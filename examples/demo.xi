@@ -8,31 +8,31 @@ str newline = "\n"
 #
 print "Create list which includes another list", newline
 
-list l, m
+list outer, inner
 int	i = 0, j
 
 while i != 3
 	j = 0
-	m = []
+	inner = []
 	while j < 4
-		m.append((i + 1) * 10 + j)
+		inner.append((i + 1) * 10 + j)
 		j += 1
-	l.append(m)
-	print "m = ", m, newline
+	outer.append(inner)
+	print "inner = ", inner, newline
 	i = i + 1
 
-print "l = ", l, newline, newline
+print "outer = ", outer, newline * 2
 
 print "Print list which includes another list", newline
 
 i = 0
 do
 	j = 0
-	while j < l[i].len
-		print l[i][j], " "
+	while j < outer[i].len
+		print outer[i][j], " "
 		j += 1
 	i += 1
-while i < l.len
+while i < outer.len
 
 print "\n\n"
 
