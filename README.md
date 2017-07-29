@@ -34,5 +34,7 @@ while 1
 The interpreter is written in C. The details of the language and the interpreter are explained in the documents listed below. EXIN is meant for educational purposes and you can do with it whatever you like.
 
 - [EXIN language reference](EXIN%20language%20reference.md)
-- [EXIN syntax diagram](EXIN%20syntax%20diagram.xhtml)   Note, download first.
 - [EXIN software architecture](EXIN%20software%20architecture.md)
+- [EXIN syntax diagram](EXIN%20syntax%20diagram.xhtml)   
+
+Download the syntax file before viewing (xhtml cannot be shown in Github.)
