@@ -378,4 +378,4 @@ real ::= ( '+' | '-' )? digit+ '.' ( digit+ )? ( ('e' | 'E') ( '+' | '-' )? digi
 
 digit ::= [0-9]
 ```
-A graphical representation of the syntax can be found in the [EXIN syntax diagram](./EXIN syntax diagram.xhmtl).
+A graphical representation of the syntax can be found in the [EXIN syntax diagram](EXIN%20syntax%20diagram.xhmtl).
