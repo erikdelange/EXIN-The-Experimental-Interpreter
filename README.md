@@ -1,7 +1,7 @@
 # EXIN - The Expermimental Interpreter
 
 EXIN is an exercise in defining a progamming language and writing an interpreter for it. Both are meant to be as simple as possible to be able to understand how the interpreter is structured and to be able to add new features. The language resembles Basic, C and Python. This is an example of EXIN code:
-``` 
+```
 # Sting reverse function
 #
 def reverse(s)
@@ -33,6 +33,6 @@ while 1
 ```
 The interpreter is written in C. The details of the language and the interpreter are explained in the documents listed below. EXIN is meant for educational purposes and you can do with it whatever you like.
 
-[EXIN language reference](./EXIN language reference.md)
-[EXIN syntax diagram](./EXIN syntax diagram.xhtml)
-[EXIN software architecture](./EXIN software architecture.md)
+[EXIN language reference](EXIN language reference.md)
+[EXIN syntax diagram](EXIN syntax diagram.xhtml)
+[EXIN software architecture](EXIN software architecture.md)
