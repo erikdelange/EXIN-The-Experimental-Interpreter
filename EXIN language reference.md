@@ -244,10 +244,13 @@ input first_name, last_name
 ##### Various
 The *pass* keyword is a no-operation statement.
 ##### Grammar in EBNF
+For an explantion of the EBNF notation used here see [EBNF syntax.txt](EBNF%20syntax.txt).
+For a graphical representation of the syntax see [EXIN syntax diagram](EXIN%20syntax%20diagram.pdf).
+
 ```
 /*	EXIN grammar.
  *
- *	For graphical representation paste this text into http://bottlecaps.de/rr/ui
+ *	For an interactive graphical representation paste this grammar into http://bottlecaps.de/rr/ui
  */
 
 program ::= (statement | NEWLINE)* EOF
@@ -378,4 +381,3 @@ real ::= ( '+' | '-' )? digit+ '.' ( digit+ )? ( ('e' | 'E') ( '+' | '-' )? digi
 
 digit ::= [0-9]
 ```
-A graphical representation of the syntax can be found in the [EXIN syntax diagram](EXIN%20syntax%20diagram.pdf).
