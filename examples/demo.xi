@@ -9,7 +9,7 @@ str newline = "\n"
 print "Create list which includes another list", newline
 
 list outer, inner
-int	i = 0, j
+int i = 0, j
 
 while i != 3
 	j = 0
