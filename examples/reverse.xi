@@ -4,14 +4,14 @@
 # Reverse a string
 
 def reverse(s)
-	str new
-	int index = s.len
+    str new
+    int index = s.len
 
-	while index
-		index -= 1
-		new += s[index]
+    while index
+        index -= 1
+        new += s[index]
 
-	return new
+    return new
 
 str s
 
@@ -25,8 +25,8 @@ print s, "\n"
 
 # now let the user enter strings
 do
-	input "Please enter a string: " s
-	if s == "End" or s == ""
-		break
-	print reverse(s), "\n"
+    input "Please enter a string (return or End to exit): " s
+    if s == "End" or s == ""
+        break
+    print reverse(s), "\n"
 while 1
