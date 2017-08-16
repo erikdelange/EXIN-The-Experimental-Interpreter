@@ -206,19 +206,19 @@ Functions are defined via the *def* keyword followed by a function name and a pa
 # Prepare Fibonacci sequence for n elements, return as list
 #
 def fibonacci(n)
-	  list fib
-	  int f0 = 0, f1 = 1, fn, i
+    list fib
+    int f0 = 0, f1 = 1, fn, i
 
-	  while i < n
-		    if i <= 1
-			      fn = i
-		    else
-			      fn = f0 + f1
-			      f0 = f1, f1 = fn
-		    fib.append(fn)
-		    i += 1
+    while i < n
+        if i <= 1
+            fn = i
+        else
+            fn = f0 + f1
+            f0 = f1, f1 = fn
+        fib.append(fn)
+        i += 1
 
-	  return fib
+    return fib
 
 int n = 10
 print "Fibonacci sequence for ", n, " elements: ", fibonacci(n), "\n\n"
