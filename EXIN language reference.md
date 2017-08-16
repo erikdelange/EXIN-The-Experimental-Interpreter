@@ -23,7 +23,7 @@ while a != 10
     print a
 a += 1
 ```
-Only tabs must be used for indentation.
+Only tabs must be used for indentation (although spaces will also work).
 
 A hash sign (#) identifies the start of a comment. All text after a hash sign until the end of the line is discarded.
 ``` python
@@ -102,15 +102,18 @@ The number of elements in a list of string is returned by the *len* method.
 = 2
 ```
 ###### Adding and removing values
-Characters, numbers or other strings can be added to a string via the *+* operator.
+Characters, numbers strings and lists can be added to a string via the *+* operator.
 ``` python
 >>> "ab" + 'c'
 = abc
 
 >>> "xy" + 3.14
 = xy3.14
+
+>>> [3] + ["alfa"]
+=[3,"alfa"]
 ```
-To append an element at the end of a list the *append* method must be used.
+To append an element at the end of a list the *append* method can also be used.
 ``` python
 >>> list m
 >>> m.append(3.14)
@@ -263,7 +266,7 @@ declaration_stmnt ::= variable_declaration | function_declaration
 
 variable_declaration ::= type identifier ( '=' assignment_expr )? ( ',' identifier ( '=' assignment_expr )? )* NEWLINE
 
-type ::= 'char' | 'int' | 'real' | 'str' | 'list'
+type ::= 'char' | 'int' | 'float' | 'str' | 'list'
 
 function_declaration ::= 'def' identifier '(' (identifier ( ',' identifier )* )? ')' block
 
@@ -321,7 +324,7 @@ function_call ::= identifier '(' (assignment_expr ( ',' assignment_expr )* )? ')
 
 variable ::= numeric_variable | sequence_variable
 
-numeric_variable ::= char_variable | integer_variable | real_variable
+numeric_variable ::= char_variable | integer_variable | float_variable
 
 sequence_variable ::= ( string_variable | list_variable ) ( subscript? ( '.' method )? )
 
@@ -341,7 +344,7 @@ char_variable ::= 'identifier of variable of type char'
 
 integer_variable ::= 'identifier of variable of type int'
 
-real_variable ::= 'identifier of variable of type real'
+float_variable ::= 'identifier of variable of type float'
 
 string_variable ::= 'identifier of variable of type str'
 
@@ -373,11 +376,11 @@ alphabetic ::= [a-zA-Z]
 
 escape ::= '\' [bnfrtv\'"0]
 
-number ::= integer | real
+number ::= integer | float
 
 integer ::= ( '+' | '-' )? digit+
 
-real ::= ( '+' | '-' )? digit+ '.' ( digit+ )? ( ('e' | 'E') ( '+' | '-' )? digit+ )?
+float ::= ( '+' | '-' )? digit+ '.' ( digit+ )? ( ('e' | 'E') ( '+' | '-' )? digit+ )?
 
 digit ::= [0-9]
 ```
