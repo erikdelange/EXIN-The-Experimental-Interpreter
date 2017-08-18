@@ -113,7 +113,7 @@ Characters, numbers and strings can be added to a string via the *+* operator.
 Literal values can be appended to a list via the *+* operator if the literal is represented as a list constant.
 ``` python
 >>> [3] + ["alfa"]
-=[3,"alfa"]
+= [3,"alfa"]
 ```
 The best way to append an element at the end of a list is via the *append* method.
 ``` python
