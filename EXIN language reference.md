@@ -102,18 +102,20 @@ The number of elements in a list of string is returned by the *len* method.
 = 2
 ```
 ###### Adding and removing values
-Characters, numbers strings and lists can be added to a string via the *+* operator.
+Characters, numbers and strings can be added to a string via the *+* operator.
 ``` python
 >>> "ab" + 'c'
 = abc
 
 >>> "xy" + 3.14
 = xy3.14
-
+```
+Literal values can be appended to a list via the *+* operator if the literal is represented as a list constant.
+``` python
 >>> [3] + ["alfa"]
 =[3,"alfa"]
 ```
-To append an element at the end of a list the *append* method can also be used.
+The best way to append an element at the end of a list is via the *append* method.
 ``` python
 >>> list m
 >>> m.append(3.14)
