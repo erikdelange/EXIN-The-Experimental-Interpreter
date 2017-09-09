@@ -3,7 +3,7 @@
 ##### General
 EXIN is a simple language and contains elements of Basic, C and Python.
 ##### Keywords
-The follwing keywords are reserved and may not be used as variable names.
+The following keywords are reserved and may not be used as variable names.
 ```
 and      break    char     continue  def
 do       else     float    if        import
@@ -11,27 +11,31 @@ input    int      list     or        pass
 print    return   str      while
 ```
 ##### Code format
-Code consist of lines of plain text. Lines contains statements but can also be empty. Statements do not span lines but are terminated by the newline character. Indentation is used to group statements in blocks for control structures (if-else, do-while, while-do). For example
+Code consist of lines of plain text. Lines contain statements but can also be empty. Statements do not span lines but are terminated by the newline character. Indentation is used to group statements in blocks for control structures (if-else, do-while, while-do). For example
 ``` python
+int a
 while a != 10
     print a
     a += 1
 ```
- will not yield the same result as
+will not yield the same result as
 ``` python
+int a
 while a != 10
     print a
 a += 1
 ```
-Only tabs must be used for indentation (although spaces will also work).
+The first code snippet prints all digits whereas the second will result in an infinite loop.
 
-A hash sign (#) identifies the start of a comment. All text after a hash sign until the end of the line is discarded.
+To avoid confusion it is best to use only tabs for indentation. However spaces will also work. When mixing spaces and tabs make sure to use 8 spaces to represent a tab.
+
+A hash sign (#) identifies the start of a comment. All text after the hash sign until the end of the line is discarded.
 ``` python
 # This is a line containing only a comment
 
 print "Hello"  # a comment at the end of a statement
 ```
-Code execution starts at the top of the file.
+Code execution always starts at the top of the file.
 ##### Data types
 The three primitive data types are *char*, *int* and *float*. They are used for storing characters, integers and floating point numbers and match the C data types char, long and double.
 
@@ -47,7 +51,7 @@ list l_2
 ```
 Variable names must begin with a letter and consist of letters, digits and underscores.
 
-Variables receive an implicit default value when declared; 0 for the primitive types or else an empty list or string. It is also possible to assign a value during declaration. This value can be a constant or an expression. Multiple variables of the same type can be declared on a single line.
+Variables receive an implicit default value when declared; 0 for the primitive types or else an empty list or empty string. It is also possible to assign a value during declaration. This value can be a constant or an expression. Multiple variables of the same type can be declared on a single line.
 ```
 char a = 'A', b = '\n', c
 int i = 10
@@ -56,7 +60,7 @@ str s = "abcd", t = "\n", u = ""
 list l = ['a', 2.1, "xyz"], m = []
 ```
 ##### Literals
-A character constant is surrounded by single quotes, a string constant by double quotes. Both may contain escape sequences starting with a backslash. Number constant without decimal dot are considered integers, and with a dot floats. A floating point number can also be written in scientific notation.
+A character constant is surrounded by single quotes, a string constant by double quotes. Both may contain escape sequences starting with a backslash. Number constant without a decimal dot are considered integers, and with a dot floats. A floating point number can also be written in scientific notation.
 ``` python
 >>> 1 / 2
 = 0
@@ -71,7 +75,7 @@ A character constant is surrounded by single quotes, a string constant by double
 ```
 ##### Strings and lists
 ###### Indices and slices
-Elements in lists and strings are be accessed via their index. Index numbers start at 0, or -1 when counting from the end of the list or variable.
+Elements in lists and strings are accessed via their index. Index numbers start at 0, or -1 when counting from the end of the list or variable.
 ``` python
 >>> "abc"[0]
 = a
@@ -93,7 +97,7 @@ It is also possible to take slices of a list or string using indices. The absenc
 >>> "abcdef"[:-5]
 = a
 ```
-The number of elements in a list of string is returned by the *len* method.
+The number of elements in a list or characters in a string is returned by the *len* method.
 ```
 >>> "abcdef".len
 = 6
@@ -122,7 +126,7 @@ The best way to append an element at the end of a list is via the *append* metho
 >>> print m
 [3.14]
 ```
-Inserting an element somewhere in a list is done via *insert(before_index, element)*. Removing an element can only be done via its index. As always this can be an index from the beginning or the end of the list.
+Inserting an element at any place in a list is done via *insert(before_index, element)*. Removing an element can only be done via its index. As always this can be an index from the beginning or from the end of the list.
 ``` python
 >>> list m
 >>> m.insert(0, 3.14)  # insert at beginning of list
@@ -135,7 +139,7 @@ Inserting an element somewhere in a list is done via *insert(before_index, eleme
 ```
 ##### Operators
 ###### Arithmetic
-The binary operators are +, -, \*, / and the modulo operator %. Modulo can only be used on integers. For usage in assignments the shorthands operators +=, -=, \*=, /= and \%= are available instead of (for example) n = n + 1. Using addition on lists or strings will result in concatenation. Multiplication by a number will result in repetition of the list or string.
+The binary operators are +, -, \*, / and the modulo operator %. Modulo can only be used on integers. For usage in assignments the shorthands operators +=, -=, \*=, /= and \%= are available instead of (for example) n = n + 1. Using addition on lists or strings will result in list or string concatenation. Multiplication by a number will result in repetition of the list or string.
 ``` python
 >>> "abc" + "def"
 = abcdef
@@ -148,7 +152,7 @@ The binary operators are +, -, \*, / and the modulo operator %. Modulo can only 
 
 >>> [1,2] * 2
 = [1,2,1,2]
-```  
+```
 ###### Comparison
 The comparison operators are ==, !=, <>, <, <=, >, >=. Note that equality comparison uses two equal characters where assignment only used one. Lists cannot be compared.
 ###### Logical
@@ -156,12 +160,12 @@ The logical operators are *and*, *or* and *!* (being not). True is represented b
 ###### Order of evaluation
 Expression evaluation follows the following rules of precedence:
  *  first read variables (including subscripts and slices) and constants,
- * 	then execute function calls, list and string methods and evaluate parenthesized expressions,
+ * 	then execute function calls, list- and string-methods and evaluate parenthesized expressions,
  *	then the unary operators + - and !
  *	then multiplication and division (normal and modulo)
  *	then addition and subtraction
  *	then the comparisons < <= > and >=
- *	then the comparisons  == and !=
+ *	then the comparisons == and !=
  * 	then logical *and*
  *	then logical *or*
  *	then assignment of values (normal and shorthand)
@@ -169,7 +173,7 @@ Expression evaluation follows the following rules of precedence:
 
 ##### Control structures
 ###### If .. else
-The *if* keyword is followed by a conditional expression and if this evalutes to true the statement block following *if* is executed. Optionally an *else* block can be defined. If statements can be nested.
+The *if* keyword is followed by a conditional expression and when this evalutes to true the statement block following *if* is executed. Optionally an *else* block can be defined. *If* statements can be nested.
 ``` python
 if i > 0
     print "i is greater then zero"
@@ -193,7 +197,7 @@ while (m += 1) < 10
 ```
 According to the rules of precedence the parenthesized part of the conditional expression from the do-while loop is executed before the comparison is made, so loop counter m is incremented first.
 
-Exit from a loop can be forced at any point by the *break* and *continue* statement. Using *break* the innermost loop is exited and the conditional expression is considered to be false. Via *continue* the rest of the statement block of the loop is skipped, causing the conditonal expression to be evaluated again.
+An exit from a loop can be forced at any point by the *break* and *continue* statement. When using *break* the innermost loop is exited and the conditional expression is considered to be false. Via *continue* the rest of the statement block of the loop is skipped, causing the conditonal expression to be evaluated again.
 ``` python
 int n
 while 1
@@ -203,7 +207,7 @@ while 1
 ```
 This loop is executed infinitly because 1 always evaluates to true. Eventually the *if* statement with *break* makes sure the loop is terminiated once n equals 10.
 ##### Function definition
-Functions are defined via the *def* keyword followed by a function name and a pair of parenthesis containing the argument names separated by comma's. Even if a function has no arguments the parenthesis are mandatory. Arguments are passed by value. There is no type checking when the function is called, and more arguments can be sent to the function then are stated in the definition.
+Functions are defined using the *def* keyword followed by a function name and a pair of parenthesis containing the argument names separated by comma's. Even if a function has no arguments the parenthesis are mandatory. All arguments are passed by value. There is no type checking when the function is called, and more arguments can be sent to the function then are stated in the definition.
 ``` python
 # Prepare Fibonacci sequence for n elements, return as list
 #
@@ -225,10 +229,10 @@ def fibonacci(n)
 int n = 10
 print "Fibonacci sequence for ", n, " elements: ", fibonacci(n), "\n\n"
 ```
-A function returns when it reaches the end of its statement block or when a *return* statement is encountered. Via the *return* statement a return value can be explicitly specified. Without this statement, of when using just *return* the return value is considered to be integer 0. The return value of a function can be used immediately, so a function can appear everywhere where a variable can be used. Any data type can be returned by a function, including lists and strings.
-Variables are defined within the scope of a function. If defined outside of a function a variable is global. Functions are always defined globally.
+A function returns when it reaches the end of its statement block or when a *return* statement is encountered. When using the *return* statement a return value can be explicitly specified. Without this statement, or when using just *return* the return value is considered to be integer 0. The return value of a function can be used immediately, so a function can appear everywhere where a variable can appear. Any data type can be returned by a function, including lists and strings.
+Variables are defined within the scope of a function. Any variable defined outside of a function is considered global. Functions are always defined globally.
 ##### Importing modules
-Via the *import* statement program code from other files can be loaded. Any file which is imported is executed immediately. Any functions are added to the global list and any statement or declaration outside a function definition is executed.
+Via the *import* statement program code from other files can be loaded. Any file which is imported is executed immediately. Its functions are added to the global list and any statement or declaration outside a function definition is executed.
 ``` python
 str file = "file1.ext"
 
@@ -247,11 +251,10 @@ input "Please enter your name: " name
 input first_name, last_name
 ```
 ##### Various
-The *pass* keyword is a no-operation statement.
+The *pass* keyword is a no-operation statement and can be used as a placeholder during program development.
 ##### Grammar in EBNF
-For an explantion of the EBNF notation used here see [EBNF syntax.txt](EBNF%20syntax.txt).
 For a graphical representation of the syntax see [EXIN syntax diagram](EXIN%20syntax%20diagram.pdf).
-
+For an explantion of the EBNF notation used below see [EBNF syntax.txt](EBNF%20syntax.txt).
 ```
 /*	EXIN grammar.
  *

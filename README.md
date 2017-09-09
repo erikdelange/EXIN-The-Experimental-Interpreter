@@ -19,19 +19,19 @@ str s
 
 # First a short demo
 s = reverse("abracadabra")
-print s, "\n\n"
+print s, "\n\n"  # this will print 'arbadacarba'
 s = reverse(s)  # turn s back in the original string
 print s, "\n\n"
 
 # Let the user enter strings
 do
-	input "Please enter a string: " s
-	if s == "End" or s == ""
+	input "Please enter a string (empty line to end): " s
+	if s == ""
 		break
 	print reverse(s), "\n"
 while 1
 ```
-The interpreter is written in C. The details of the language and the interpreter are explained in the documents listed below. EXIN is meant for educational purposes and you can do with it whatever you like.
+The interpreter is written in C. The details of the language and the interpreter are explained in the documents listed below. EXIN is meant for fun and education (at least mine) and you can do with it whatever you like.
 
 - [EXIN language reference](EXIN%20language%20reference.md)
 - [EXIN software architecture](EXIN%20software%20architecture.md)
