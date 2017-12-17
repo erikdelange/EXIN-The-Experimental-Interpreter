@@ -31,7 +31,7 @@ static inline char *tokenName(token_t t)  /* inline requires at least C99 */
 }
 
 
-/*	This struct is the API to the  scanner object, containing both data and
+/*	This struct is the API to the Scanner object, containing both data and
  *	function adresses.
  *
  *	Function next() reads the next token, and places it in variable 'token'.
@@ -46,9 +46,12 @@ typedef struct scanner {
 	token_t peeked;  	/* private */
 	bool_t atbol;
 	char *string;
-	void (*init)(void);
 	token_t (*next)(void);
 	token_t (*peek)(void);
+	void (*init)(void);
+	void (*save)(struct scanner *);
+	void (*jump)(struct scanner *);
+
 } Scanner;
 
 extern Scanner scanner;

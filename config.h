@@ -7,7 +7,7 @@
 #if !defined (_CONFIG_)
 #define _CONFIG_
 
-#define VERSION	"1.0"
+#define VERSION	"1.01"
 
 #define LINESIZE 256		/* maximum length of command line for interpreter */
 
@@ -29,7 +29,7 @@ typedef enum { false = 0, true } bool_t;
 #ifdef DEBUG
 	#define debug_printf(level, fmt, ...) \
 				do { \
-					if (debug >= level) \
+					if (xi.debug >= level) \
 						fprintf(stderr, fmt, __VA_ARGS__); } \
 				while (0)
 #else
@@ -40,7 +40,7 @@ typedef enum { false = 0, true } bool_t;
 							/* debug logging detail levels: */
 #define DEBUGLEVEL0	0		/* no debug output */
 #define DEBUGLEVEL1	1		/* tokens only */
-#define DEBUGLEVEL2	2		/* L1 + function and block entry & exit */
-#define	DEBUGLEVEL3	3		/* L2 + object alloc & free */
+#define DEBUGLEVEL2	2		/* LEVEL1 + function and block entry & exit */
+#define	DEBUGLEVEL3	3		/* LEVEL2 + object alloc() & free() */
 
 #endif

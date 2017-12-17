@@ -3,7 +3,7 @@
 ##### General
 EXIN is a simple language and contains elements of Basic, C and Python.
 ##### Keywords
-The following keywords are reserved and may not be used as variable names.
+The following keywords are reserved and may not be used as variable or function names.
 ```
 and      break    char     continue  def
 do       else     float    if        import
@@ -12,14 +12,14 @@ print    return   str      while
 ```
 ##### Code format
 Code consist of lines of plain text. Lines contain statements but can also be empty. Statements do not span lines but are terminated by the newline character. Indentation is used to group statements in blocks for control structures (if-else, do-while, while-do). For example
-``` python
+```
 int a
 while a != 10
     print a
     a += 1
 ```
 will not yield the same result as
-``` python
+```
 int a
 while a != 10
     print a
@@ -30,7 +30,7 @@ The first code snippet prints all digits whereas the second will result in an in
 To avoid confusion it is best to use only tabs for indentation. However spaces will also work. When mixing spaces and tabs make sure to use 8 spaces to represent a tab.
 
 A hash sign (#) identifies the start of a comment. All text after the hash sign until the end of the line is discarded.
-``` python
+```
 # This is a line containing only a comment
 
 print "Hello"  # a comment at the end of a statement
@@ -75,7 +75,7 @@ A character constant is surrounded by single quotes, a string constant by double
 ```
 ##### Strings and lists
 ###### Indices and slices
-Elements in lists and strings are accessed via their index. Index numbers start at 0, or -1 when counting from the end of the list or variable.
+Elements in lists and strings are accessed via their index. Index numbers start at 0, or -1 when counting from the end of the list or string.
 ``` python
 >>> "abc"[0]
 = a
@@ -107,7 +107,7 @@ The number of elements in a list or characters in a string is returned by the *l
 ```
 ###### Adding and removing values
 Characters, numbers and strings can be added to a string via the *+* operator.
-``` python
+```
 >>> "ab" + 'c'
 = abc
 
@@ -115,19 +115,19 @@ Characters, numbers and strings can be added to a string via the *+* operator.
 = xy3.14
 ```
 Literal values can be appended to a list via the *+* operator if the literal is represented as a list constant.
-``` python
+```
 >>> [3] + ["alfa"]
 = [3,"alfa"]
 ```
 The best way to append an element at the end of a list is via the *append* method.
-``` python
+```
 >>> list m
 >>> m.append(3.14)
 >>> print m
 [3.14]
 ```
 Inserting an element at any place in a list is done via *insert(before_index, element)*. Removing an element can only be done via its index. As always this can be an index from the beginning or from the end of the list.
-``` python
+```
 >>> list m
 >>> m.insert(0, 3.14)  # insert at beginning of list
 >>> print m
@@ -139,8 +139,8 @@ Inserting an element at any place in a list is done via *insert(before_index, el
 ```
 ##### Operators
 ###### Arithmetic
-The binary operators are +, -, \*, / and the modulo operator %. Modulo can only be used on integers. For usage in assignments the shorthands operators +=, -=, \*=, /= and \%= are available instead of (for example) n = n + 1. Using addition on lists or strings will result in list or string concatenation. Multiplication by a number will result in repetition of the list or string.
-``` python
+The binary operators are +, -, \*, / and the modulo operator %. Modulo can only be used on integers. For usage in assignments the shorthands operators +=, -=, \*=, /= and \%= are available instead of (for example) n = n + 1. Using addition on lists or strings will result in list or string concatenation. Multiplication of a list or string by a number will result in repetition of the list or string.
+```
 >>> "abc" + "def"
 = abcdef
 
@@ -174,7 +174,7 @@ Expression evaluation follows the following rules of precedence:
 ##### Control structures
 ###### If .. else
 The *if* keyword is followed by a conditional expression and when this evalutes to true the statement block following *if* is executed. Optionally an *else* block can be defined. *If* statements can be nested.
-``` python
+```
 if i > 0
     print "i is greater then zero"
 else
@@ -184,8 +184,8 @@ else
         print "i is less then zero"
 ```
 ###### Loops
-EXIN has two types of loops: *while*, and *do .. while*. The while loop evaluates the conditional expression before the loop is entered, whereas for the do .. while loop this is only done after the loop has been executed. So the statement block of the last type of loop is executed at least once.
-``` python
+EXIN has two types of loops: *while*, and *do .. while*. The while loop evaluates the conditional expression before the loop is entered, whereas for the do .. while loop this is only done after the loop has been executed. So the statement block of a do .. while loop is executed at least once.
+```
 int n = 0
 while n
     print "this is never executed"
@@ -195,10 +195,10 @@ do
     print m
 while (m += 1) < 10
 ```
-According to the rules of precedence the parenthesized part of the conditional expression from the do-while loop is executed before the comparison is made, so loop counter m is incremented first.
+According to the rules of precedence the parenthesized part of the conditional expression from the do .. while loop is executed before the comparison is made, so loop counter m is incremented first.
 
 An exit from a loop can be forced at any point by the *break* and *continue* statement. When using *break* the innermost loop is exited and the conditional expression is considered to be false. Via *continue* the rest of the statement block of the loop is skipped, causing the conditonal expression to be evaluated again.
-``` python
+```
 int n
 while 1
     if n == 10
@@ -208,7 +208,7 @@ while 1
 This loop is executed infinitly because 1 always evaluates to true. Eventually the *if* statement with *break* makes sure the loop is terminiated once n equals 10.
 ##### Function definition
 Functions are defined using the *def* keyword followed by a function name and a pair of parenthesis containing the argument names separated by comma's. Even if a function has no arguments the parenthesis are mandatory. All arguments are passed by value. There is no type checking when the function is called, and more arguments can be sent to the function then are stated in the definition.
-``` python
+```
 # Prepare Fibonacci sequence for n elements, return as list
 #
 def fibonacci(n)
@@ -232,21 +232,21 @@ print "Fibonacci sequence for ", n, " elements: ", fibonacci(n), "\n\n"
 A function returns when it reaches the end of its statement block or when a *return* statement is encountered. When using the *return* statement a return value can be explicitly specified. Without this statement, or when using just *return* the return value is considered to be integer 0. The return value of a function can be used immediately, so a function can appear everywhere where a variable can appear. Any data type can be returned by a function, including lists and strings.
 Variables are defined within the scope of a function. Any variable defined outside of a function is considered global. Functions are always defined globally.
 ##### Importing modules
-Via the *import* statement program code from other files can be loaded. Any file which is imported is executed immediately. Its functions are added to the global list and any statement or declaration outside a function definition is executed.
-``` python
+Via the *import* statement program code from other files can be loaded. The code in any file which is imported is executed immediately. Its functions are added to the global list and any statement or declaration outside a function definition is executed. A module will only be imported once, repeated calls importing an already imported file have no effect.
+```
 str file = "file1.ext"
 
 import "file2.ext", file
 ```
 ##### Input and output
 Information can be send to the standard output via the *print* statement. Any number of expressions separated by comma's can follow *print*.
-``` python
+```
 >>> str s = "Hello"
 >>> print s, " there ", 1 + 2 - 3.14
 Hello there -0.14
 ```
 The *input* statement reads data from the standard input into a variable. Input must be ended by a newline. Optionally a string can be specified which is printed before the input is read. Multiple variables can be read using a single input statement.
-``` python
+```
 input "Please enter your name: " name
 input first_name, last_name
 ```

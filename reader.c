@@ -88,7 +88,7 @@ static void reset(void)
 }
 
 
-/*	Set the read pointer at the start of the current line.
+/*	Move the read pointer ro the start of the current line.
  *
  */
 static void to_bol(void)
@@ -107,9 +107,7 @@ static void jump(PositionObject *position)
 	reader.m = position->reader.m;
 	reader.rp = position->reader.rp;
 
-	scanner.token = position->scanner.token;
-	scanner.atbol = position->scanner.atbol;
-	strcpy(scanner.string, position->scanner.string);
+	scanner.jump(&position->scanner);
 }
 
 
@@ -126,10 +124,9 @@ static PositionObject *save(void)
 	/* save relevant reader variabeles */
 	pos->reader.m = reader.m;
 	pos->reader.rp = reader.rp;
+
 	/* save relevant scanner variabeles */
-	pos->scanner.token = scanner.token;
-	pos->scanner.atbol = scanner.atbol;
-	pos->scanner.string = strdup(scanner.string);
+	scanner.save(&pos->scanner);
 
 	return pos;
 }

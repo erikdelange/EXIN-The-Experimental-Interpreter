@@ -9,7 +9,13 @@
 #include "exin.h"
 
 
-int debug = DEBUGLEVEL0;
+Xi xi = {
+	DEBUGLEVEL0,
+	TABSIZE,
+	&scanner,
+	&reader,
+	&module
+};
 
 
 /*	Forward declarations.
@@ -28,10 +34,7 @@ int	main(int argc, char **argv)
 	int opt_evaluate = 0;
 	int opt_interpret = 0;
 
-	char *executable;
 	int c;
-
-	executable = basename(argv[0]);
 
 	while (--argc > 0 && (*++argv)[0] == '-')
 		while ((c = *++argv[0]))
@@ -39,9 +42,9 @@ int	main(int argc, char **argv)
 				#ifdef DEBUG
 				case 'd':
 					if (isdigit((*argv)[1]))
-						debug = *++argv[0] - '0';
+						xi.debug = *++argv[0] - '0';
 					else
-						debug = 1;
+						xi.debug = 1;
 					break;
 				#endif
 				case 'e':
@@ -51,14 +54,14 @@ int	main(int argc, char **argv)
 					opt_interpret = 1;
 					break;
 				default:
-					fprintf(stderr, "%s: unknown option %c\n", executable, c);
+					fprintf(stderr, "%s: unknown option %c\n", basename(argv[0]), c);
 					break;
 			}
 
 	if (((opt_evaluate || opt_interpret) && argc != 0) ||
 		 (!(opt_evaluate || opt_interpret) && argc != 1)) {
 		fprintf(stderr, "EXIN version %s\n", VERSION);
-		fprintf(stderr, "usage: %s [options] [file]\n", executable);
+		fprintf(stderr, "usage: %s [options] [file]\n", basename(argv[0]));
 		fprintf(stderr, "options\n");
 		#ifdef DEBUG
 		fprintf(stderr, "-d[detail] = show debug info\n");

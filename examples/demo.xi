@@ -62,8 +62,8 @@ list t = multiply([1.2, "ab", 'c'], 2)
 print t, newline * 2
 
 
-# -----------------------------
-# Add numbers, strings and list
+# ------------------------------
+# Add numbers, strings and lists
 #
 print "Add two values", newline
 

@@ -58,7 +58,10 @@ static token_t read_string(char *buffer);
 static token_t read_number(char *buffer);
 static token_t token_next(void);
 static token_t token_peek(void);
-static void token_init(void);
+static void scanner_save(struct scanner *);
+static void scanner_jump(struct scanner *);
+static void scanner_init(void);
+
 
 static char buffer[BUFSIZE + 1];
 
@@ -71,13 +74,15 @@ Scanner scanner = {
 	0,
 	true,
 	&buffer[0],
-	token_init,
 	token_next,
-	token_peek
+	token_peek,
+	scanner_init,
+	scanner_save,
+	scanner_jump
 };
 
 
-static void token_init(void)
+static void scanner_init(void)
 {
 	scanner.token = UNKNOWN;
 	scanner.peeked = 0;
@@ -107,6 +112,30 @@ static token_t token_peek(void)
 		scanner.peeked = read_next_token(scanner.string);
 
 	return scanner.peeked;
+}
+
+
+/*	Save the global scanner state in sc.
+ *
+ */
+static void scanner_save(struct scanner *sc)
+{
+	sc->token = scanner.token;
+	sc->atbol = scanner.atbol;
+	sc->peeked = scanner.peeked;
+	sc->string = strdup(scanner.string);
+}
+
+
+/*	Load the global scanner state from sc.
+ *
+ */
+static void scanner_jump(struct scanner *sc)
+{
+	scanner.token = sc->token;
+	scanner.atbol = sc->atbol;
+	scanner.peeked = sc->peeked;
+	strcpy(scanner.string, sc->string);
 }
 
 
@@ -142,7 +171,7 @@ static token_t read_next_token(char *buffer)
 			if (ch == ' ')
 				col++;
 			else if (ch == '\t')
-				col = (col / TABSIZE + 1) * TABSIZE;
+				col = (col / xi.tabsize + 1) * xi.tabsize;
 			else
 				break;
 		}  /* col = column-nr of first character which is not tab or space */

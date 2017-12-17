@@ -32,10 +32,22 @@
 #include "list.h"
 #include "str.h"
 
-/* exin.c */
-extern int debug;
-
 /* strndup.c */
 extern char *strndup(const char *s, size_t n);
+
+/* 	exin.c
+ *
+ * 	Struct holding all global variables.
+ *
+ */
+typedef struct {
+	int debug;
+	int tabsize;
+	struct scanner *scanner;
+	struct reader *reader;
+	struct module *module;
+} Xi;
+
+extern Xi xi;
 
 #endif

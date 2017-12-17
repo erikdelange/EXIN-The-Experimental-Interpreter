@@ -2,6 +2,8 @@
  *
  * 	EXIN code parser.
  *
+ *	See also: https://en.wikipedia.org/wiki/Recursive_descent_parser
+ *
  * 	1995	K.W.E. de Lange
  */
 #include "exin.h"
@@ -91,7 +93,7 @@ static void function_declaration(void)
 	reader.reset();
 
 	/* avoid debug output when scanning for functions */
-	tmp = debug, debug = 0;
+	tmp = xi.debug, xi.debug = 0;
 
 	do {
 		if (accept(DEFFUNC)) {
@@ -105,7 +107,7 @@ static void function_declaration(void)
 			scanner.next();
 	} while (scanner.token != ENDMARKER);
 
-	debug = tmp;
+	xi.debug = tmp;
 
 	debug_printf(DEBUGLEVEL2, "\n-----: %s", "Start execution");
 

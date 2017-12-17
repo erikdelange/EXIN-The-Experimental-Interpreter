@@ -18,8 +18,8 @@ static struct module *import(char *filename);
 static struct module *searchModule(char *name);
 
 
-/*	An empty module object, used as 1. the starting point for the list of
- *	loaded modules and 2. the module API.
+/*	An empty module object, used as 1) the starting point for the list of
+ *	loaded modules and 2) the module API.
  *
  */
 Module module = {
@@ -46,7 +46,7 @@ static size_t fileSize(char *filename)
 }
 
 
-/*	Allocate buffer and read file.
+/*	Allocate buffer for file content and read the file.
  *
  *	filename	filename optionally including path
  *	return		buffer containing code or NULL in case of error
@@ -90,7 +90,7 @@ static struct module *searchModule(char *filename)
 }
 
 
-/*	Import a module ans start interpreting the module's code.
+/*	Import a module and start interpreting that module's code.
  *
  * 	filename	filename optionally including path
  * 	return		new module-object (interpreter stops in case of error)
@@ -102,27 +102,24 @@ static Module *import(char *filename)
 
 	if ((m = searchModule(filename)) == NULL) {  /* check if already loaded */
 
-		m = calloc((size_t)1, sizeof(Module));
-		if (m == NULL)
+		if ((m = calloc((size_t)1, sizeof(Module))) == NULL)
 			error(OutOfMemoryError);
 
-		m->code = loadFile(filename);
-		if (m->code == NULL)
+		if ((m->code = loadFile(filename)) == NULL)
 			error(SystemError, "error importing %s", filename);
 
-		m->name = strdup(filename);
-		if (m->name == NULL)
+		if ((m->name = strdup(filename)) == NULL)
 			error(OutOfMemoryError);
 
 		m->next = module.next;
 		module.next = m;
-	}
 
-	reader.m = m;
-	reader.reset();
+		reader.m = m;
+		reader.reset();
 
-	if (setjmp(return_address) == 0)
-		parser();
+		if (setjmp(return_address) == 0)
+			parser();
+	}  /* import only done once */
 
 	return m;
 }
