@@ -49,7 +49,7 @@ printf("%s", token.string);
 EXIN program code is stored modules and accessed via the *module* struct. At least one module exists but via the *import* statement more can be loaded. See *module.c* and struct *module* for the details.
 The scanner uses a reader (in file *reader.c*) to read individual characters from the program code. Similar to the *scanner* struct a single *reader* struct containing variables and function calls is used. The reader is able move the read pointer to other places in the same module or between modules when it needs to do so because of function calls or loops.
 
-![](https://github.com/erikdelange/EXIN-The-Experimental-Interpreter/blob/master/Exin software structure.png)
+![]('https://github.com/erikdelange/EXIN-The-Experimental-Interpreter/blob/master/Exin software structure.png')
 
 ###### Not efficient
 When reading code the interpreter evaluates the characters which are read over and over. So long variables names are searched in the list with identifiers every time again. This can be time-consuming. Some interpreters first translate these names and/or keywords in shorter (e.g. one-byte versions) before starting interpretation which speeds up things. However the aim for EXIN was simplicity and not speed.
