@@ -1,6 +1,6 @@
 /*	exin.c
  *
- *	Experimental Interpreter EXIN (or XI)
+ *	Experimental Interpreter EXIN
  *
  * 	This is the interpreters main program.
  *
@@ -9,12 +9,9 @@
 #include "exin.h"
 
 
-Xi xi = {
+Exin exin = {
 	DEBUGLEVEL0,
-	TABSIZE,
-	&scanner,
-	&reader,
-	&module
+	TABSIZE
 };
 
 
@@ -42,9 +39,9 @@ int	main(int argc, char **argv)
 				#ifdef DEBUG
 				case 'd':
 					if (isdigit((*argv)[1]))
-						xi.debug = *++argv[0] - '0';
+						exin.debug = *++argv[0] - '0';
 					else
-						xi.debug = 1;
+						exin.debug = 1;
 					break;
 				#endif
 				case 'e':
@@ -52,6 +49,12 @@ int	main(int argc, char **argv)
 					break;
 				case 'i':
 					opt_interpret = 1;
+					break;
+				case 't':
+					if (isdigit((*argv)[1]))
+						exin.tabsize = atoi(*argv);
+					else
+						exin.tabsize = TABSIZE;
 					break;
 				default:
 					fprintf(stderr, "%s: unknown option %c\n", basename(argv[0]), c);
@@ -67,6 +70,8 @@ int	main(int argc, char **argv)
 		fprintf(stderr, "-d[detail] = show debug info\n");
 		fprintf(stderr, "   detail = 1..9 (little - much)\n");
 		#endif
+		fprintf(stderr, "-t[tabsize] = set tab size in spaces\n");
+		fprintf(stderr, "   tabsize = >= 1\n");
 		fprintf(stderr, "-i = interpret line as statement\n");
 		fprintf(stderr, "-e = evaluate line as expression\n");
 	} else {

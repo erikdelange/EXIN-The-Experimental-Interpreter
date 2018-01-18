@@ -43,11 +43,8 @@ extern char *strndup(const char *s, size_t n);
 typedef struct {
 	int debug;
 	int tabsize;
-	struct scanner *scanner;
-	struct reader *reader;
-	struct module *module;
-} Xi;
+} Exin;
 
-extern Xi xi;
+extern Exin exin;
 
 #endif

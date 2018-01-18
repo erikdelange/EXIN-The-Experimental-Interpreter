@@ -29,7 +29,7 @@ typedef enum { false = 0, true } bool_t;
 #ifdef DEBUG
 	#define debug_printf(level, fmt, ...) \
 				do { \
-					if (xi.debug >= level) \
+					if (exin.debug >= level) \
 						fprintf(stderr, fmt, __VA_ARGS__); } \
 				while (0)
 #else

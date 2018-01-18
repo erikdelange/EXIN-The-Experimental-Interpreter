@@ -87,7 +87,7 @@ static StrObject *str_vset(StrObject *obj, va_list argp)
 
 
 /*	Operand op1 or op2 is a string. The other operand can be anything and
- *	must be converted to a string.
+ *	will be converted to a string.
  *
  */
 Object *str_concat(Object *op1, Object *op2)

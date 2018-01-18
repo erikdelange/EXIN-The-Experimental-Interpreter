@@ -1,9 +1,9 @@
 /*	reader.c
  *
- * 	The reader read character from the source code. The reader can also jump to
- * 	other places in the code. The reader contains a pointer to the module
- * 	object from which it is currently reading. (See also reader.h).
- *	Only one global reader object existst.
+ * 	The reader object reads characters from the source code. The reader can also
+ *	jump to other places in the code. The reader contains a pointer to the
+ * 	module object from which it is currently reading. (See also reader.h).
+ *	Only one global reader object exists.
  *
  *	2017	K.W.E. de Lange
  */
@@ -67,7 +67,7 @@ static int peekch(void)
 /*	Undo the read of a character.
  *
  *	Note: this implementation only set the read pointer back one position and
- *	does nothing with ch
+ *	does nothing with ch. Properly this should be done via a stack.
  *
  */
 static int pushch(int ch)
@@ -99,7 +99,7 @@ static void to_bol(void)
 }
 
 
-/*	Jump to location 'position' in the code.
+/*	Jump to location 'position' in the code. This can be in another module.
  *
  */
 static void jump(PositionObject *position)
@@ -119,7 +119,8 @@ static PositionObject *save(void)
 {
 	PositionObject *pos;
 
-	pos = (PositionObject *)obj_alloc(POSITION_T);
+	if ((pos = (PositionObject *)obj_alloc(POSITION_T)) == NULL)
+		error(OutOfMemoryError);
 
 	/* save relevant reader variabeles */
 	pos->reader.m = reader.m;

@@ -171,7 +171,7 @@ static token_t read_next_token(char *buffer)
 			if (ch == ' ')
 				col++;
 			else if (ch == '\t')
-				col = (col / xi.tabsize + 1) * xi.tabsize;
+				col = (col / exin.tabsize + 1) * exin.tabsize;
 			else
 				break;
 		}  /* col = column-nr of first character which is not tab or space */

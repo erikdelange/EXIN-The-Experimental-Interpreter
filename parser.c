@@ -93,7 +93,7 @@ static void function_declaration(void)
 	reader.reset();
 
 	/* avoid debug output when scanning for functions */
-	tmp = xi.debug, xi.debug = 0;
+	tmp = exin.debug, exin.debug = 0;
 
 	do {
 		if (accept(DEFFUNC)) {
@@ -107,7 +107,7 @@ static void function_declaration(void)
 			scanner.next();
 	} while (scanner.token != ENDMARKER);
 
-	xi.debug = tmp;
+	exin.debug = tmp;
 
 	debug_printf(DEBUGLEVEL2, "\n-----: %s", "Start execution");
 
