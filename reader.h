@@ -1,28 +1,28 @@
-/*	reader.h
+/* reader.h
  *
- *	2017	K.W.E. de Lange
+ * 2018	K.W.E. de Lange
  */
-#if !defined (_READER_)
+#ifndef _READER_
 #define _READER_
 
-#include "position.h"
 #include "module.h"
 
 typedef struct reader {
-	struct module *m;		/* now reading from this module */
-	char *rp;				/* read pointer = next character to read */
+	struct module *current;	/* currently reading from this module */
+	char *pos;				/* position of next character to read */
+	char *bol;				/* beginning of current line */
+	
+	int (*nextch)(void);	/* read the next character */
+	int (*peekch)(void);	/* peek the next character */
+	int (*pushch)(int);		/* push character back in the input stream */
+	void (*to_bol)(void);	/* move to beginning of current line */
+	void (*reset)(void);	/* reset reader to line 1, character 1 */
 
-	int (*nextch)(void);
-	int (*peekch)(void);
-	int (*pushch)(int);
-
-	void (*reset)(void);
-	void (*to_bol)(void);
-
-	struct positionobject *(*save)(void);
-	void (*jump)(struct positionobject *);
-
-	void (*print_current_line)(void);
+	void (*init)(struct reader *);			/* initialize reader struct */
+	struct positionobject *(*save)(void);	/* save current reader */
+	void (*jump)(struct positionobject *);	/* load current reader */
+	void (*import)(const char *filename);	/* import new module */
+	void (*print_current_line)(void);		/* print current line */
 } Reader;
 
 extern Reader reader;

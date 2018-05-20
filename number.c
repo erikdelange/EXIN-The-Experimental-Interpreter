@@ -1,64 +1,20 @@
-/*	number.c
+/* number.c
  *
- *	Number object (CHAR, INTEGER, FLOAT) operations
+ * Number object (CHAR, INTEGER, FLOAT) operations
  *
- *	2016	K.W.E. de Lange
+ * 2016 K.W.E. de Lange
  */
-#include "exin.h"
+#include <stdlib.h>
+
+#include "number.h"
+#include "error.h"
 
 
-/*	Standard forward declarations for a typeobject
- *
- */
-static Object *char_alloc(void);
-static Object *int_alloc(void);
-static Object *float_alloc(void);
-static void number_free(Object *obj);
-static void number_print(Object *obj);
-static CharObject *char_set(CharObject *obj, char_t c);
-static IntObject *int_set(IntObject *obj, int_t i);
-static FloatObject *float_set(FloatObject *obj, float_t r);
-static Object *number_vset(Object *obj, va_list argp);
-
-
-/*	Number object API (separate for char_t, int_t and float_t).
- *
- */
-TypeObject charobject = {
-	"char",
-	char_alloc,
-	number_free,
-	number_print,
-	(Object *(*)())char_set,
-	number_vset
-};
-
-TypeObject intobject = {
-	"int",
-	int_alloc,
-	number_free,
-	number_print,
-	(Object *(*)())int_set,
-	number_vset
-};
-
-TypeObject floatobject = {
-	"float",
-	float_alloc,
-	number_free,
-	number_print,
-	(Object *(*)())float_set,
-	number_vset
-};
-
-
-static Object *char_alloc()
+static Object *char_alloc(void)
 {
 	CharObject *obj;
 
-	obj = calloc((size_t)1, sizeof(CharObject));
-
-	if (obj == NULL)
+	if ((obj = calloc(1, sizeof(CharObject))) == NULL)
 		error(OutOfMemoryError);
 
 	obj->typeobj = &charobject;
@@ -71,13 +27,11 @@ static Object *char_alloc()
 }
 
 
-static Object *int_alloc()
+static Object *int_alloc(void)
 {
 	IntObject *obj;
 
-	obj = calloc((size_t)1, sizeof(IntObject));
-
-	if (obj == NULL)
+	if ((obj = calloc(1, sizeof(IntObject))) == NULL)
 		error(OutOfMemoryError);
 
 	obj->typeobj = &intobject;
@@ -90,13 +44,11 @@ static Object *int_alloc()
 }
 
 
-static Object *float_alloc()
+static Object *float_alloc(void)
 {
 	FloatObject *obj;
 
-	obj = calloc((size_t)1, sizeof(FloatObject));
-
-	if (obj == NULL)
+	if ((obj = calloc(1, sizeof(FloatObject))) == NULL)
 		error(OutOfMemoryError);
 
 	obj->typeobj = &floatobject;
@@ -177,15 +129,14 @@ static Object *number_vset(Object *obj, va_list argp)
 }
 
 
-/*	Determine the type of the result of an arithmetic operations using two
- * 	operands according to the following rules:
+/* Determine the type of the result of an arithmetic operations using two
+ * operands according to the following rules:
  *
- *	FLOAT is one of both operands is FLOAT,
- *	else INTEGER if one of both operands in INTEGER
- *	else CHAR
- *
+ * FLOAT is one of both operands is FLOAT,
+ * else INTEGER if one of both operands in INTEGER
+ * else CHAR
  */
-static object_t coerce(Object *op1, Object *op2)
+static objecttype_t coerce(Object *op1, Object *op2)
 {
 	if (TYPE(op1) == FLOAT_T || TYPE(op2) == FLOAT_T)
 		return FLOAT_T;
@@ -384,3 +335,33 @@ Object *number_negate(Object *op1)
 {
 	return obj_create(INT_T, (int_t)!obj_as_bool(op1));
 }
+
+
+/* Number object API (separate for char_t, int_t and float_t).
+ */
+TypeObject charobject = {
+	"char",
+	char_alloc,
+	number_free,
+	number_print,
+	(Object *(*)())char_set,
+	number_vset
+};
+
+TypeObject intobject = {
+	"int",
+	int_alloc,
+	number_free,
+	number_print,
+	(Object *(*)())int_set,
+	number_vset
+};
+
+TypeObject floatobject = {
+	"float",
+	float_alloc,
+	number_free,
+	number_print,
+	(Object *(*)())float_set,
+	number_vset
+};

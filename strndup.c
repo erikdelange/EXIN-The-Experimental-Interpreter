@@ -1,9 +1,9 @@
-/*	strndup.c
+/* strndup.c
  *
- *	Not every C compiler has this function in its standard library, so here
- * 	is a private version.
+ * Not every C compiler has this function in its standard library so here
+ * is a private version.
  * 
- *	1994	K.W.E. de Lange
+ * 1994	K.W.E. de Lange
  */
 #include <string.h>
 #include <stdlib.h>
@@ -17,7 +17,7 @@ char *strndup(const char *s, size_t n)
 	if (n < len)
 		len = n;
 
-	result = (char *)malloc(len + 1);
+	result = malloc(len + 1);
 
 	if (!result)
 		return 0;

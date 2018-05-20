@@ -1,8 +1,8 @@
-/*	identifier.h
+/* identifier.h
  *
- * 	1994	K.W.E. de Lange
+ * 1994	K.W.E. de Lange
  */
-#if !defined (_IDENTIFIER_)
+#ifndef _IDENTIFIER_
 #define _IDENTIFIER_
 
 #include "object.h"
@@ -11,25 +11,27 @@ typedef struct identifier {
 	char *name;
 	struct identifier *next;
 	struct object *object;
+	struct identifier *(*add)(const char *name);
+	struct identifier *(*search)(const char *name);
+	void (*bind)(struct identifier *self, Object *o);
 } Identifier;
+
+extern Identifier identifier;
 
 typedef struct scope {
 	struct scope *parent;
 	Identifier *first;
 	int level;
 	int indentation[MAXINDENT];
+	void (*append_level)(void);
+	void (*remove_level)(void);
 } Scope;
 
-#define SCOPE_INIT	{ NULL, NULL, 0, { 0 } }
+extern Scope scope;
 
-extern Scope *global;
+#define SCOPE_INIT	{ .parent = NULL, .first = NULL, .level = 0, { 0 } }
+
 extern Scope *local;
-
-extern void appendScopeLevel(void);
-extern void removeScopeLevel(void);
-extern Identifier *addIdentifier(char *name, Scope *level);
-extern Identifier *searchIdentifier(char *name);
-extern void bind(Identifier *id, Object *obj);
 
 #endif
 

@@ -27,7 +27,7 @@ a += 1
 ```
 The first code snippet prints all digits whereas the second will result in an infinite loop.
 
-To avoid confusion it is best to use only tabs for indentation. However spaces will also work. When mixing spaces and tabs make sure to use 8 spaces to represent a tab.
+To avoid confusion it is best to use only tabs for indentation. However spaces will also work. When mixing spaces and tabs make sure to use the number of spaces which represent a tab in your editor. The default is 4.
 
 A hash sign (#) identifies the start of a comment. All text after the hash sign until the end of the line is discarded.
 ```
@@ -39,7 +39,7 @@ Code execution always starts at the top of the file.
 ##### Data types
 The three primitive data types are *char*, *int* and *float*. They are used for storing characters, integers and floating point numbers and match the C data types char, long and double.
 
-Two other data types are built on top of these primitive types: strings and lists. Lists store any data type, including other lists. Their data type is *list*. The elements in a list can be a mix of all data types. A special variant of the list is the string (data type *str*) which contains only characters.
+Two other data types are built on top of the primitive types: strings and lists. Lists store any data type, including other lists. Their data type is *list*. The elements in a list can be a mix of all data types. A special variant of the list is the string (data type *str*) which contains only characters.
 
 EXIN is strongly typed and requires that every variable is declared before it can be used.
 ```
@@ -169,7 +169,7 @@ Expression evaluation follows the following rules of precedence:
  * 	then logical *and*
  *	then logical *or*
  *	then assignment of values (normal and shorthand)
- * 	and last comma separated statements
+ * 	and finally comma separated statements
 
 ##### Control structures
 ###### If .. else

@@ -1,8 +1,8 @@
-/*	none.h
+/* none.h
  *
- * 	2016	K.W.E. de Lange
+ * 2016	K.W.E. de Lange
  */
-#if !defined(_NONE_)
+#ifndef _NONE_
 #define NONE
 
 #include "object.h"

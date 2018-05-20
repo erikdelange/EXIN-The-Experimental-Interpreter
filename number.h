@@ -1,8 +1,8 @@
-/*	number.h
+/* number.h
  *
- * 	2016	K.W.E. de Lange
+ * 2016 K.W.E. de Lange
  */
-#if !defined (_NUMBER_)
+#ifndef _NUMBER_
 #define _NUMBER_
 
 #include "object.h"
@@ -44,5 +44,6 @@ extern Object *number_or(Object *op1, Object *op2);
 extern Object *number_and(Object *op1, Object *op2);
 
 extern Object *number_negate(Object *op1);
+
 
 #endif

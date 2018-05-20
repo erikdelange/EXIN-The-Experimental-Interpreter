@@ -1,26 +1,30 @@
-/*	scanner.c
+/* scanner.c
  *
- *	Token scanner (also called symbol scanner)
+ * Token scanner (also called symbol scanner)
  *
- * 	A program consist of a sequence of tokens. A token is a group of one or
- *	more characters which have a special meaning in the programming language.
- *	The scanner reads a program character by character (using the reader
- *	object) and converts them into tokens.
+ * A program consist of a sequence of tokens. A token is a group of one or
+ * more characters which have a special meaning in the programming language.
+ * The scanner reads a program character by character (using the reader
+ * object) and converts them into tokens.
  *
- *	Object scanner is the API to the token scanner. Only one scanner object
- *	exists. See also scanner.h.
+ * Object scanner is the API to the token scanner. Only one scanner object
+ * exists. See also scanner.h.
  *
- *	After reading the next token scanner.token contains the token type and
- * 	scanner.string - if applicable - the identifier, the number the
- * 	character of the string.
+ * After reading the next token scanner.token contains the token type and
+ * scanner.string - if applicable - the identifier, the number the
+ * character of the string.
  *
- *	1994	K.W.E. de Lange
+ * 1994	K.W.E. de Lange
  */
-#include "exin.h"
+#include <string.h>
+#include <ctype.h>
 
+#include "identifier.h"
+#include "scanner.h"
+#include "reader.h"
+#include "error.h"
 
 /*	Table containing all keywords and corresponding token.
- *
  */
 static struct {
 	char *keyword;
@@ -49,48 +53,63 @@ static struct {
 
 
 /*	Forward declarations.
- *
  */
 static token_t read_next_token(char *buffer);
 static token_t read_identifier(char *buffer);
 static token_t read_character(char *buffer);
 static token_t read_string(char *buffer);
 static token_t read_number(char *buffer);
-static token_t token_next(void);
-static token_t token_peek(void);
+static token_t next_token(void);
+static token_t peek_token(void);
 static void scanner_save(struct scanner *);
 static void scanner_jump(struct scanner *);
-static void scanner_init(void);
-
-
-static char buffer[BUFSIZE + 1];
+static void scanner_init(struct scanner *);
 
 
 /*	Token scanner API and data.
- *
  */
 Scanner scanner = {
-	UNKNOWN,
-	0,
-	true,
-	&buffer[0],
-	token_next,
-	token_peek,
-	scanner_init,
-	scanner_save,
-	scanner_jump
+	.token = UNKNOWN,
+	.peeked = 0,
+	.at_bol = true,
+	.string[0] = 0,
+
+	.next = next_token,
+	.peek = peek_token,
+	.init = scanner_init,
+	.save = scanner_save,
+	.jump = scanner_jump
 };
 
 
-static void scanner_init(void)
+static void scanner_init(struct scanner *sc)
 {
-	scanner.token = UNKNOWN;
-	scanner.peeked = 0;
-	scanner.atbol = true;
+	*sc = scanner;
+
+	sc->token = UNKNOWN;
+	sc->peeked = 0;
+	sc->at_bol = true;
+	sc->string[0] = 0;
 }
 
 
-static token_t token_next(void)
+/*	Save the global scanner state in sc.
+ */
+static void scanner_save(struct scanner *sc)
+{
+	*sc = scanner;
+}
+
+
+/*	Load the global scanner state from sc.
+ */
+static void scanner_jump(struct scanner *sc)
+{
+	scanner = *sc;
+}
+
+
+static token_t next_token(void)
 {
 	if (scanner.peeked == 0)
 		scanner.token = read_next_token(scanner.string);
@@ -106,7 +125,7 @@ static token_t token_next(void)
 }
 
 
-static token_t token_peek(void)
+static token_t peek_token(void)
 {
 	if (scanner.peeked == 0)
 		scanner.peeked = read_next_token(scanner.string);
@@ -115,39 +134,14 @@ static token_t token_peek(void)
 }
 
 
-/*	Save the global scanner state in sc.
+/* Read the next token.
  *
- */
-static void scanner_save(struct scanner *sc)
-{
-	sc->token = scanner.token;
-	sc->atbol = scanner.atbol;
-	sc->peeked = scanner.peeked;
-	sc->string = strdup(scanner.string);
-}
-
-
-/*	Load the global scanner state from sc.
- *
- */
-static void scanner_jump(struct scanner *sc)
-{
-	scanner.token = sc->token;
-	scanner.atbol = sc->atbol;
-	scanner.peeked = sc->peeked;
-	strcpy(scanner.string, sc->string);
-}
-
-
-/*	Read the next token.
- *
- *	After reading the buffer contains:
- * 		the identifier if token == IDENTIFIER
- *		the number if token == INTEGER or FLOAT
- * 		the string if token == STRING
- * 		the character if token == CHAR
- *		and is empty for all other tokens
- *
+ * After reading the buffer contains:
+ *    the identifier if token == IDENTIFIER
+ *    the number if token == INTEGER or FLOAT
+ *    the string if token == STRING
+ *    the character if token == CHAR
+ *    and is empty for all other tokens
  */
 static token_t read_next_token(char *buffer)
 {
@@ -161,9 +155,9 @@ static token_t read_next_token(char *buffer)
 	 * 	is DEDENT, else there is an indentation error.
 	 * 	If the indentation has not changed then continue reading the next token.
 	 */
-	while (scanner.atbol == true) {
+	while (scanner.at_bol == true) {
 		int col = 0;
-		scanner.atbol = false;
+		scanner.at_bol = false;
 
 		/* determine the indentation */
 		while (1) {
@@ -171,7 +165,7 @@ static token_t read_next_token(char *buffer)
 			if (ch == ' ')
 				col++;
 			else if (ch == '\t')
-				col = (col / exin.tabsize + 1) * exin.tabsize;
+				col = (col / config.tabsize + 1) * config.tabsize;
 			else
 				break;
 		}  /* col = column-nr of first character which is not tab or space */
@@ -181,7 +175,7 @@ static token_t read_next_token(char *buffer)
 			while (ch != '\n' && ch != EOF)
 				ch = reader.nextch();
 		if (ch == '\n') {
-			scanner.atbol = true;
+			scanner.at_bol = true;
 			continue;
 		} else if (ch == EOF) {
 			col = 0;  /* do we need more DEDENTs? */
@@ -201,7 +195,7 @@ static token_t read_next_token(char *buffer)
 			if (--local->level < 0)
 				error(SyntaxError, "inconsistent use of TAB and space in identation");
 			if (col != local->indentation[local->level]) {
-				scanner.atbol = true;  /* not yet at old indentation level */
+				scanner.at_bol = true;  /* not yet at old indentation level */
 				reader.to_bol();
 			}
 			return DEDENT;
@@ -220,7 +214,7 @@ static token_t read_next_token(char *buffer)
 
 	/* check for end of line or end of file */
 	if (ch == '\n') {
-		scanner.atbol = true;
+		scanner.at_bol = true;
 		return NEWLINE;
 	} else if (ch == EOF)
 		return ENDMARKER;
@@ -297,12 +291,10 @@ static token_t read_next_token(char *buffer)
 }
 
 
-/*	Read a string.
+/* Read a string.
  *
- *	Strings are surrounded by double quotes. Escape sequeces are recognized.
- *
- * 	Examples: "abc"  ""  "xyz\n"
- *
+ * Strings are surrounded by double quotes. Escape sequences are recognized.
+ * Examples: "abc"  ""  "xyz\n"
  */
 static token_t read_string(char *string)
 {
@@ -336,12 +328,10 @@ static token_t read_string(char *string)
 }
 
 
-/*	Read an integer or a floating point number.
+/* Read an integer or a floating point number.
  *
- *	Scientific notation (e, E) is recognized.
- *
- *	Examples: 2  0.2  2.0  1E+2  1E2  1E-2  0.1E+2
- *
+ * Scientific notation (e, E) is recognized.
+ * Examples: 2  0.2  2.0  1E+2  1E2  1E-2  0.1E+2
  */
 static token_t read_number(char *number)
 {
@@ -392,11 +382,10 @@ static token_t read_number(char *number)
 }
 
 
-/*	Read a name and check whether it is a keyword or an identifier.
+/* Read a name and check whether it is a keyword or an identifier.
  *
- * 	A name consist of digits, letters and underscores, and must start with
- * 	a letter.
- *
+ * A name consist of digits, letters and underscores, and must start with
+ * a letter.
  */
 static token_t read_identifier(char *name)
 {
@@ -436,10 +425,9 @@ static token_t read_identifier(char *name)
 }
 
 
-/*	Read a character constant. This can a single letter or an escape sequence.
+/* Read a character constant. This can a single letter or an escape sequence.
  *
- *	A character constant is surrounded by single quotes.
- *
+ * A character constant is surrounded by single quotes.
  */
 static token_t read_character(char *c)
 {

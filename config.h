@@ -1,35 +1,44 @@
-/*	config.h
+/* config.h
  *
- * 	Configuration constants.
+ * Configuration constants.
  *
- * 	1994	K.W.E. de Lange
+ * 2018	K.W.E. de Lange
  */
-#if !defined (_CONFIG_)
+#ifndef _CONFIG_
 #define _CONFIG_
 
-#define VERSION	"1.01"
+#include <stdbool.h>
+#include <setjmp.h>
+#include <stdio.h>
 
-#define LINESIZE 256		/* maximum length of command line for interpreter */
-
-#define MAXINDENT 64		/* maximum number of indents */
-
-#define TABSIZE 8			/* spaces per tab. Also set this in your editor */
-
-#define	BUFSIZE	256			/* maximum length of identifier name */
+#define VERSION		"1.02"
+#define	BUFSIZE		256		/* maximum length of identifier name excl '\0' */
+#define LINESIZE 	256		/* maximum length of input line incl '\0' */
+#define MAXINDENT 	132		/* maximum number of indents */
+#define TABSIZE 	4		/* default spaces per tab */
 
 #define	char_t	char		/* Basic type for CHAR_T */
-#define	int_t	long		/* Basic type for INT_T	*/
+#define	int_t	long		/* Basic type for INT_T */
 #define	float_t	double		/* Basic type for FLOAT_T */
 
-typedef enum { false = 0, true } bool_t;
+/* 	Struct holding global configuration variables.
+ */
+typedef struct {
+	int debug;
+	int tabsize;
+} Config;
 
-/* Define DEBUG in the compiler options to enable debug logging.
- *
+extern Config config;
+
+extern jmp_buf return_address;
+
+/*	Define preprocessor macro DEBUG in the compiler options to enable
+ *	debug logging.
  */
 #ifdef DEBUG
 	#define debug_printf(level, fmt, ...) \
 				do { \
-					if (exin.debug >= level) \
+					if (config.debug >= level) \
 						fprintf(stderr, fmt, __VA_ARGS__); } \
 				while (0)
 #else
@@ -37,7 +46,8 @@ typedef enum { false = 0, true } bool_t;
 			do { } while (0)
 #endif
 
-							/* debug logging detail levels: */
+/* debug logging detail levels:
+ */
 #define DEBUGLEVEL0	0		/* no debug output */
 #define DEBUGLEVEL1	1		/* tokens only */
 #define DEBUGLEVEL2	2		/* LEVEL1 + function and block entry & exit */

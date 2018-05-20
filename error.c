@@ -1,20 +1,23 @@
-/*	error.c
+/* error.c
  *
- *	Error handling.
+ * Error handling.
  *
- *	1995	K.W.E. de Lange
+ * 1995	K.W.E. de Lange
  */
-#include "exin.h"
+#include <stdarg.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include "reader.h"
+#include "error.h"
 
 
-/*	Table containing all error messages.
- *
+/* Table containing all error messages.
  */
 static struct {
 	int number;
 	char *description;
 	int print_extra_info;
-} errors[] = {  /* sort this list by number (see error.h) */
+} errors[] = {
 	{ NameError, "NameError", 1 },
 	{ TypeError, "TypeError", 1 },
 	{ SyntaxError, "SyntaxError", 1 },
@@ -27,28 +30,34 @@ static struct {
 };
 
 
-/*	Display an error message and stop the interpreter.
+/* Display an error message and stop the interpreter.
  *
- * 	number	error number (see error.h)
- * 	...		optional printf style format string, optionally followed by arguments
+ * number	error number (see error.h)
+ * ...		optional printf style format string, optionally followed by arguments
  *
- * 	error(TypeError, "%s is not subscriptable", TYPENAME(sequence));
- *
+ * error(TypeError, "%s is not subscriptable", TYPENAME(sequence));
  */
 void error(int number, ...)
 {
+	int i = 0;
 	char *format;
 	va_list argp;
 
 	va_start(argp, number);
 
-	if (reader.m && reader.m->name)
-		fprintf(stderr, "File %s", reader.m->name);
-
-	reader.print_current_line();
-
-	if (number < 0 || number > (int)(sizeof errors / sizeof errors[0]) - 1)
+	while (1) {
+		if (errors[i].number == number)
+			break;
+		if (i++ <= (int)(sizeof errors / sizeof errors[0]) - 1)
+			continue;
 		error(SystemError, "unknown error number %d", number);
+	}
+
+	if (reader.current) {
+		if (reader.current->name)
+			fprintf(stderr, "File %s", reader.current->name);
+		reader.print_current_line();
+	}
 
 	fprintf(stderr, "%s", errors[number].description);
 
@@ -57,8 +66,8 @@ void error(int number, ...)
 		format = va_arg(argp, char *);
 		if (format)
 			vfprintf(stderr, format, argp);
-		fprintf(stderr, "\n");
 	}
+	fprintf(stderr, "\n");
 
 	va_end(argp);
 

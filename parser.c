@@ -1,26 +1,26 @@
-/*	parser.c
+/* parser.c
  *
- * 	EXIN code parser.
+ * Code parser.
  *
- *	See also: https://en.wikipedia.org/wiki/Recursive_descent_parser
+ * See also: https://en.wikipedia.org/wiki/Recursive_descent_parser
  *
- * 	1995	K.W.E. de Lange
+ * 1995	K.W.E. de Lange
  */
-#include "exin.h"
+#include <string.h>
 
-
-jmp_buf	return_address;			/* Return adress at end of function */
-Object *return_value = NULL;	/* Result of the last function call */
+#include "expression.h"
+#include "identifier.h"
+#include "parser.h"
+#include "error.h"
 
 
 /*	Forward declarations.
- *
  */
 static void block(void);
 static void skip_function(void);
 static void skip_block(void);
 static void function_declaration(void);
-static void variable_declaration(object_t type);
+static void variable_declaration(objecttype_t type);
 static void if_stmnt(void);
 static void	while_stmnt(void);
 static void do_stmnt(void);
@@ -32,12 +32,12 @@ static void expression_stmnt(void);
 static ListObject *push_arguments(void);
 static void pop_arguments(ListObject *arglist);
 
+
 static int do_break = 0;		/* Busy quiting loop because of break  */
 static int do_continue = 0;		/* Busy quiting loop because of continue */
 
 
-/*	Check if the current token matches t. If true then read the next token.
- *
+/* Check if the current token matches t. If true then read the next token.
  */
 int accept(token_t t)
 {
@@ -49,8 +49,7 @@ int accept(token_t t)
 }
 
 
-/*	Check if the current token matches t. If false stop with error message.
- *
+/* Check if the current token matches t. If false stop with error message.
  */
 int expect(token_t t)
 {
@@ -63,8 +62,7 @@ int expect(token_t t)
 }
 
 
-/*	Initialise and start the parsing proces.
- *
+/* Initialise and start the parsing proces.
  */
 void parser(void)
 {
@@ -80,10 +78,9 @@ void parser(void)
 }
 
 
-/*	Store the address (= LPAR after IDENTIFIER) of every function in the module.
+/* Store the address (= LPAR after IDENTIFIER) of every function in the module.
  *
- *	The identifiers are always placed in the list with local variables.
- *
+ * The identifiers are always placed in the list with local variables.
  */
 static void function_declaration(void)
 {
@@ -93,21 +90,21 @@ static void function_declaration(void)
 	reader.reset();
 
 	/* avoid debug output when scanning for functions */
-	tmp = exin.debug, exin.debug = 0;
+	tmp = config.debug, config.debug = 0;
 
 	do {
 		if (accept(DEFFUNC)) {
 			if (scanner.token != IDENTIFIER)
 				error(SyntaxError, "missing identifier after function definition");
-			if ((id = addIdentifier(scanner.string, local)) == NULL)
+			if ((id = identifier.add(scanner.string)) == NULL)
 				error(NameError, "%s is allready declared", scanner.string);
-			bind(id, (Object *)reader.save());
+			identifier.bind(id, (Object *)reader.save());
 			skip_function();
 		} else
 			scanner.next();
 	} while (scanner.token != ENDMARKER);
 
-	exin.debug = tmp;
+	config.debug = tmp;
 
 	debug_printf(DEBUGLEVEL2, "\n-----: %s", "Start execution");
 
@@ -115,11 +112,10 @@ static void function_declaration(void)
 }
 
 
-/*	Skip interpretation of the statements of a function.
+/* Skip interpretation of the statements of a function.
  *
- *	in:		token = functions IDENTIFIER
- *	out:	token = first token after DEDENT at end of function statement-block
- *
+ * in:  token = functions IDENTIFIER
+ * out: token = first token after DEDENT at end of function statement-block
  */
 static void skip_function(void)
 {
@@ -137,10 +133,10 @@ static void skip_function(void)
 }
 
 
-/*	Skip statements in a block, considering sub-blocks.
+/* Skip statements in a block, considering sub-blocks.
  *
- *	in:		token = first token of block; must be NEWLINE, else error
- *	out:	token = first token after DEDENT at end of block
+ * in:  token = first token of block; must be NEWLINE, else error
+ * out: token = first token after DEDENT at end of block
  *
  */
 static void skip_block(void)
@@ -166,11 +162,10 @@ static void skip_block(void)
 }
 
 
-/*	Statement interpreter.
+/* Statement interpreter.
  *
- *	in:		token = token to interpret
- *	out:	token = first token after statement
- *
+ * in:  token = token to interpret
+ * out: token = first token after statement
  */
 void statement(void)
 {
@@ -211,13 +206,12 @@ void statement(void)
 }
 
 
-/*	Execute a statement-block.
+/* Execute a statement-block.
  *
- * 	Syntax:	NEWLINE INDENT statement+ DEDENT
+ * Syntax: NEWLINE INDENT statement+ DEDENT
  *
- *	in: 	token = NEWLINE
- *	out: 	token = DEDENT
- *
+ * in:  token = NEWLINE
+ * out: token = DEDENT
  */
 static void block(void)
 {
@@ -247,11 +241,10 @@ static void block(void)
 }
 
 
-/*	Evaluate expression.
+/* Evaluate expression.
  *
- *	in:		token = first token of expression
- *	out:	token = first token after NEWLINE
- *
+ * in:  token = first token of expression
+ * out: token = first token after NEWLINE
  */
 static void expression_stmnt(void)
 {
@@ -264,17 +257,16 @@ static void expression_stmnt(void)
 }
 
 
-/*	Declare variabele(s) and (optionally) assign an initial value.
+/* Declare variabele(s) and (optionally) assign an initial value.
  *
- *	type	variabele(s) type - char, int, float, str, list
+ * type: variabele(s) type - char, int, float, str, list
  *
- *	Syntax: type identifier ( '=' value )? ( ',' identifier ( '=' value )? )* NEWLINE
+ * Syntax: type identifier ( '=' value )? ( ',' identifier ( '=' value )? )* NEWLINE
  *
- *	in:		token = first token after DEFCHAR, DEFINT, DEFFLOAT, DEFSTR, DEFLIST
- *	out:	token = first token after NEWLINE
- *
+ * in:  token = first token after DEFCHAR, DEFINT, DEFFLOAT, DEFSTR, DEFLIST
+ * out: token = first token after NEWLINE
  */
-static void variable_declaration(object_t type)
+static void variable_declaration(objecttype_t type)
 {
 	Identifier *id;
 	Object *obj;
@@ -283,11 +275,11 @@ static void variable_declaration(object_t type)
 		if (scanner.token != IDENTIFIER)
 			error(SyntaxError, "expected identifier instead of %s", \
 								tokenName(scanner.token));
-		if ((id = addIdentifier(scanner.string, local)) == NULL)
+		if ((id = identifier.add(scanner.string)) == NULL)
 			error(NameError, "identifier %s already declared", scanner.string);
 
 		obj = obj_alloc(type);
-		bind(id, obj);
+		identifier.bind(id, obj);
 		scanner.next();
 
 		if (accept(EQUAL)) {
@@ -302,10 +294,10 @@ static void variable_declaration(object_t type)
 }
 
 
-/*	Evaluate expression and test if result is 0 or <> 0.
+/* Evaluate expression and test if result is 0 or <> 0.
  *
- *	in:		token = first token of expression
- *	out:	token = first token after expression (= NEWLINE)
+ * in:  token = first token of expression
+ * out: token = first token after expression (= NEWLINE)
  *
  */
 static int condition(void)
@@ -321,14 +313,13 @@ static int condition(void)
 }
 
 
-/*	if condition
- *		block
- *	else
- *		block
+/* if condition
+ *     block
+ * else
+ *     block
  *
- *	in:		token = first token after IF
- *	out:	token = first token after DEDENT of last statement-block
- *
+ * in:  token = first token after IF
+ * out: token = first token after DEDENT of last statement-block
  */
 static void if_stmnt(void)
 {
@@ -348,12 +339,11 @@ static void if_stmnt(void)
 }
 
 
-/*	while condition
- *		block
+/* while condition
+ *     block
  *
- *	in:		token = first token after WHILE
- *	out:	token = first token after DEDENT of statement-block
- *
+ * in:  token = first token after WHILE
+ * out: token = first token after DEDENT of statement-block
  */
 static void	while_stmnt(void)
 {
@@ -377,13 +367,12 @@ static void	while_stmnt(void)
 }
 
 
-/*	do
- *		block
- *	while condition NEWLINE
+/* do
+ *     block
+ * while condition NEWLINE
  *
- *	in:		token = first token after DO
- *	out:	token = first token after NEWLINE
- *
+ * in:  token = first token after DO
+ * out: token = first token after NEWLINE
  */
 static void do_stmnt(void)
 {
@@ -411,34 +400,9 @@ static void do_stmnt(void)
 }
 
 
-/*	return: exit from function with a return value (default int 0).
+/* Import a module.
  *
- *	Syntax:	return value? NEWLINE
- *
- *	in:		token = first token after RETURN
- *	out:	token = first token after NEWLINE
- *
- */
-static void return_stmt(void)
-{
-	if (scanner.token == NEWLINE)
-		return_value = obj_create(INT_T, 0);
-	else
-		return_value = comma_expr();
-
-	expect(NEWLINE);
-
-	/* When returning from a function jump to function_call(),
-	 * else to main() (which will stop the interpreter).
-	 */
-	longjmp(return_address, 1);
-}
-
-
-/*	Import a module.
- *
- *	Syntax: import string ( , string )* NEWLINE
- *
+ * Syntax: import string ( , string )* NEWLINE
  */
 static void import_stmt(void)
 {
@@ -448,7 +412,7 @@ static void import_stmt(void)
 	do {
 		obj = assignment_expr();
 		pos = reader.save();
-		module.import(obj_as_str(obj));
+		reader.import(obj_as_str(obj));
 		reader.jump(pos);
 		obj_decref(pos);
 		obj_decref(obj);
@@ -458,13 +422,12 @@ static void import_stmt(void)
 }
 
 
-/*	Print value(s) naar STDOUT.
+/* Print value(s) naar STDOUT.
  *
- * 	Syntax:	print value ( , value )* NEWLINE
+ * Syntax: print value ( , value )* NEWLINE
  *
- *	in:		token = first token after PRINT
- *	out:	token = first token after NEWLINE
- *
+ * in:  token = first token after PRINT
+ * out: token = first token after NEWLINE
  */
 static void	print_stmnt(void)
 {
@@ -480,13 +443,12 @@ static void	print_stmnt(void)
 }
 
 
-/*	Read value(s) from STDIN.
+/* Read value(s) from STDIN.
  *
- * 	Syntax:	input string? identifier ( , string? identifier )* NEWLINE
+ * Syntax: input string? identifier ( , string? identifier )* NEWLINE
  *
- *	in:		token = first token after INPUT
- *	out:	token = first token after NEWLINE
- *
+ * in:  token = first token after INPUT
+ * out: token = first token after NEWLINE
  */
 static void input_stmnt(void)
 {
@@ -501,10 +463,10 @@ static void input_stmnt(void)
 		if (scanner.token != IDENTIFIER)
 			error(SyntaxError, "expected identifier instead of %s", \
 								tokenName(scanner.token));
-		if ((id = searchIdentifier(scanner.string)) == NULL)
+		if ((id = identifier.search(scanner.string)) == NULL)
 			error(NameError, "identifier %s undeclared", scanner.string);
 		obj = obj_scan(TYPE(id->object));
-		bind(id, obj);
+		identifier.bind(id, obj);
 		accept(IDENTIFIER);
 	} while (accept(COMMA));
 
@@ -512,14 +474,13 @@ static void input_stmnt(void)
 }
 
 
-/*	Jump to the function. Reserve local stack for variable. Store the return
- *	address in global variable return_address.
+/* Jump to the function. Reserve local stack for variables. Store the return
+ * address in global variable 'return_address'.
  *
- *	addr	position in the code of the LPAR of the functie-definition
+ * addr: position in the code of the LPAR of the function definition
  *
- *	in:		token = LPAR of argument list
- *	out:	token = token after RPAR of functie call
- *
+ * in:  token = LPAR of argument list
+ * out: token = token after RPAR of function call
  */
 Object *function_call(PositionObject *addr)
 {
@@ -532,7 +493,7 @@ Object *function_call(PositionObject *addr)
 
 	arglist = push_arguments();
 	/* token is now RPAR of function call */
-	appendScopeLevel();
+	scope.append_level();
 
 	return_to = reader.save();  /* continue here after return from function */
 
@@ -546,7 +507,7 @@ Object *function_call(PositionObject *addr)
 	if (setjmp(return_address) == 0)  /* for return statement */
 		block();
 	memcpy(&return_address, &temp, sizeof(jmp_buf));
-
+	
 	debug_printf(DEBUGLEVEL2, "\n-----: %s", "End function");
 
 	/* now returned from function */
@@ -558,7 +519,7 @@ Object *function_call(PositionObject *addr)
 	reader.jump(return_to);  /* continue at end of function call */
 	accept(RPAR);
 
-	removeScopeLevel();
+	scope.remove_level();
 
 	obj_decref((Object *)return_to);
 	obj = return_value;
@@ -568,11 +529,10 @@ Object *function_call(PositionObject *addr)
 }
 
 
-/*	Create a list with a copy of the object of every function argument.
+/* Create a list with a deep copy of the object of every function argument.
  *
- * 	in:		token = function IDENTIFIER
- * 	out:	token = RPAR of argument list in function call
- *
+ * in:  token = function IDENTIFIER
+ * out: token = RPAR of argument list in function call
  */
 static ListObject *push_arguments(void)
 {
@@ -596,14 +556,13 @@ static ListObject *push_arguments(void)
 }
 
 
-/*	After a jump to a function read the arguments from list and create local
- *	variables. The list has been created via deep copy and contains all new
- *	object which only need to be linked to local variables. Not all arguments
- *	have to be read from the list.
+/* After a jump to a function read the arguments from 'list' and create local
+ * variables. The list has been created via deep copy and so contains new
+ * object which only need to be linked to local variable names. Not all
+ * arguments have to be read from the list.
  *
- * 	in:		token = LPAR
- * 	out:	token = RPAR of argument list in function definition
- *
+ * in:  token = LPAR
+ * out: token = RPAR of argument list in function definition
  */
 static void pop_arguments(ListObject *list)
 {
@@ -616,14 +575,38 @@ static void pop_arguments(ListObject *list)
 		if (scanner.token != IDENTIFIER)
 			error(SyntaxError, "expected identifier instead of %s", \
 								tokenName(scanner.token));
-		if ((id = addIdentifier(scanner.string, local)) == NULL)
+		if ((id = identifier.add(scanner.string)) == NULL)
 			error(NameError, "identifier %s already declared", scanner.string);
 		if ((obj = listnode_remove(list, 0)) == NULL)
 			error(SyntaxError, "no argument on stack to assign to %s", \
 								scanner.string);
 
-		bind(id, obj);
+		identifier.bind(id, obj);
 		expect(IDENTIFIER);
 		accept(COMMA);
 	}
 }
+
+
+/* return: exit from function with a return value (default int 0).
+ *
+ * Syntax: return value? NEWLINE
+ *
+ * in:  token = first token after RETURN
+ * out: token = first token after NEWLINE
+ */
+static void return_stmt(void)
+{
+	if (scanner.token == NEWLINE)
+		return_value = obj_create(INT_T, 0);
+	else
+		return_value = comma_expr();
+
+	expect(NEWLINE);
+
+	/* When returning from a function jump to function_call(),
+	 * else to main() (which will stop the interpreter).
+	 */
+	longjmp(return_address, 1);
+}
+

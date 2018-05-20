@@ -1,81 +1,36 @@
-/*	list.c
+/* list.c
  *
- *	List object operations
+ * List object operations
  *
- *	2016	K.W.E. de Lange
+ * 2016 K.W.E. de Lange
  */
-#include "exin.h"
+#include <stdlib.h>
+
+#include "object.h"
+#include "error.h"
 
 
-/*	Standard forward declarations for a typeobject
- *
- */
-static ListObject *list_alloc(void);
-static void list_free(ListObject *list);
-static void list_print(ListObject *list);
-static ListObject *list_set(ListObject *obj, ListObject *src);
-static ListObject *list_vset(ListObject *obj, va_list argp);
-static int_t length(ListObject *list);
-
-/*	Standard forward declarations for a typeobject
- *
- */
-static ListNode *listnode_alloc(void);
-static void listnode_free(ListNode *node);
-static void listnode_print(ListNode *node);
-static ListNode *listnode_set(ListNode *node, Object *obj);
-static ListNode *listnode_vset(ListNode *node, va_list argp);
-
-
-/*	List object API.
- *
- */
-TypeObject listobject = {
-	"list",
-	(Object *(*)())list_alloc,
-	(void (*)(Object *))list_free,
-	(void (*)(Object *))list_print,
-	(Object *(*)())list_set,
-	(Object *(*)(Object *, va_list))list_vset
-};
-
-
-/*	Listnode object API.
- *
- */
-TypeObject listnodeobject = {
-	"listnode",
-	(Object *(*)())listnode_alloc,
-	(void (*)(Object *))listnode_free,
-	(void (*)(Object *))listnode_print,
-	(Object *(*)())listnode_set,
-	(Object *(*)(Object *, va_list))listnode_vset
-};
-
-
-/*	Create a new empty list object.
- *
+/* Create a new empty list object.
  */
 static ListObject *list_alloc(void)
 {
 	ListObject *list;
 
-	list = calloc((size_t)1, sizeof(ListObject));
+	if ((list = calloc(1, sizeof(ListObject))) == NULL)
+		error(OutOfMemoryError);
 
-	if (list != NULL) {
-		list->typeobj = &listobject;
-		list->type = LIST_T;
-		list->refcount = 0;
+	list->typeobj = &listobject;
+	list->type = LIST_T;
+	list->refcount = 0;
 
-		list->head = NULL;
-		list->tail = NULL;
-	}
+	list->head = NULL;
+	list->tail = NULL;
+
 	return list;
 }
 
 
-/*	Free a list-object, including all list-nodes and referenced objects.
- *
+/* Free a list object, including all list nodes and referenced objects.
  */
 static void list_free(ListObject *list)
 {
@@ -105,10 +60,9 @@ static void list_print(ListObject *list)
 }
 
 
-/*	Create a copy of a list.
+/* Create a copy of a list.
  *
- * 	The new list contains new objects (= deep copy).
- *
+ * The new list contains new objects (= deep copy).
  */
 static ListObject *list_set(ListObject *dest, ListObject *src)
 {
@@ -132,30 +86,28 @@ static ListObject *list_vset(ListObject *obj, va_list argp)
 }
 
 
-/*	Create a new empty listnode.
- *
+/* Create a new empty listnode.
  */
 static ListNode *listnode_alloc(void)
 {
 	ListNode *node;
 
-	node = calloc((size_t)1, sizeof(ListNode));
+	if ((node = calloc(1, sizeof(ListNode))) == NULL)
+		error(OutOfMemoryError);
 
-	if (node != NULL) {
-		node->typeobj = &listnodeobject;
-		node->type = LISTNODE_T;
-		node->refcount = 0;
+	node->typeobj = &listnodeobject;
+	node->type = LISTNODE_T;
+	node->refcount = 0;
 
-		node->next = NULL;
-		node->prev = NULL;
-		node->obj = NULL;
-	}
+	node->next = NULL;
+	node->prev = NULL;
+	node->obj = NULL;
+
 	return node;
 }
 
 
 /* Free a listnode, and release the object it references.
- *
  */
 static void listnode_free(ListNode *node)
 {
@@ -191,8 +143,27 @@ static ListNode *listnode_vset(ListNode *node, va_list argp)
 }
 
 
-/*	Create a new list which contains the objects from op1 and op2.
- *
+/* Count the number of listnodes in a list.
+ */
+static int_t length(ListObject *list)
+{
+	ListNode *node;
+	int_t i;
+
+	for (i = 0, node = list->head; node; i++, node = node->next)
+		;
+
+	return i;
+}
+
+
+Object *list_length(ListObject *list)
+{
+	return obj_create(INT_T, length(list));
+}
+
+
+/* Create a new list which contains the objects from op1 and op2.
  */
 Object *list_concat(ListObject *op1, ListObject *op2)
 {
@@ -211,8 +182,7 @@ Object *list_concat(ListObject *op1, ListObject *op2)
 }
 
 
-/*	Create a new list which contains n times an existing list.
- *
+/* Create a new list which contains n times an existing list.
  */
 Object *list_repeat(Object *op1, Object *op2)
 {
@@ -235,29 +205,7 @@ Object *list_repeat(Object *op1, Object *op2)
 }
 
 
-/*	Count the number of listnodes in a list.
- *
- */
-static int_t length(ListObject *list)
-{
-	ListNode *node;
-	int_t i;
-
-	for (i = 0, node = list->head; node; i++, node = node->next)
-		;
-
-	return i;
-}
-
-
-Object *list_length(ListObject *list)
-{
-	return obj_create(INT_T, length(list));
-}
-
-
-/*	Retrieve a listnode from a list by index.
- *
+/* Retrieve a listnode from a list by index.
  */
 ListNode *list_item(ListObject *list, int index)
 {
@@ -284,11 +232,10 @@ ListNode *list_item(ListObject *list, int index)
 }
 
 
-/*	Create a new list from a slice of an existing list.
+/* Create a new list from a slice of an existing list.
  *
- * 	The new list contains new object (= deep copy). Start and end are
- *	automatically adjusted to the nearest possible values.
- *
+ * The new list contains new object (= deep copy). Start and end are
+ * automatically adjusted to the nearest possible values.
  */
 ListObject *list_slice(ListObject *list, int start, int end)
 {
@@ -318,8 +265,7 @@ ListObject *list_slice(ListObject *list, int start, int end)
 }
 
 
-/*	Append an object to the end of a list.
- *
+/* Append an object to the end of a list.
  */
 void listnode_append(ListObject *list, Object *obj)
 {
@@ -339,12 +285,11 @@ void listnode_append(ListObject *list, Object *obj)
 }
 
 
-/*	Insert an object before the listnode with number index.
+/* Insert an object before the listnode with number index.
  *
- *	Index is automatically adjusted to the nearest possible value.
- *	A negative index counts back from the end of the list. Index -1 points to
- * 	the last listnode.
- *
+ * Index is automatically adjusted to the nearest possible value.
+ * A negative index counts back from the end of the list. Index -1
+ * points to the last listnode.
  */
 void listnode_insert(ListObject *list, int index, Object *obj)
 {
@@ -385,12 +330,11 @@ void listnode_insert(ListObject *list, int index, Object *obj)
 }
 
 
-/*	Remove a listnode from a list.
+/* Remove a listnode from a list.
  *
- *	Index must exists (nmbering starts at 0).
- *	A negative index counts back from the end of the list. Index -1 points to
- * 	the last listnode.
- *
+ * Index must exists (nmbering starts at 0).
+ * A negative index counts back from the end of the list. Index -1
+ * points to the last listnode.
  */
 Object *listnode_remove(ListObject *list, int index)
 {
@@ -429,3 +373,28 @@ Object *listnode_remove(ListObject *list, int index)
 	}
 	return obj;
 }
+
+
+
+/* List object API.
+ */
+TypeObject listobject = {
+	"list",
+	(Object *(*)())list_alloc,
+	(void (*)(Object *))list_free,
+	(void (*)(Object *))list_print,
+	(Object *(*)())list_set,
+	(Object *(*)(Object *, va_list))list_vset
+};
+
+
+/* Listnode object API.
+ */
+TypeObject listnodeobject = {
+	"listnode",
+	(Object *(*)())listnode_alloc,
+	(void (*)(Object *))listnode_free,
+	(void (*)(Object *))listnode_print,
+	(Object *(*)())listnode_set,
+	(Object *(*)(Object *, va_list))listnode_vset
+};

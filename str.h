@@ -1,11 +1,12 @@
-/*	str.h
+/* str.h
  *
- * 	2016	K.W.E. de Lange
+ * 2016 K.W.E. de Lange
  */
-#if !defined (_STR_)
+#ifndef _STR_
 #define _STR_
 
 #include "object.h"
+#include "number.h"
 
 typedef struct {
 	OBJ_HEAD;

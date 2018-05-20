@@ -1,19 +1,19 @@
-/*	object.h
+/* object.h
  *
- * 	1994	K.W.E. de Lange
+ * 1994 K.W.E. de Lange
  */
-#if !defined (_OBJECT_)
+#ifndef _OBJECT_
 #define _OBJECT_
 
 #include <stdarg.h>
 #include "config.h"
 
 typedef enum { UNDEFINED, CHAR_T, INT_T, FLOAT_T, STR_T,
-			   LIST_T, LISTNODE_T, POSITION_T, NONE_T } object_t;
+			   LIST_T, LISTNODE_T, POSITION_T, NONE_T } objecttype_t;
 
 
 #define OBJ_HEAD	int refcount; 	\
-					object_t type; 	\
+					objecttype_t type; 	\
 					struct typeobject *typeobj
 
 typedef struct object {
@@ -48,17 +48,18 @@ typedef struct typeobject {
 
 #define obj_incref(obj)	(((Object *)(obj))->refcount++)
 
-#define obj_decref(obj)	do { 										\
-							if (--((Object *)(obj))->refcount <= 0)	\
-								obj_free((Object *)obj); 			\
-						} while (0)
+#define obj_decref(obj)	\
+			do { \
+				if (--((Object *)(obj))->refcount <= 0) \
+					obj_free((Object *)obj); \
+			} while (0)
 
 #include "list.h"
 
-extern Object *obj_alloc(object_t type);
-extern Object *obj_create(object_t type, ...);
+extern Object *obj_alloc(objecttype_t type);
+extern Object *obj_create(objecttype_t type, ...);
 extern void obj_free(Object *obj);
-extern Object *obj_scan(object_t objtype);
+extern Object *obj_scan(objecttype_t objtype);
 extern void	obj_print(Object *a);
 
 extern void	obj_assign(Object *a, Object *b);
@@ -97,5 +98,7 @@ extern int_t str_to_int(char *s);
 extern float_t str_to_float(char *s);
 
 extern Object *obj_to_strobj(Object *obj);
+
+extern Object *return_value;
 
 #endif

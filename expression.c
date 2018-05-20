@@ -1,35 +1,43 @@
-/*	expression.c
+/* expression.c
  *
- * 	Expression evaluator
+ * Expression evaluator
  *
- *	Evaluates an experssion recursively in the following order:
+ * Evaluates an expression recursively in the following order:
  *
- *	- first variables (including subscripts and slices), constants,
- * 	  then function-calls, object-methods and parenthesized expressions,
- *	- then the unary operators + - and !
- *	- then multiplication and division (normal and modulo)
- *	- then addition and subtraction
- *	- then the comparisons < <= > and >=
- *	- then the comparisons  == and !=
- * 	- then logical and
- *	- then logical or
- *	- then assignment of values (normal and compound)
- * 	- and last comma separated statements
+ * - first variables (including subscripts and slices), constants,
+ *   then function calls, object methods and parenthesized expressions,
+ * - then the unary operators + - and !
+ * - then multiplication and division (normal and modulo)
+ * - then addition and subtraction
+ * - then the comparisons < <= > and >=
+ * - then the comparisons == and !=
+ * - then logical and
+ * - then logical or
+ * - then assignment of values (normal and compound)
+ * - and finally comma separated statements
  *
- *  Final outcome is an object containing the result.
+ * The outcome is an object which contains the result.
  *
- *	1995	K.W.E. de Lange
+ * 1995 K.W.E. de Lange
  */
-#include "exin.h"
+#include <limits.h>
+#include <string.h>
+
+#include "expression.h"
+#include "identifier.h"
+#include "position.h"
+#include "scanner.h"
+#include "parser.h"
+#include "error.h"
+#include "str.h"
 
 
 static Object *logical_or_expr(void);
 
 
-/*	Decode the next expression and convert to integer.
+/* Decode the next expression and convert to integer.
  *
- * 	To be used when subscript indices must be read.
- *
+ * To be used when subscript indices must be read.
  */
 static int int_expression()
 {
@@ -44,17 +52,16 @@ static int int_expression()
 }
 
 
-/*	Decode subscripts [index] and [start:end] for sequences.
+/* Decode subscripts [index] and [start:end] for sequences.
  *
- * 	Index is mandatory, start en end are optional. The result can be another
- *  sequence with subscripts. Decoding continues until nog subscripts are left.
+ * Index is mandatory, start en end are optional. The result can be another
+ * sequence with subscripts. Decoding continues until no subscripts are left.
  *
- * 	The opening LSQB of the subscript has already been read.
+ * The opening LSQB of the subscript has already been read.
  *
- * 	Return:	new reference (count = 1)
- * 			for LIST: LISTNODE for index or LIST for slice
- * 			for STR: CHAR for index or STR for slice
- *
+ * Return: new reference (count = 1)
+ *         for LIST: LISTNODE for index or LIST for slice
+ *         for STR: CHAR for index or STR for slice
  */
 static Object *subscript(Object *sequence)
 {
@@ -107,12 +114,11 @@ static Object *subscript(Object *sequence)
 }
 
 
-/*	Call methods: seq.len, seq.append, seq.remove, seq.insert
+/* Call methods: seq.len, seq.append, seq.remove, seq.insert
  *
- * 	The DOT which indicates a method will follow has already been read.
+ * The DOT which indicates a method will follow has already been read.
  *
- * 	Return:	new reference (count = 1)
- *
+ * Return: new reference (with count = 1)
  */
 static Object *method(Object *object)
 {
@@ -121,7 +127,8 @@ static Object *method(Object *object)
 
 	object = isListNode(object) ? obj_from_listnode(object) : object;
 
-	/* For many methods the approach used below is not very efficient */
+	/* If an object has many methods then the approach used below is not
+	 * very efficient and must be rewritten. */
 	if (scanner.token == IDENTIFIER) {
 		if (TYPE(object) == LIST_T && strcmp("insert", scanner.string) == 0) {
 			expect(IDENTIFIER);
@@ -163,15 +170,14 @@ static Object *method(Object *object)
 }
 
 
-/*	Evaluate the part of an expression which comes after the identifier,
- *	functie call or constant.
+/* Evaluate the part of an expression which comes after the identifier,
+ * function call or constant.
  *
- * 	Contains: subscripts and methods. Methods may follow subscripts:
- * 	e.g. "abc"[:].len retuns 3
+ * Contains: subscripts and methods. Methods may follow subscripts:
+ * e.g. "abc"[:].len returns 3
  *
- * 	Return: obj (reference count not increased) if there is no trailer, or
- * 			new reference (count = 1)
- *
+ * Return: obj (reference count not increased) if there is no trailer, or
+ *         new reference (count = 1)
  */
 static Object *trailer(Object *obj)
 {
@@ -193,10 +199,9 @@ static Object *trailer(Object *obj)
 }
 
 
-/*	Evaluate variables, function calls, constants, (expression)
+/* Evaluate variables, function calls, constants, (expression)
  *
- * 	Return: object with reference count +1
- *
+ * Return: object with reference count +1
  */
 static Object *primary_expr(void)
 {
@@ -232,7 +237,7 @@ static Object *primary_expr(void)
 			}
 			break;
 		case IDENTIFIER:  /* variabele or function identifier */
-			if ((id = searchIdentifier(scanner.string)) == NULL)
+			if ((id = identifier.search(scanner.string)) == NULL)
 				error(NameError, "identifier %s is not defined", scanner.string);
 			expect(IDENTIFIER);
 			if (TYPE(id->object) == POSITION_T) {
@@ -254,8 +259,7 @@ static Object *primary_expr(void)
 }
 
 
-/*	Operators: (unary)-  (unary)+  ! (logical negation, NOT)
- *
+/* Operators: (unary)-  (unary)+  ! (logical negation, NOT)
  */
 static Object *unary_expr(void)
 {
@@ -278,8 +282,7 @@ static Object *unary_expr(void)
 }
 
 
-/*	Operators:	*  /  %
- *
+/* Operators: *  /  %
  */
 static Object *mult_expr(void)
 {
@@ -311,8 +314,7 @@ static Object *mult_expr(void)
 }
 
 
-/*	Operators: +  -
- *
+/* Operators: +  -
  */
 static Object *additive_expr(void)
 {
@@ -338,8 +340,7 @@ static Object *additive_expr(void)
 }
 
 
-/*	Operators: <  <=  >  >=
- *
+/* Operators: <  <=  >  >=
  */
 static Object *relational_expr(void)
 {
@@ -377,8 +378,7 @@ static Object *relational_expr(void)
 }
 
 
-/*	Operators: ==  !=  <>
- *
+/* Operators: ==  !=  <>
  */
 static Object *equality_expr(void)
 {
@@ -404,8 +404,7 @@ static Object *equality_expr(void)
 }
 
 
-/*	Operators: logical and
- *
+/* Operators: logical and
  */
 static Object *logical_and_expr(void)
 {
@@ -425,8 +424,7 @@ static Object *logical_and_expr(void)
 }
 
 
-/*	Operators: logical or
- *
+/* Operators: logical or
  */
 static Object *logical_or_expr(void)
 {
@@ -446,8 +444,7 @@ static Object *logical_or_expr(void)
 }
 
 
-/*	Operators: =  +=  -=  *=  /=  %=
- *
+/* Operators: =  +=  -=  *=  /=  %=
  */
 Object *assignment_expr(void)
 {
@@ -495,11 +492,10 @@ Object *assignment_expr(void)
 }
 
 
-/*	Operators: ,
+/* Operators: ,
  *
- *	Multiple expressions separated by comma's. Returns an object with the
- * 	result from the last expression.
- *
+ * Multiple expressions separated by comma's. Returns an object with the
+ * result from the last expression.
  */
 Object *comma_expr(void)
 {

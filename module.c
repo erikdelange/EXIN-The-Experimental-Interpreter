@@ -1,88 +1,37 @@
-/*	module.c
+/* module.c
  *
- *	EXIN code is grouped in files called modules. Modules are loaded via the
- *	module.import() function. Every module object contains a reference to the
- *	loaded code of that module.
+ * Code is grouped in files called modules. Modules are loaded via the
+ * module.new() function. Every module object contains a reference to
+ * the loaded code of that module. Module objects are stored in a
+ * singly linked list starting at 'modulehead'.
  *
- *	1995	K.W.E. de Lange
+ * 1995	K.W.E. de Lange
  */
-#include <sys/types.h>
 #include <sys/stat.h>
-#include "exin.h"
+#include <assert.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <stdio.h>
+#include "module.h"
+#include "error.h"
 
 
-/*	Forward declarations.
- *
+/* Pointer to the list of loaded modules
  */
-static struct module *import(char *filename);
-static struct module *searchModule(char *name);
+static Module *modulehead = NULL;
 
 
-/*	An empty module object, used as 1) the starting point for the list of
- *	loaded modules and 2) the module API.
+/* Search a module in the list of loaded modules.
  *
+ * name		filename of module (may include path)
+ * return	module object or NULL if not found
  */
-Module module = {
-	NULL,
-	"shell",
-	"",
-	import
-};
-
-
-/*	Determine file size.
- *
- *	filename	filename optionally including path
- *	return		file size in bytes or 0 in case of error
- *
- */
-static size_t fileSize(char *filename)
-{
-	struct _stat stat_buffer;
-
-	if (_stat(filename, &stat_buffer) == 0)
-		return stat_buffer.st_size;
-	return 0;
-}
-
-
-/*	Allocate buffer for file content and read the file.
- *
- *	filename	filename optionally including path
- *	return		buffer containing code or NULL in case of error
- *
- */
-static char *loadFile(char *filename)
-{
-	FILE *fp;
-	char *buffer;
-	size_t bytes;
-
-	if ((bytes = fileSize(filename)) != 0)
-		if ((buffer = (char *)calloc(bytes + 1, sizeof(char))) != NULL)
-			if ((fp = fopen(filename, "r")) != NULL) {
-				fread(buffer, sizeof(char), bytes, fp);
-				fclose(fp);
-				buffer[bytes] = 0;
-				return buffer;
-			}
-
-	return NULL;
-}
-
-
-/*	Search a module in the list of loaded modules.
- *
- *	filename	filename optionally including path
- * 	return		module-object or NULL if not found
- *
- */
-static struct module *searchModule(char *filename)
+static Module *search(const char *name)
 {
 	Module *m;
 
-	for (m = module.next; m; m = m->next)
-		if (strcmp(filename, m->name) == 0)
+	for (m = modulehead; m; m = m->next)
+		if (strcmp(name, m->name) == 0)
 			break;
 
 	return m;
@@ -90,36 +39,72 @@ static struct module *searchModule(char *filename)
 }
 
 
-/*	Import a module and start interpreting that module's code.
+/* Load the code for a module.
  *
- * 	filename	filename optionally including path
- * 	return		new module-object (interpreter stops in case of error)
- *
+ * self		pointer to module object
+ * name		filename (may include path)
+ * return	1 if succesfull else 0
  */
-static Module *import(char *filename)
+static int load(Module *self, const char *name)
+{
+	FILE *fp;
+	struct _stat stat_buffer;
+
+	assert(self != NULL);
+
+	if (_stat(name, &stat_buffer) == 0) {
+		self->size = stat_buffer.st_size;
+		if ((self->code = calloc(self->size + 1, sizeof(char))) != NULL) {
+			if ((fp = fopen(name, "r")) != NULL) {
+				self->size = fread(self->code, sizeof(char), self->size, fp);
+				fclose(fp);
+				self->code[self->size] = 0;
+				return 1;
+			} else {
+				free(self->code);
+				self->code = NULL;
+			}
+		}
+	}
+	return 0;
+}
+
+
+/* Create a new module and load the code.
+ *
+ * name		module's filename (may include path)
+ * return	module object (else program fails)
+ */
+static Module *new(const char *name)
 {
 	Module *m;
 
-	if ((m = searchModule(filename)) == NULL) {  /* check if already loaded */
+	if ((m = calloc(1, sizeof(Module))) == NULL)
+		error(OutOfMemoryError);
+	else
+		*m = module;
 
-		if ((m = calloc((size_t)1, sizeof(Module))) == NULL)
-			error(OutOfMemoryError);
+	if (load(m, name) == 0)
+		error(SystemError, "error importing %s: %s (%d)", name, strerror(errno), errno);
 
-		if ((m->code = loadFile(filename)) == NULL)
-			error(SystemError, "error importing %s", filename);
+	if ((m->name = strdup(name)) == NULL)
+		error(OutOfMemoryError);
 
-		if ((m->name = strdup(filename)) == NULL)
-			error(OutOfMemoryError);
-
-		m->next = module.next;
-		module.next = m;
-
-		reader.m = m;
-		reader.reset();
-
-		if (setjmp(return_address) == 0)
-			parser();
-	}  /* import only done once */
+	m->next = modulehead;
+	modulehead = m;
 
 	return m;
 }
+
+
+/*	The module API.
+ */
+Module module = {
+	.next = NULL,
+	.name = NULL,
+	.code = NULL,
+	.size = 0,
+
+	.new = new,
+	.search = search
+};

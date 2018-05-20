@@ -1,10 +1,10 @@
-/*	error.h
+/* error.h
  *
- * 	Error message codes
+ * Error message codes
  *
- * 	1994	K.W.E. de Lange
+ * 1995	K.W.E. de Lange
  */
-#if !defined (_ERROR_)
+#ifndef _ERROR_
 #define _ERROR_
 
 #define	NameError 0

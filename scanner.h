@@ -1,9 +1,12 @@
-/*	scanner.h
+/* scanner.h
  *
- * 	1994	K.W.E. de Lange
+ * 2018	K.W.E. de Lange
  */
-#if !defined (_SCANNER_)
+#ifndef _SCANNER_
 #define _SCANNER_
+
+#include <stdbool.h>
+#include "config.h"
 
 typedef enum { 	UNKNOWN=0, CHAR, INT, FLOAT, STR, STAR, SLASH,
 				PLUS, MINUS, EQEQUAL, NOTEQUAL, LESS, LESSEQUAL, GREATER,
@@ -13,7 +16,6 @@ typedef enum { 	UNKNOWN=0, CHAR, INT, FLOAT, STR, STAR, SLASH,
 				AND, OR, PLUSEQUAL, MINUSEQUAL, STAREQUAL, SLASHEQUAL,
 				PERCENTEQUAL, NOT, LSQB, RSQB, NEWLINE, INDENT, DEDENT,
 				PASS, BREAK, CONTINUE, DEFLIST, COLON, IMPORT } token_t;
-
 
 static inline char *tokenName(token_t t)  /* inline requires at least C99 */
 {
@@ -31,24 +33,23 @@ static inline char *tokenName(token_t t)  /* inline requires at least C99 */
 }
 
 
-/*	This struct is the API to the Scanner object, containing both data and
- *	function adresses.
+/* This struct is the API to the Scanner object, containing both data and
+ * function adresses.
  *
- *	Function next() reads the next token, and places it in variable 'token'.
- *	If the token is an identifier or literal then 'string' points to the text.
- *	Function peek() looks one token ahead without actually reading it.
- *	Variable 'peeked' is used to temporarily store the peeked token, and is for
- *	internal use only.
- *
+ * Function next() reads the next token, and places it in variable 'token'.
+ * If the token is an identifier or literal then 'string' points to the text.
+ * Function peek() looks one token ahead without actually reading it.
+ * Variable 'peeked' is used to temporarily store the peeked token, and is for
+ * internal use only.
  */
 typedef struct scanner {
 	token_t	token;
 	token_t peeked;  	/* private */
-	bool_t atbol;
-	char *string;
+	bool at_bol;
+	char string[BUFSIZE + 1];
 	token_t (*next)(void);
 	token_t (*peek)(void);
-	void (*init)(void);
+	void (*init)(struct scanner *);
 	void (*save)(struct scanner *);
 	void (*jump)(struct scanner *);
 

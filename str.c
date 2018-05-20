@@ -1,52 +1,32 @@
-/*	string.c
+/* string.c
  *
- * 	String object operations
+ * String object operations
  *
- * 	2016	K.W.E. de Lange
+ * 2016 K.W.E. de Lange
  */
-#include "exin.h"
+#include <stdlib.h>
+#include <string.h>
 
-
-/*	Standard forward declarations for a typeobject
- *
- */
-static StrObject *str_alloc(void);
-static void str_free(StrObject *obj);
-static void str_print(StrObject *obj);
-static StrObject *str_set(StrObject *obj, const char *s);
-static StrObject *str_vset(StrObject *obj, va_list argp);
-static int_t length(StrObject *obj);
-
-
-/*	String object API.
- *
- */
-TypeObject strobject = {
-	"str",
-	(Object *(*)())str_alloc,
-	(void (*)(Object *))str_free,
-	(void (*)(Object *))str_print,
-	(Object *(*)())str_set,
-	(Object *(*)(Object *, va_list))str_vset
-};
+#include "strndup.h"
+#include "error.h"
+#include "str.h"
 
 
 static StrObject *str_alloc(void)
 {
 	StrObject *obj;
 
-	obj = calloc((size_t)1, sizeof(StrObject));
+	if ((obj = calloc(1, sizeof(StrObject))) == NULL)
+		error(OutOfMemoryError);
 
-	if (obj != NULL) {
-		obj->typeobj = &strobject;
-		obj->type = STR_T;
-		obj->refcount = 0;
+	obj->typeobj = &strobject;
+	obj->type = STR_T;
+	obj->refcount = 0;
 
-		obj->sptr = strdup("");  /* initial value is empty string */
+	obj->sptr = strdup("");  /* initial value is empty string */
+	if (obj->sptr == NULL)
+		error(OutOfMemoryError);
 
-		if (obj->sptr == NULL)
-			error(OutOfMemoryError);
-	}
 	return obj;
 }
 
@@ -86,9 +66,8 @@ static StrObject *str_vset(StrObject *obj, va_list argp)
 }
 
 
-/*	Operand op1 or op2 is a string. The other operand can be anything and
- *	will be converted to a string.
- *
+/* Operand op1 or op2 is a string. The other operand can be anything and
+ * will be converted to a string.
  */
 Object *str_concat(Object *op1, Object *op2)
 {
@@ -117,6 +96,18 @@ Object *str_concat(Object *op1, Object *op2)
 		obj_free(conv);
 
 	return obj;
+}
+
+
+static int_t length(StrObject *obj)
+{
+	return strlen(obj_as_str((Object *)obj));
+}
+
+
+Object *str_length(StrObject *obj)
+{
+	return obj_create(INT_T, length(obj));
 }
 
 
@@ -168,18 +159,6 @@ Object *str_neq(Object *op1, Object *op2)
 }
 
 
-static int_t length(StrObject *obj)
-{
-	return strlen(obj_as_str((Object *)obj));
-}
-
-
-Object *str_length(StrObject *obj)
-{
-	return obj_create(INT_T, length(obj));
-}
-
-
 CharObject *str_item(StrObject *str, int index)
 {
 	CharObject *obj;
@@ -228,3 +207,15 @@ StrObject *str_slice(StrObject *obj, int start, int end)
 
 	return slice;
 }
+
+
+/* String object API.
+ */
+TypeObject strobject = {
+	.name = "str",
+	.alloc = (Object *(*)())str_alloc,
+	.free = (void (*)(Object *))str_free,
+	.print = (void (*)(Object *))str_print,
+	.set = (Object *(*)())str_set,
+	.vset = (Object *(*)(Object *, va_list))str_vset
+};

@@ -1,65 +1,72 @@
-/*	object.c
+/* object.c
  *
- *	Operations on objects (variables, functions, ...)
+ * Operations on objects (variables, functions, ...)
  *
- *	All variables and functions are modelled as objects. An object contains its
- * 	data but also a number of methods. Every object has mandatory set of
- *	methods. This set is: alloc, free, set, vset and print. Which other methods
- *	are available depends in the type of the object. See: number.c, str.c,
- * 	list.c, position.c and none.c.
+ * All variables and functions are modelled as objects. An object contains its
+ * data but also a number of methods. Every object has mandatory set of
+ * methods. This set is: alloc, free, set, vset and print. Which other methods
+ * are available depends in the type of the object. See: number.c, str.c,
+ * list.c, position.c and none.c.
  *
- *	All operations on and between objects are found in object.c and are
- *	accessed via function names like obj_... followed by the operation,
- *	e.g. obj_add().
+ * All operations on and between objects are found in object.c and are
+ * accessed via function names like obj_... followed by the operation,
+ * e.g. obj_add().
  *
- *	We distinguish unary and binary operations. For unary operations only one
- * 	operand is required:
+ * We distinguish unary and binary operations. For unary operations only one
+ * operand is required:
  *
- *			result = operator operand
+ *          result = operator operand
  *
- *	The unary operators are:
+ * The unary operators are:
  *
- *			- 	negation of the operand
- *			+	retuns the operand (so does nothing)
- *			!	logical negation of the operand (so 0 or 1)
+ *          -   negation of the operand
+ *          +   retuns the operand (so does nothing)
+ *          !   logical negation of the operand (so 0 or 1)
  *
- *	For binary operators the two operands as used as input for the operations:
+ * For binary operators the two operands as used as input for the operations:
  *
- *			resul = operand1 operator operand2
+ *          result = operand1 operator operand2
  *
- *			The artihmetic operators are:	+  -  *  /  %
- *			The comparison operators are: 	==  !=  <>  <  <=  >  >=
- *			The logical operators are: 		and  or
+ *          The artihmetic operators are:   +  -  *  /  %
+ *          The comparison operators are:   ==  !=  <>  <  <=  >  >=
+ *          The logical operators are:      and  or
  *
- *	Which operations are supported depends on the object type. Numerical object
- * 	will support almost everything, list or strings have less operations.
+ * Which operations are supported depends on the object type. Numerical object
+ * will support almost everything, list or strings have less operations.
  *
- *	Two operations are only meant for use on list or string objects:
+ * Two operations are only meant for use on list or string objects:
  *
- *			item[index]
- *			slice[start:end]
+ *          item[index]
+ *          slice[start:end]
  *
- *	As C-functions the unary- and binary operations look like:
+ * As C-functions the unary- and binary operations look like:
  *
- *		result *operator(*operand1)
- *		result *operator(*operand1, *operand2)
+ *      result *operator(*operand1)
+ *      result *operator(*operand1, *operand2)
  *
- *	Operand1 and operand2 always remain unchanged. Result is a newly created
- *	object. Its type is dependent on operand1 and optionally operand2.
- *	See function coerce() in number.c for the rules for determining the type
- *	of the result for arithmetic operations. For locical and comparison
- *	operations the result is always an INTEGER as we do not have a boolean
- *	type.
+ * Operand1 and operand2 always remain unchanged. Result is a newly created
+ * object. Its type is dependent on operand1 and optionally operand2.
+ * See function coerce() in number.c for the rules for determining the type
+ * of the result for arithmetic operations. For locical and comparison
+ * operations the result is always an INTEGER as we do not have a boolean
+ * type.
  *
- *	1994	K.W.E. de Lange
+ * 1994 K.W.E. de Lange
  */
-#include "exin.h"
+#include <string.h>
+#include <stdlib.h>
+
+#include "position.h"
+#include "number.h"
+#include "object.h"
+#include "error.h"
+#include "none.h"
+#include "str.h"
 
 
-/*	Create a new object of type 'type' and assign the default initial value.
- *
+/* Create a new object of type 'type' and assign the default initial value.
  */
-Object *obj_alloc(object_t type)
+Object *obj_alloc(objecttype_t type)
 {
 	Object *obj = NULL;
 
@@ -102,13 +109,12 @@ Object *obj_alloc(object_t type)
 }
 
 
-/*	Create a new object of type 'type' and assign an initial value.
+/* Create a new object of type 'type' and assign an initial value.
  *
- *	type	type of the new object, also type of the initial value to assign
- *	...		value to assign (mandatory)
- *
+ * type type of the new object, also type of the initial value to assign
+ * ...  value to assign (mandatory)
  */
-Object *obj_create(object_t type, ...)
+Object *obj_create(objecttype_t type, ...)
 {
 	va_list argp;
 	Object *obj;
@@ -125,8 +131,7 @@ Object *obj_create(object_t type, ...)
 }
 
 
-/*	Free the memomry which was reserverd for an object.
- *
+/* Free the memory which was reserverd for an object.
  */
 void obj_free(Object *obj)
 {
@@ -134,8 +139,7 @@ void obj_free(Object *obj)
 }
 
 
-/*	Print value on stdout.
- *
+/* Print value on stdout.
  */
 void obj_print(Object *obj)
 {
@@ -143,13 +147,12 @@ void obj_print(Object *obj)
 }
 
 
-/*	Read a value from stdin.
- *
+/* Read a value from stdin.
  */
-Object *obj_scan(object_t type)
+Object *obj_scan(objecttype_t type)
 {
 	char buffer[LINESIZE] = "";
-	Object* obj = NULL;
+	Object *obj = NULL;
 
 	fgets(buffer, LINESIZE, stdin);
 	buffer[strcspn(buffer, "\r\n")] = 0;  /* remove trailing newline */
@@ -176,8 +179,7 @@ Object *obj_scan(object_t type)
 }
 
 
-/*	(type op1)result = op1
- *
+/* (type op1)result = op1
  */
 Object *obj_copy(Object *op1)
 {
@@ -201,8 +203,7 @@ Object *obj_copy(Object *op1)
 }
 
 
-/*	op1 = (type op1) op2
- *
+/* op1 = (type op1) op2
  */
 void obj_assign(Object *op1, Object *op2)
 {
@@ -232,8 +233,7 @@ void obj_assign(Object *op1, Object *op2)
 }
 
 
-/*	result = op1 + op2
- *
+/* result = op1 + op2
  */
 Object *obj_add(Object *op1, Object *op2)
 {
@@ -253,8 +253,7 @@ Object *obj_add(Object *op1, Object *op2)
 }
 
 
-/*	result = op1 - op2
- *
+/* result = op1 - op2
  */
 Object *obj_sub(Object *op1, Object *op2)
 {
@@ -270,8 +269,7 @@ Object *obj_sub(Object *op1, Object *op2)
 }
 
 
-/*	result = op1 * op2
- *
+/* result = op1 * op2
  */
 Object *obj_mult(Object *op1, Object *op2)
 {
@@ -291,8 +289,8 @@ Object *obj_mult(Object *op1, Object *op2)
 }
 
 
-/*	result = op1 / op2
- *
+
+/* result = op1 / op2
  */
 Object *obj_divs(Object *op1, Object *op2)
 {
@@ -308,8 +306,8 @@ Object *obj_divs(Object *op1, Object *op2)
 }
 
 
-/*	result = op1 % op2
- *
+
+/* result = op1 % op2
  */
 Object *obj_mod(Object *op1, Object *op2)
 {
@@ -326,8 +324,7 @@ Object *obj_mod(Object *op1, Object *op2)
 }
 
 
-/*	result = 0 - op1
- *
+/* result = 0 - op1
  */
 Object *obj_invert(Object *op1)
 {
@@ -342,8 +339,7 @@ Object *obj_invert(Object *op1)
 }
 
 
-/*	result = (int_t)(op1 == op2)
- *
+/* result = (int_t)(op1 == op2)
  */
 Object *obj_eql(Object *op1, Object *op2)
 {
@@ -361,8 +357,7 @@ Object *obj_eql(Object *op1, Object *op2)
 }
 
 
-/*	result = (int_t)(op1 != op2)
- *
+/* result = (int_t)(op1 != op2)
  */
 Object *obj_neq(Object *op1, Object *op2)
 {
@@ -380,8 +375,7 @@ Object *obj_neq(Object *op1, Object *op2)
 }
 
 
-/* 	result = (int_t)(op1 < op2)
- *
+/* result = (int_t)(op1 < op2)
  */
 Object *obj_lss(Object *op1, Object *op2)
 {
@@ -397,8 +391,7 @@ Object *obj_lss(Object *op1, Object *op2)
 }
 
 
-/*	result = (int_t)(op1 <= op2)
- *
+/* result = (int_t)(op1 <= op2)
  */
 Object *obj_leq(Object *op1, Object *op2)
 {
@@ -414,8 +407,7 @@ Object *obj_leq(Object *op1, Object *op2)
 }
 
 
-/*	result = (int_t)(op1 > op2)
- *
+/* result = (int_t)(op1 > op2)
  */
 Object *obj_gtr(Object *op1, Object *op2)
 {
@@ -431,8 +423,7 @@ Object *obj_gtr(Object *op1, Object *op2)
 }
 
 
-/*	result = (int_t)(op1 >= op2)
- *
+/* result = (int_t)(op1 >= op2)
  */
 Object *obj_geq(Object *op1, Object *op2)
 {
@@ -448,8 +439,7 @@ Object *obj_geq(Object *op1, Object *op2)
 }
 
 
-/*	result = (int_t)(op1 or op2)
- *
+/* result = (int_t)(op1 or op2)
  */
 Object *obj_or(Object *op1, Object *op2)
 {
@@ -465,8 +455,7 @@ Object *obj_or(Object *op1, Object *op2)
 }
 
 
-/*	result = (int_t)(op1 and op2)
- *
+/* result = (int_t)(op1 and op2)
  */
 Object *obj_and(Object *op1, Object *op2)
 {
@@ -482,8 +471,7 @@ Object *obj_and(Object *op1, Object *op2)
 }
 
 
-/*	result = (int_t)!op1
- *
+/* result = (int_t)!op1
  */
 Object *obj_negate(Object *op1)
 {
@@ -498,9 +486,8 @@ Object *obj_negate(Object *op1)
 }
 
 
-/*	item = list[index]
- * 	item = string[index]
- *
+/* item = list[index]
+ * item = string[index]
  */
 Object *obj_item(Object *sequence, int index)
 {
@@ -517,9 +504,8 @@ Object *obj_item(Object *sequence, int index)
 }
 
 
-/*	slice = list[start:end]
- *	slice = string[start:end]
- *
+/* slice = list[start:end]
+ * slice = string[start:end]
  */
 Object *obj_slice(Object *sequence, int start, int end)
 {
@@ -536,8 +522,7 @@ Object *obj_slice(Object *sequence, int start, int end)
 }
 
 
-/*	result = (char_t)op1
- *
+/* result = (char_t)op1
  */
 char_t obj_as_char(Object *op1)
 {
@@ -557,8 +542,7 @@ char_t obj_as_char(Object *op1)
 }
 
 
-/*	result = (int_t)op1
- *
+/* result = (int_t)op1
  */
 int_t obj_as_int(Object *op1)
 {
@@ -578,8 +562,7 @@ int_t obj_as_int(Object *op1)
 }
 
 
-/*	result = (float_t)op1
- *
+/* result = (float_t)op1
  */
 float_t obj_as_float(Object *op1)
 {
@@ -599,8 +582,7 @@ float_t obj_as_float(Object *op1)
 }
 
 
-/*	result = (str_t)op1
- *
+/* result = (str_t)op1
  */
 char *obj_as_str(Object *op1)
 {
@@ -616,8 +598,7 @@ char *obj_as_str(Object *op1)
 }
 
 
-/*	result = (list_t)op1
- *
+/* result = (list_t)op1
  */
 ListObject *obj_as_list(Object *op1)
 {
@@ -633,8 +614,7 @@ ListObject *obj_as_list(Object *op1)
 }
 
 
-/*	result = (bool_t)op1
- *
+/* result = (bool_t)op1
  */
 int obj_as_bool(Object *op1)
 {
@@ -654,8 +634,7 @@ int obj_as_bool(Object *op1)
 }
 
 
-/*	Convert string to a char_t
- *
+/* Convert string to a char_t
  */
 char_t str_to_char(char *s)
 {
@@ -682,8 +661,7 @@ char_t str_to_char(char *s)
 }
 
 
-/*	Convert string to an int_t
- *
+/* Convert string to an int_t
  */
 int_t str_to_int(char *s)
 {
@@ -705,8 +683,7 @@ int_t str_to_int(char *s)
 }
 
 
-/*	Convert string to a float_t
- *
+/* Convert string to a float_t
  */
 float_t str_to_float(char *s)
 {
@@ -728,8 +705,7 @@ float_t str_to_float(char *s)
 }
 
 
-/*	Convert object obj to a string object
- *
+/* Convert object obj to a string object
  */
 Object *obj_to_strobj(Object *obj)
 {
@@ -759,8 +735,7 @@ Object *obj_to_strobj(Object *obj)
 
 
 #if 0
-/*	Place string representation of f in buffer.
- *
+/* Place string representation of f in buffer.
  */
 char *float_to_str(float_t f, char *buffer, size_t buffersize)
 {
