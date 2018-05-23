@@ -59,6 +59,11 @@ float x = 3.14, y = 1E10
 str s = "abcd", t = "\n", u = ""
 list l = ['a', 2.1, "xyz"], m = []
 ```
+The type of a variable or constant is determined via the *.type* method.
+``` python
+>>> "abc".type
+= str
+```
 ##### Literals
 A character constant is surrounded by single quotes, a string constant by double quotes. Both may contain escape sequences starting with a backslash. Number constant without a decimal dot are considered integers, and with a dot floats. A floating point number can also be written in scientific notation.
 ``` python
@@ -206,6 +211,13 @@ while 1
     n += 1
 ```
 This loop is executed infinitly because 1 always evaluates to true. Eventually the *if* statement with *break* makes sure the loop is terminiated once n equals 10.
+##### Looping through lists and strings
+The *for .. in ..* statement cycles through the content of a list of string.
+```
+for element in [1, 2.0, "abc", 'c']
+    print element, " ", element.type, "\n"
+```
+It is not neccesary to define variable *element* upfront. If it does not exist it is automically created. The values which are assigned can be different for each element of the list. For a string element it is of course only assigned characters.
 ##### Function definition
 Functions are defined using the *def* keyword followed by a function name and a pair of parenthesis containing the argument names separated by comma's. Even if a function has no arguments the parenthesis are mandatory. All arguments are passed by value. There is no type checking when the function is called, and more arguments can be sent to the function then are stated in the definition.
 ```

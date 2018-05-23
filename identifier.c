@@ -58,7 +58,7 @@ static Identifier *searchIdentifierInScope(const Scope *level, const char *name)
  * name     identifier name
  * return   *Identifier object or NULL if not found
  */
-Identifier *search(const char *name)
+static Identifier *search(const char *name)
 {
 	Identifier *id;
 
@@ -95,7 +95,7 @@ static Identifier *addIdentifier(Scope *level, const char *name)
 
 /* Add an identifier to the local scope.
  */
- Identifier *add(const char *name)
+ static Identifier *add(const char *name)
  {
 	return addIdentifier(local, name);
  }
@@ -114,7 +114,7 @@ static void unbind(Identifier *self)
 
 /* Bind an object to an identifier. First remove an existing binding.
  */
-void bind(Identifier *self, Object *obj)
+static void bind(Identifier *self, Object *obj)
 {
 	if (self->object)
 		unbind(self);
@@ -137,7 +137,7 @@ static void removeIdentifier(Identifier *id)
 
 /* Append a new lowest level to the scope hierarchy.
  */
-void appendScopeLevel(void)
+static void appendScopeLevel(void)
 {
 	Scope *scope;
 
@@ -157,7 +157,7 @@ void appendScopeLevel(void)
  *
  * Also releases all identifiers and the objects linked to them.
  */
-void removeScopeLevel(void)
+static void removeScopeLevel(void)
 {
 	Identifier *id, *next;
 	Scope *scope;

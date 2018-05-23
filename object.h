@@ -80,11 +80,16 @@ extern Object *obj_geq(Object *op1, Object *op2);
 extern Object *obj_or(Object *op1, Object *op2);
 extern Object *obj_and(Object *op1, Object *op2);
 
+extern Object *obj_in(Object *op1, Object *op2);
+
 extern Object *obj_negate(Object *op1);
 extern Object *obj_invert(Object *op1);
 
+extern int_t obj_length(Object *sequence);
 extern Object *obj_item(Object *sequence, int index);
 extern Object *obj_slice(Object *sequence, int start, int end);
+
+extern Object *obj_type(Object *op1);
 
 extern char_t obj_as_char(Object *op1);
 extern int_t obj_as_int(Object *op1);

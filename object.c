@@ -471,6 +471,32 @@ Object *obj_and(Object *op1, Object *op2)
 }
 
 
+/* result = (int_t)(op1 in (sequence)op2)
+ */
+Object *obj_in(Object *op1, Object *op2)
+{
+	Object *result = NULL;
+	int_t len;
+
+	op1 = isListNode(op1) ? obj_from_listnode(op1) : op1;
+	op2 = isListNode(op2) ? obj_from_listnode(op2) : op2;
+
+	if (isSequence(op2) == 0)
+		error(TypeError, "%s is not subscriptable", TYPENAME(op2));
+
+	len = obj_length(op2);
+
+	for (int_t i = 0; i < len; i++) {
+		if (result != NULL)
+			obj_decref(result);
+		result = obj_eql(op1, obj_item(op2, i));
+		if (((IntObject *)result)->ival == 1)
+			break;
+	}
+	return result;
+}
+
+
 /* result = (int_t)!op1
  */
 Object *obj_negate(Object *op1)
@@ -519,6 +545,31 @@ Object *obj_slice(Object *sequence, int start, int end)
 		error(TypeError, "type %s is not subscriptable", TYPENAME(sequence));
 
 	return NULL;
+}
+
+
+/* Return number of items in a sequence.
+ */
+int_t obj_length(Object *sequence)
+{
+	sequence = isListNode(sequence) ? obj_from_listnode(sequence) : sequence;
+
+	if (TYPE(sequence) == STR_T)
+		return obj_as_int(str_length((StrObject *)sequence));
+	else if (TYPE(sequence) == LIST_T)
+		return obj_as_int(list_length((ListObject *)sequence));
+	else
+		error(TypeError, "type %s is not subscriptable", TYPENAME(sequence));
+
+	return 0;
+}
+
+
+/* Return object type as string.
+ */
+Object *obj_type(Object *op1)
+{
+	return obj_create(STR_T, TYPENAME(op1));
 }
 
 

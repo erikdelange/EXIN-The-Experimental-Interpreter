@@ -114,7 +114,7 @@ static Object *subscript(Object *sequence)
 }
 
 
-/* Call methods: seq.len, seq.append, seq.remove, seq.insert
+/* Call methods: seq.len, seq.append, seq.remove, seq.insert, *.type
  *
  * The DOT which indicates a method will follow has already been read.
  *
@@ -161,6 +161,9 @@ static Object *method(Object *object)
 		} else if (TYPE(object) == STR_T && strcmp("len", scanner.string) == 0) {
 			expect(IDENTIFIER);
 			obj = str_length((StrObject *)object);
+		} else if (strcmp("type", scanner.string) == 0) {
+			expect(IDENTIFIER);
+			obj = obj_type(object);
 		} else
 			error(SyntaxError, "unknown method %s for type %s", scanner.string, TYPENAME(object));
 	} else

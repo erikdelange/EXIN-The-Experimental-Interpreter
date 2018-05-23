@@ -24,6 +24,7 @@ static void variable_declaration(objecttype_t type);
 static void if_stmnt(void);
 static void	while_stmnt(void);
 static void do_stmnt(void);
+static void for_stmnt(void);
 static void	print_stmnt(void);
 static void input_stmnt(void);
 static void return_stmt(void);
@@ -181,6 +182,8 @@ void statement(void)
 		variable_declaration(LIST_T);
 	else if (accept(DEFFUNC))
 		skip_function();
+	else if (accept(FOR))
+		for_stmnt();
 	else if (accept(DO))
 		do_stmnt();
 	else if (accept(IF))
@@ -396,6 +399,54 @@ static void do_stmnt(void)
 	do_break = 0;
 
 	expect(NEWLINE);
+	obj_decref(loop);
+}
+
+
+/* Loop through the content of a sequence.
+ *
+ * for identifier in sequence NEWLINE
+ *      block
+ *
+ * If the identifier does not exist it is created.
+ *
+ * in:  token = first token after FOR
+ * out: token = first token after dedent of block
+ */
+static void for_stmnt(void)
+{
+	int_t len;
+	Object *sequence;
+	Identifier *id = NULL;
+	PositionObject *loop;
+
+	if (scanner.token == IDENTIFIER)
+		if ((id = identifier.search(scanner.string)) == NULL)
+			id = identifier.add(scanner.string);
+
+	expect(IDENTIFIER);
+	expect(IN);
+
+	sequence = comma_expr();
+	len = obj_length(sequence);
+
+	if (scanner.token != NEWLINE)
+		error(SyntaxError, "expected newline");
+
+	do_break = do_continue = 0;
+
+	loop = reader.save();
+
+	for (int_t i = 0; i < len && !do_break; i++) {
+		identifier.bind(id, obj_item(sequence, i));
+		block();
+		do_continue = 0;
+		reader.jump(loop);
+	}
+	do_break = 0;
+
+	skip_block();
+
 	obj_decref(loop);
 }
 

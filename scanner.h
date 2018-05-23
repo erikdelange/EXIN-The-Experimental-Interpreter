@@ -15,7 +15,7 @@ typedef enum { 	UNKNOWN=0, CHAR, INT, FLOAT, STR, STAR, SLASH,
 				DEFFLOAT, DEFSTR, DEFFUNC, DOT, ENDMARKER, RETURN, PERCENT,
 				AND, OR, PLUSEQUAL, MINUSEQUAL, STAREQUAL, SLASHEQUAL,
 				PERCENTEQUAL, NOT, LSQB, RSQB, NEWLINE, INDENT, DEDENT,
-				PASS, BREAK, CONTINUE, DEFLIST, COLON, IMPORT } token_t;
+				PASS, BREAK, CONTINUE, DEFLIST, COLON, IMPORT, FOR, IN } token_t;
 
 static inline char *tokenName(token_t t)  /* inline requires at least C99 */
 {
@@ -28,7 +28,7 @@ static inline char *tokenName(token_t t)  /* inline requires at least C99 */
 	"ENDMARKER", "RETURN", "PERCENT", "AND", "OR", "PLUSEQUAL", "MINUSEQUAL",
 	"STAREQUAL", "SLASHEQUAL", "PERCENTEQUAL", "NOT", "LSQB", "RSQB",
 	"NEWLINE", "INDENT", "DEDENT", "PASS", "BREAK", "CONTINUE", "DEFLIST",
-	"COLON", "IMPORT" };
+	"COLON", "IMPORT", "FOR", "IN" };
 	return string[t];
 }
 
