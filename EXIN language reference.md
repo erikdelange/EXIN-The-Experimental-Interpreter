@@ -171,7 +171,7 @@ Expression evaluation follows the following rules of precedence:
  *	then multiplication and division (normal and modulo)
  *	then addition and subtraction
  *	then the comparisons < <= > and >=
- *	then the comparisons == != and in
+ *	then the comparisons == != and *in*
  * 	then logical *and*
  *	then logical *or*
  *	then assignment of values (normal and shorthand)
