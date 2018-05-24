@@ -15,18 +15,16 @@ for k in l
     print "k = ", k, "\n"
 
 for c in "abcdef"
-    print c
+    print c, "\n"
 
-print "\n"
+for i in "ab"[1:]
+	print i, "\n"
 
 print c.type, "\n"
 print l.type, "\n"
 print i.type, "\n"
 print (1.2).type, "\n"
 print "abc".type, "\n"
-
-for i in "ab"[1:]
-	print i
 
 for element in [1, 2.0, "abc", 'c']
     print element, " ", element.type, "\n"

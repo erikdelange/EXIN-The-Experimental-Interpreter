@@ -6,12 +6,13 @@ EXIN is a simple language and contains elements of Basic, C and Python.
 The following keywords are reserved and may not be used as variable or function names.
 ```
 and      break    char     continue  def
-do       else     float    if        import
-input    int      list     or        pass
-print    return   str      while
+do       else     float    for       if
+import   in       input    int       list
+or       pass     print    return    str
+while
 ```
 ##### Code format
-Code consist of lines of plain text. Lines contain statements but can also be empty. Statements do not span lines but are terminated by the newline character. Indentation is used to group statements in blocks for control structures (if-else, do-while, while-do). For example
+Code consist of lines of plain text. Lines contain statements but can also be empty. Statements do not span lines but are terminated by the newline character. Indentation is used to group statements in blocks for control structures (if-else, do-while, while-do, for-in). For example
 ```
 int a
 while a != 10
@@ -27,7 +28,7 @@ a += 1
 ```
 The first code snippet prints all digits whereas the second will result in an infinite loop.
 
-To avoid confusion it is best to use only tabs for indentation. However spaces will also work. When mixing spaces and tabs make sure to use the number of spaces which represent a tab in your editor. The default is 4.
+To avoid confusion it is best to use only tabs for indentation. However spaces will also work. Tabs and spaces can be mixed as long as the interpreter knows how much spaces represent a tab. The default is 4 but this can modified by command line option -t.
 
 A hash sign (#) identifies the start of a comment. All text after the hash sign until the end of the line is discarded.
 ```
@@ -39,7 +40,7 @@ Code execution always starts at the top of the file.
 ##### Data types
 The three primitive data types are *char*, *int* and *float*. They are used for storing characters, integers and floating point numbers and match the C data types char, long and double.
 
-Two other data types are built on top of the primitive types: strings and lists. Lists store any data type, including other lists. Their data type is *list*. The elements in a list can be a mix of all data types. A special variant of the list is the string (data type *str*) which contains only characters.
+Two additional sequence data types are built on top of the primitive types: strings and lists. Lists store any data type, including other lists. Their data type is *list*. The elements in a list can be a mix of all data types. A special variant of the list is the string (data type *str*) which contains only characters.
 
 EXIN is strongly typed and requires that every variable is declared before it can be used.
 ```
@@ -51,7 +52,7 @@ list l_2
 ```
 Variable names must begin with a letter and consist of letters, digits and underscores.
 
-Variables receive an implicit default value when declared; 0 for the primitive types or else an empty list or empty string. It is also possible to assign a value during declaration. This value can be a constant or an expression. Multiple variables of the same type can be declared on a single line.
+Variables receive an implicit default value when declared; 0 for the primitive types or else an empty list ([]) or empty string (""). It is also possible to assign a value during declaration. This value can be a constant or an expression. Multiple variables of the same type can be declared on a single line.
 ```
 char a = 'A', b = '\n', c
 int i = 10
@@ -59,7 +60,7 @@ float x = 3.14, y = 1E10
 str s = "abcd", t = "\n", u = ""
 list l = ['a', 2.1, "xyz"], m = []
 ```
-The type of a variable or constant is determined via the *.type* method.
+The type of a variable or constant can be determined via the *.type* method.
 ``` python
 >>> "abc".type
 = str
@@ -102,7 +103,7 @@ It is also possible to take slices of a list or string using indices. The absenc
 >>> "abcdef"[:-5]
 = a
 ```
-The number of elements in a list or characters in a string is returned by the *len* method.
+The number of elements in a list or number of characters in a string is returned by the *.len* method.
 ```
 >>> "abcdef".len
 = 6
@@ -124,14 +125,14 @@ Literal values can be appended to a list via the *+* operator if the literal is 
 >>> [3] + ["alfa"]
 = [3,"alfa"]
 ```
-The best way to append an element at the end of a list is via the *append* method.
+The best way to append an element at the end of a list is via the *.append* method.
 ```
 >>> list m
 >>> m.append(3.14)
 >>> print m
 [3.14]
 ```
-Inserting an element at any place in a list is done via *insert(before_index, element)*. Removing an element can only be done via its index. As always this can be an index from the beginning or from the end of the list.
+Inserting an element at any place in a list is done via *.insert(before_index, element)*. Removing an element can only be done via its index. As always this can be an index from the beginning or from the end of the list.
 ```
 >>> list m
 >>> m.insert(0, 3.14)  # insert at beginning of list
@@ -159,7 +160,7 @@ The binary operators are +, -, \*, / and the modulo operator %. Modulo can only 
 = [1,2,1,2]
 ```
 ###### Comparison
-The comparison operators are ==, !=, <>, <, <=, >, >=. Note that equality comparison uses two equal characters where assignment only used one. Lists cannot be compared.
+The comparison operators are ==, !=, in, <>, <, <=, >, >=. Note that equality comparison uses two equal characters where assignment only used one. Lists cannot be compared. The *in* operator is used to check if a value can be found in a sequence.
 ###### Logical
 The logical operators are *and*, *or* and *!* (being not). True is represented by a non-zero integer, falso being zero.
 ###### Order of evaluation
@@ -170,7 +171,7 @@ Expression evaluation follows the following rules of precedence:
  *	then multiplication and division (normal and modulo)
  *	then addition and subtraction
  *	then the comparisons < <= > and >=
- *	then the comparisons == and !=
+ *	then the comparisons == != and in
  * 	then logical *and*
  *	then logical *or*
  *	then assignment of values (normal and shorthand)
@@ -189,7 +190,7 @@ else
         print "i is less then zero"
 ```
 ###### Loops
-EXIN has two types of loops: *while*, and *do .. while*. The while loop evaluates the conditional expression before the loop is entered, whereas for the do .. while loop this is only done after the loop has been executed. So the statement block of a do .. while loop is executed at least once.
+EXIN has three types of loops: *while*, *do .. while* and *for .. in*. The while loop evaluates the conditional expression before the loop is entered, whereas for the do .. while loop this is only done after the loop has been executed. So the statement block of a do .. while loop is executed at least once.
 ```
 int n = 0
 while n
@@ -212,14 +213,14 @@ while 1
 ```
 This loop is executed infinitly because 1 always evaluates to true. Eventually the *if* statement with *break* makes sure the loop is terminiated once n equals 10.
 ##### Looping through lists and strings
-The *for .. in ..* statement cycles through the content of a list of string.
+The *for .. in sequence* loop cycles through the content of a list of string. As with the other loops *break* and *continue* can be used here.
 ```
 for element in [1, 2.0, "abc", 'c']
     print element, " ", element.type, "\n"
 ```
-It is not neccesary to define variable *element* upfront. If it does not exist it is automically created. The values which are assigned can be different for each element of the list. For a string element it is of course only assigned characters.
+It is not neccesary to define variable *element* upfront. If it does not exist it is automically created. The values which are assigned can be different for each element of the list. If the sequence is a string then of course element is only assigned characters.
 ##### Function definition
-Functions are defined using the *def* keyword followed by a function name and a pair of parenthesis containing the argument names separated by comma's. Even if a function has no arguments the parenthesis are mandatory. All arguments are passed by value. There is no type checking when the function is called, and more arguments can be sent to the function then are stated in the definition.
+Functions are defined using the *def* keyword followed by a function name and a pair of parenthesis containing the argument names separated by comma's. Even if a function has no arguments the parenthesis are mandatory. All arguments are passed by value. There is no type checking when the function is called, and more arguments can be sent to the function then are stated in the definition. Sending less arguments will result in an error.
 ```
 # Prepare Fibonacci sequence for n elements, return as list
 #
@@ -244,7 +245,7 @@ print "Fibonacci sequence for ", n, " elements: ", fibonacci(n), "\n\n"
 A function returns when it reaches the end of its statement block or when a *return* statement is encountered. When using the *return* statement a return value can be explicitly specified. Without this statement, or when using just *return* the return value is considered to be integer 0. The return value of a function can be used immediately, so a function can appear everywhere where a variable can appear. Any data type can be returned by a function, including lists and strings.
 Variables are defined within the scope of a function. Any variable defined outside of a function is considered global. Functions are always defined globally.
 ##### Importing modules
-Via the *import* statement program code from other files can be loaded. The code in any file which is imported is executed immediately. Its functions are added to the global list and any statement or declaration outside a function definition is executed. A module will only be imported once, repeated calls importing an already imported file have no effect.
+Via the *import* statement program code from other files can be loaded. The code in any file which is imported is executed immediately. Its functions are added to the global list and any statement or declaration outside a function definition is executed. A module will only be imported once, repeated calls importing an already imported file have no effect. Imports can be nested.
 ```
 str file = "file1.ext"
 
@@ -270,20 +271,20 @@ For an explantion of the EBNF notation used below see [EBNF syntax.txt](EBNF%20s
 ```
 /*	EXIN grammar.
  *
- *	For an interactive graphical representation paste this grammar into http://bottlecaps.de/rr/ui
+ *	For graphical representation use http://bottlecaps.de/rr/ui
  */
 
 program ::= (statement | NEWLINE)* EOF
 
 /* statements */
 
-statement ::= declaration_stmnt | import_stmt | print_stmnt | input_stmnt | return_stmnt | if_stmnt | while_stmnt | do_stmnt | break_stmnt | continue_stmnt | pass_stmnt | expression_stmnt
+statement ::= declaration_stmnt | import_stmt | print_stmnt | input_stmnt | return_stmnt | if_stmnt | while_stmnt | do_stmnt | for_stmnt | break_stmnt | continue_stmnt | pass_stmnt | expression_stmnt
 
 declaration_stmnt ::= variable_declaration | function_declaration
 
-variable_declaration ::= type identifier ( '=' assignment_expr )? ( ',' identifier ( '=' assignment_expr )? )* NEWLINE
+variable_declaration ::= var_type identifier ( '=' assignment_expr )? ( ',' identifier ( '=' assignment_expr )? )* NEWLINE
 
-type ::= 'char' | 'int' | 'float' | 'str' | 'list'
+var_type ::= 'char' | 'int' | 'float' | 'str' | 'list'
 
 function_declaration ::= 'def' identifier '(' (identifier ( ',' identifier )* )? ')' block
 
@@ -305,6 +306,8 @@ while_stmnt ::= 'while' expression block
 
 do_stmnt ::= 'do' block 'while' expression NEWLINE
 
+for_stmnt ::= 'for' IDENTIFIER 'in' sequence
+
 break_stmnt ::= 'break' NEWLINE
 
 continue_stmnt ::= 'continue' NEWLINE
@@ -323,7 +326,7 @@ logical_or_expr ::= logical_and_expr ( 'or' logical_or_expr )*
 
 logical_and_expr ::= equality_expr ( 'and' logical_and_expr )*
 
-equality_expr ::= relational_expr ( ( '==' | '!=' | '<>' ) equality_expr )*
+equality_expr ::= relational_expr ( ( '==' | '!=' | '<>' | 'in' ) equality_expr )*
 
 relational_expr ::= additive_expr ( ( '<'| '>' | '<=' | '>=' ) relational_expr )*
 
@@ -339,23 +342,27 @@ function_call ::= identifier '(' (assignment_expr ( ',' assignment_expr )* )? ')
 
 /* variables and constants */
 
-variable ::= numeric_variable | sequence_variable
+variable ::= ( numeric_variable | sequence_variable ) ( '.' method )?
 
 numeric_variable ::= char_variable | integer_variable | float_variable
 
-sequence_variable ::= ( string_variable | list_variable ) ( subscript? ( '.' method )? )
+sequence_variable ::= ( string_variable | list_variable ) ( subscript? )
 
-method ::= list_insert | list_append | list_remove | list_len | string_len
+sequence ::= ( string_variable | list_variable ) ( '[' slice ']' )?
+
+method ::= type | list_insert | list_append | list_remove | list_len | string_len
+
+type ::= 'type'
+
+string_len ::= 'len'
+
+list_len ::= 'len'
 
 list_insert ::= 'insert' '(' index ','  logical_or_expr ')'
 
 list_append ::= 'append' '(' logical_or_expr ')'
 
 list_remove ::= 'remove' '(' index ')'
-
-list_len ::= 'len'
-
-string_len ::= 'len'
 
 char_variable ::= 'identifier of variable of type char'
 
@@ -400,4 +407,5 @@ integer ::= ( '+' | '-' )? digit+
 float ::= ( '+' | '-' )? digit+ '.' ( digit+ )? ( ('e' | 'E') ( '+' | '-' )? digit+ )?
 
 digit ::= [0-9]
+
 ```

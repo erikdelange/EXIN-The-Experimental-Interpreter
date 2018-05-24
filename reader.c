@@ -117,7 +117,7 @@ static void print_current_line(void)
 			if (*p == '\n')
 				line++;
 
-		fprintf(stderr, ", line: %d\n", line);
+		fprintf(stderr, ", line %d\n", line);
 
 		/* print line */
 		while (*p && *p != '\n')

@@ -381,7 +381,7 @@ static Object *relational_expr(void)
 }
 
 
-/* Operators: ==  !=  <>
+/* Operators: ==  !=  <>  in 
  */
 static Object *equality_expr(void)
 {
@@ -399,6 +399,12 @@ static Object *equality_expr(void)
 		} else if (accept(NOTEQUAL)) {
 			rvalue = equality_expr();
 			result = obj_neq(lvalue, rvalue);
+			obj_decref(lvalue);
+			obj_decref(rvalue);
+			lvalue = result;
+		} else if (accept(IN)) {
+			rvalue = equality_expr();
+			result = obj_in(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
 			lvalue = result;

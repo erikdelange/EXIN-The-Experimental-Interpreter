@@ -490,7 +490,7 @@ Object *obj_in(Object *op1, Object *op2)
 		if (result != NULL)
 			obj_decref(result);
 		result = obj_eql(op1, obj_item(op2, i));
-		if (((IntObject *)result)->ival == 1)
+		if (obj_as_int(result) == 1)
 			break;
 	}
 	return result;
