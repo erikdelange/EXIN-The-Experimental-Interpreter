@@ -83,6 +83,8 @@ static Identifier *addIdentifier(Scope *level, const char *name)
 		if ((id = calloc(1, sizeof(Identifier))) == NULL)
 			error(OutOfMemoryError);
 
+		*id = identifier;
+		
 		id->next = level->first;
 		level->first = id;
 		if ((id->name = strdup(name)) == NULL)
@@ -105,6 +107,8 @@ static Identifier *addIdentifier(Scope *level, const char *name)
  */
 static void unbind(Identifier *self)
 {
+	debug_printf(DEBUGLEVEL3, "\nunbind: %s, %p", self->name, (void *)self->object);
+	
 	if (self->object) {
 		obj_decref(self->object);
 		self->object = NULL;
@@ -119,6 +123,8 @@ static void bind(Identifier *self, Object *obj)
 	if (self->object)
 		unbind(self);
 
+	debug_printf(DEBUGLEVEL3, "\nbind  : %s, %p", self->name, (void *)obj);
+	
 	self->object = obj;
 }
 
@@ -139,16 +145,18 @@ static void removeIdentifier(Identifier *id)
  */
 static void appendScopeLevel(void)
 {
-	Scope *scope;
+	Scope *level;
 
-	if ((scope = calloc(1, sizeof(Scope))) == NULL)
+	if ((level = calloc(1, sizeof(Scope))) == NULL)
 		error(OutOfMemoryError);
 
-	scope->parent = local;
+	*level = scope;
+	
+	level->parent = local;
 
-	local = scope;
+	local = level;
 	local->first = NULL;
-	local->level = 0;
+	local->indentlevel = 0;
 	local->indentation[0] = 0;
 }
 
@@ -160,17 +168,17 @@ static void appendScopeLevel(void)
 static void removeScopeLevel(void)
 {
 	Identifier *id, *next;
-	Scope *scope;
+	Scope *level;
 
 	if (local != global) {
-		scope = local;
-		local = scope->parent;
-		for (id = scope->first; id; ) {
+		level = local;
+		local = level->parent;
+		for (id = level->first; id; ) {
 			next = id->next;
 			removeIdentifier(id);
 			id = next;
 		}
-		free(scope);
+		free(level);
 	}
 }
 
@@ -192,7 +200,8 @@ Identifier identifier = {
 Scope scope = {
 	.parent = NULL,
 	.first = NULL,
-	.level = 0,
+	.indentlevel = 0,
+	.indentation[0] = 0,
 	.append_level = appendScopeLevel,
 	.remove_level = removeScopeLevel
 };

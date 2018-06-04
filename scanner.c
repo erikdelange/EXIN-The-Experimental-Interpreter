@@ -181,22 +181,22 @@ static token_t read_next_token(char *buffer)
 			continue;
 		} else if (ch == EOF) {
 			col = 0;  /* do we need more DEDENTs? */
-			if (col == local->indentation[local->level])
+			if (col == local->indentation[local->indentlevel])
 				return ENDMARKER;
 		} else
 			reader.pushch(ch);
 
-		if (col == local->indentation[local->level])
+		if (col == local->indentation[local->indentlevel])
 			break;  /* indentation has not changed */
-		else if (col > local->indentation[local->level]) {
-			if (local->level == MAXINDENT)
+		else if (col > local->indentation[local->indentlevel]) {
+			if (local->indentlevel == MAXINDENT)
 				error(SyntaxError, "max indentation level reached");
-			local->indentation[++local->level] = col;
+			local->indentation[++local->indentlevel] = col;
 			return INDENT;
 		} else {  /* col < local->indentation[local->level] */
-			if (--local->level < 0)
+			if (--local->indentlevel < 0)
 				error(SyntaxError, "inconsistent use of TAB and space in identation");
-			if (col != local->indentation[local->level]) {
+			if (col != local->indentation[local->indentlevel]) {
 				scanner.at_bol = true;  /* not yet at old indentation level */
 				reader.to_bol();
 			}

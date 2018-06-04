@@ -38,7 +38,8 @@ static int do_break = 0;		/* Busy quiting loop because of break  */
 static int do_continue = 0;		/* Busy quiting loop because of continue */
 
 
-/* Check if the current token matches t. If true then read the next token.
+/* Check if the current token matches t. If true then return 1 and read the
+ * next token, if false then return 0.
  */
 int accept(token_t t)
 {
@@ -50,7 +51,8 @@ int accept(token_t t)
 }
 
 
-/* Check if the current token matches t. If false stop with error message.
+/* The current token must match t. If it does then read the next token, if
+ * it does not then stop the interpreter with an error message.
  */
 int expect(token_t t)
 {

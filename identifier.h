@@ -21,7 +21,7 @@ extern Identifier identifier;
 typedef struct scope {
 	struct scope *parent;
 	Identifier *first;
-	int level;
+	int indentlevel;
 	int indentation[MAXINDENT];
 	void (*append_level)(void);
 	void (*remove_level)(void);
@@ -29,7 +29,7 @@ typedef struct scope {
 
 extern Scope scope;
 
-#define SCOPE_INIT	{ .parent = NULL, .first = NULL, .level = 0, { 0 } }
+#define SCOPE_INIT	{ .parent = NULL, .first = NULL, .indentlevel = 0, .indentation[0] = 0 }
 
 extern Scope *local;
 

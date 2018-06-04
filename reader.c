@@ -50,9 +50,9 @@ static int peekch(void)
  */
 static int pushch(int ch)
 {
-	if (reader.pos > reader.current->code) {
+	if (reader.pos > reader.current->code && ch != EOF) {
 		reader.pos--;
-		assert(*reader.pos == ch);
+		assert(*reader.pos == (char)ch);
 	}
 	return ch;
 }

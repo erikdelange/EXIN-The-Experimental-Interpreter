@@ -11,7 +11,7 @@
 #include "error.h"
 
 
-/* Table containing all error messages.
+/* Table containing all error messages. No sorting needed.
  */
 static struct {
 	int number;

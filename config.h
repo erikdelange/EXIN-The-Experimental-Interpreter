@@ -11,7 +11,7 @@
 #include <setjmp.h>
 #include <stdio.h>
 
-#define VERSION		"1.04"
+#define VERSION		"1.05"
 #define	BUFSIZE		256		/* maximum length of identifier name excl '\0' */
 #define LINESIZE 	256		/* maximum length of input line incl '\0' */
 #define MAXINDENT 	132		/* maximum number of indents */
@@ -51,6 +51,6 @@ extern jmp_buf return_address;
 #define DEBUGLEVEL0	0		/* no debug output */
 #define DEBUGLEVEL1	1		/* tokens only */
 #define DEBUGLEVEL2	2		/* LEVEL1 + function and block entry & exit */
-#define	DEBUGLEVEL3	3		/* LEVEL2 + object alloc() & free() */
+#define	DEBUGLEVEL3	3		/* LEVEL2 + object alloc() & free() * (un)bind() */
 
 #endif

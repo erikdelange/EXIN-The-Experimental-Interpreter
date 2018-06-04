@@ -8,7 +8,7 @@ Every source code file has an accompanying header file (e.g. *object.c*, *object
 When starting the interpreter with the -h argument - and if it has been compiled with the DEBUG option - the following message is printed.
 ```
 > .\exin -h
-EXIN version 1.02
+EXIN version 1.04
 usage: EXIN [options] file
 options
 -d[detail] = show debug info
@@ -50,13 +50,13 @@ Scanner scanner = {
 token = scanner.next();
 printf("%s", token.string);
 ```
-Program code is stored modules and accessed via the *module* struct. At least one module exists but via the *import* statement more can be loaded. See *reader.c* and *module.c* and struct *module* for the details.
+Program code is stored modules and accessed via the *module* struct. Modules must be loaded via the *import* statement. See *reader.c* and *module.c* and structs *reader* and *module* for the details.
 The scanner uses a reader (in file *reader.c*) to read individual characters from the program code. Similar to the *scanner* struct only a single *reader* struct containing variables and function calls is used. The reader is able move the read pointer to other places in the same module or between modules when it needs to do so because of function calls or loops.
 
 ![EXIN-software-structure.png](https://github.com/erikdelange/EXIN-The-Experimental-Interpreter/blob/master/EXIN-software-structure.png)
 
 ###### Not efficient
-When reading code the interpreter evaluates the characters which are read over and over. So long variables names are searched in the list with identifiers every time again. This can be time-consuming. Some interpreters first translate these names and/or keywords in shorter (e.g. one-byte) versions before starting interpretation which speeds up things. However the aim for this interpreter was simplicity and not speed.
+When reading code the interpreter evaluates the characters which are read over and over. So long variables names are searched in the list with identifiers every time again. This is not very efficient. Some interpreters first translate these names and/or keywords in shorter (e.g. one- or two-byte) versions before starting interpretation which speeds up things. However the aim for this interpreter was simplicity and not speed.
 ##### Variables
 Function names and variables are stored in lists with identifiers. Two global variables *global* and *local* in *identifier.c* point to the relevant lists with identifiers.
 An identifier is just a name. The value which belongs to a variable is stored separately in an object. This allows an identifier to point to any type of value. Using a uniform way to store values also makes operations on variables easy. Because all values are objects they are also used during expression evaluation (see *expression.c*). The generic functions to do unary and binary operations on objects can be found in *object.c*. The *obj_...* functions are actually wrappers. For each type of variable a separate file with the supported operations is created. See *number.c*, *string.c* and *list.c* for the detals and note that not all objects support the same operations. Again the obj_... wrapper calls functions in these files.

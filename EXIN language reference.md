@@ -5,9 +5,10 @@ EXIN is an easy to understand language which contains elements of Basic, C and P
 ##### Keywords
 The following keywords are reserved and may not be used as variable or function names.
 ```
-and      break    char     continue def      do       else     float    
-for      if       import   in       input    int      list     or
-pass     print    return   str      while
+and       break     char      continue  def       do
+else      float     for       if        import    in
+input     int       list      or        pass      print
+return    str       while
 ```
 ##### Code format
 Code consist of lines of plain text. Lines contain statements but can also be empty. Statements do not span lines but are terminated by the newline character. Indentation is used to group statements in blocks for control structures (if-else, do-while, while-do, for-in). For example
@@ -216,7 +217,7 @@ The *for .. in sequence* loop cycles through the content of a list of string. As
 for element in [1, 2.0, "abc", 'c']
     print element, " ", element.type, "\n"
 ```
-It is not neccesary to define variable *element* upfront. If it does not exist it is automatically created. The types of the values which are assigned can be different for each element of the list. If the sequence used in the *for .. in* loop is a string then of course element is only assigned characters.
+It is not neccesary to define variable *element* upfront. If it does not exist it is automatically created. The types of the values which are assigned can be different for each element of the list. If the sequence used in the *for .. in* loop is a string then of course *element* is only assigned characters.
 ##### Function definition
 Functions are defined using the *def* keyword followed by a function name and a pair of parenthesis containing the argument names separated by comma's. Even if a function has no arguments the parenthesis are mandatory. All arguments are passed by value. There is no type checking when the function is called, and more arguments can be sent to the function then are stated in the definition. Sending less arguments will result in an error.
 ```
