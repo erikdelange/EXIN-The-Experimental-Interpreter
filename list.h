@@ -32,7 +32,9 @@ extern ListNode *list_item(ListObject *list, int index);
 extern ListObject *list_slice(ListObject *list, int start, int end);
 extern Object *list_concat(ListObject *op1, ListObject *op2);
 extern Object *list_repeat(Object *op1, Object *op2);
-extern void listnode_insert(ListObject *list, int index, Object *obe);
+extern Object *list_eql(ListObject *op1, ListObject *op2);
+extern Object *list_neq(ListObject *op1, ListObject *op2);
+extern void listnode_insert(ListObject *list, int index, Object *obj);
 extern void listnode_append(ListObject *list, Object *obj);
 extern Object *listnode_remove(ListObject *list, int index);
 

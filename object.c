@@ -28,7 +28,7 @@
  *          result = operand1 operator operand2
  *
  *          The artihmetic operators are:   +  -  *  /  %
- *          The comparison operators are:   ==  !=  <>  <  <=  >  >=
+ *          The comparison operators are:   ==  !=  <>  <  <=  >  >=  in
  *          The logical operators are:      and  or
  *
  * Which operations are supported depends on the object type. Numerical object
@@ -151,10 +151,10 @@ void obj_print(Object *obj)
  */
 Object *obj_scan(objecttype_t type)
 {
-	char buffer[LINESIZE] = "";
+	char buffer[LINESIZE + 1] = "";
 	Object *obj = NULL;
 
-	fgets(buffer, LINESIZE, stdin);
+	fgets(buffer, LINESIZE + 1, stdin);
 	buffer[strcspn(buffer, "\r\n")] = 0;  /* remove trailing newline */
 
 	switch (type) {
@@ -350,6 +350,8 @@ Object *obj_eql(Object *op1, Object *op2)
 		return number_eql(op1, op2);
 	else if (isString(op1) && isString(op2))
 		return str_eql(op1, op2);
+	else if (isList(op1) && isList(op2))
+		return list_eql((ListObject *)op1, (ListObject *)op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation ==: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
@@ -368,6 +370,8 @@ Object *obj_neq(Object *op1, Object *op2)
 		return number_neq(op1, op2);
 	else if (isString(op1) && isString(op2))
 		return str_neq(op1, op2);
+	else if (isList(op1) && isList(op2))
+		return list_neq((ListObject *)op1, (ListObject *)op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation !=: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));

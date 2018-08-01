@@ -3,7 +3,7 @@
 ##### General
 EXIN is an easy to understand language which contains elements of Basic, C and Python.
 ##### Keywords
-The following keywords are reserved and may not be used as variable or function names.
+The following keywords are reserved and may not be used as variable or function name.
 ```
 and       break     char      continue  def       do
 else      float     for       if        import    in
@@ -11,7 +11,7 @@ input     int       list      or        pass      print
 return    str       while
 ```
 ##### Code format
-Code consist of lines of plain text. Lines contain statements but can also be empty. Statements do not span lines but are terminated by the newline character. Indentation is used to group statements in blocks for control structures (if-else, do-while, while-do, for-in). For example
+Code consist of lines of plain text. Lines contain statements but can also be empty. Statements do not span lines but are terminated by a newline character. Indentation is used to group statements in blocks for control structures (if-else, do-while, while-do, for-in). For example
 ```
 int a
 while a != 10
@@ -25,11 +25,11 @@ while a != 10
     print a
 a += 1
 ```
-The first code snippet prints all digits whereas the second will result in an infinite loop.
+The first code snippet prints all digits whereas the second one is an infinite loop.
 
 To avoid confusion it is best to use only tabs for indentation. However spaces will also work. Tabs and spaces can be mixed as long as the interpreter knows how much spaces represent a tab. The default is 4 but this can modified by command line option -t.
 
-A hash sign (#) identifies the start of a comment. All text after the hash sign until the end of the line is discarded.
+A hash sign (*#*) indicates the start of a comment. All text after the hash sign until the end of the line is discarded by the interpreter.
 ```
 # This is a line containing only a comment
 
@@ -39,7 +39,7 @@ Code execution always starts at the top of a file.
 ##### Data types
 The three primitive data types are *char*, *int* and *float*. They are used for storing characters, integers and floating point numbers and match the C data types char, long and double.
 
-Two additional data types are built on top of the primitive types: strings and lists. These are sequence data types as the can store multiple values. Lists can contain any data type, including other lists. Their data type is *list*. A special variant of the list is the string (data type *str*) which can contain only characters.
+Two additional data types are built on top of the primitive types: strings and lists. These are sequence data types as the can store multiple values which can be accessed by index. Lists can contain any data type, including other lists. Their data type is *list*. A special variant of the list is the string (data type *str*) which can contain only characters.
 
 EXIN is strongly typed and requires that every variable is declared before it can be used.
 ```
@@ -144,7 +144,7 @@ Inserting an element at any place in a list is done via *.insert(before_index, e
 ```
 ##### Operators
 ###### Arithmetic
-The binary operators are +, -, \*, / and the modulo operator %. Modulo can only be used on integers. For usage in assignments the shorthands operators +=, -=, \*=, /= and \%= are available instead of (for example) n = n + 1. Using addition on lists or strings will result in list - or string concatenation. Multiplication of a list or string by a number will result in repetition of the list or string.
+The binary operators are +, -, \*, / and the modulo operator %. Modulo can only be used on integers. For usage in assignments the shorthands operators +=, -=, \*=, /= and \%= are available instead of (for example) n = n + 1. Using addition on lists or strings will result in list - or string concatenation. Multiplication of a list or string by a number results in the repetition of the list or string.
 ```
 >>> "abc" + "def"
 = abcdef
@@ -159,7 +159,7 @@ The binary operators are +, -, \*, / and the modulo operator %. Modulo can only 
 = [1,2,1,2]
 ```
 ###### Comparison
-The comparison operators are *==, !=, in, <>, <, <=, >, >=*. Note that equality comparison uses two equal characters where assignment only used one. Lists cannot be compared. The *in* operator is used to check if a value can be found in a sequence.
+The comparison operators are *==, !=, in, <>, <, <=, >, >=*. Note that equality comparison uses two equal characters where assignment only used one. Lists and strings can be only be compared using *==* and *!=*. The *in* operator is used to check if a value can be found in a sequence.
 ###### Logical
 The logical operators are *and*, *or* and *!* (being not). True is represented by a non-zero integer, falso being zero.
 ###### Order of evaluation
@@ -210,14 +210,14 @@ while 1
         break
     n += 1
 ```
-This loop is executed infinitly because 1 always evaluates to true. Eventually the *if* statement with *break* makes sure the loop is terminiated once n equals 10.
+This loop is executed infinitly because 1 always evaluates to true. However eventually the *if* statement with *break* makes sure the loop is terminiated once n equals 10.
 ##### Looping through lists and strings
 The *for .. in sequence* loop cycles through the content of a list of string. As with the other loops *break* and *continue* can be used here.
 ```
 for element in [1, 2.0, "abc", 'c']
     print element, " ", element.type, "\n"
 ```
-It is not neccesary to define variable *element* upfront. If it does not exist it is automatically created. The types of the values which are assigned can be different for each element of the list. If the sequence used in the *for .. in* loop is a string then of course *element* is only assigned characters.
+It is not neccesary to define variable *element* upfront because it is just a reference to a variable in the list. In C this would be called a pointer. You can use it to change the value in the list. The types of the values which are assigned can be different for each element of the list. If the sequence used in the *for .. in* loop is a string then of course *element* is only assigned characters. Strings are read only.
 ##### Function definition
 Functions are defined using the *def* keyword followed by a function name and a pair of parenthesis containing the argument names separated by comma's. Even if a function has no arguments the parenthesis are mandatory. All arguments are passed by value. There is no type checking when the function is called, and more arguments can be sent to the function then are stated in the definition. Sending less arguments will result in an error.
 ```

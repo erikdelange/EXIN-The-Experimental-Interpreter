@@ -11,9 +11,9 @@
 #include <setjmp.h>
 #include <stdio.h>
 
-#define VERSION		"1.05"
+#define VERSION		"1.06"
 #define	BUFSIZE		256		/* maximum length of identifier name excl '\0' */
-#define LINESIZE 	256		/* maximum length of input line incl '\0' */
+#define LINESIZE 	256		/* maximum length of input line excl '\0' */
 #define MAXINDENT 	132		/* maximum number of indents */
 #define TABSIZE 	4		/* default spaces per tab */
 

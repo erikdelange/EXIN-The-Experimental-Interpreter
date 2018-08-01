@@ -162,7 +162,7 @@ Object *str_neq(Object *op1, Object *op2)
 CharObject *str_item(StrObject *str, int index)
 {
 	CharObject *obj;
-	int len;
+	int_t len;
 
 	len = length(str);
 
@@ -182,7 +182,7 @@ StrObject *str_slice(StrObject *obj, int start, int end)
 {
 	StrObject *slice;
 	char *src, *dst;
-	int len;
+	int_t len;
 
 	len = length(obj);
 
