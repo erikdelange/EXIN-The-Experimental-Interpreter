@@ -11,7 +11,7 @@
 #include <setjmp.h>
 #include <stdio.h>
 
-#define VERSION		"1.06"
+#define VERSION		"1.07"
 #define	BUFSIZE		256		/* maximum length of identifier name excl '\0' */
 #define LINESIZE 	256		/* maximum length of input line excl '\0' */
 #define MAXINDENT 	132		/* maximum number of indents */
@@ -21,7 +21,7 @@
 #define	int_t	long		/* Basic type for INT_T */
 #define	float_t	double		/* Basic type for FLOAT_T */
 
-/* 	Struct holding global configuration variables.
+/* 	Struct containing all global configuration variables.
  */
 typedef struct {
 	int debug;

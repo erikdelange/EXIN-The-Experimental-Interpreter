@@ -1,7 +1,7 @@
 /* module.c
  *
- * Code is grouped in files called modules. Modules are loaded via the
- * module.new() function. Every module object contains a reference to
+ * Code is grouped in modules. Each module is a file. Modules are loaded via
+ * the module.new() function. Every module object contains a reference to
  * the loaded code of that module. Module objects are stored in a
  * singly linked list starting at 'modulehead'.
  *
@@ -35,15 +35,14 @@ static Module *search(const char *name)
 			break;
 
 	return m;
-
 }
 
 
-/* Load the code for a module.
+/* Load the code for a module. A closing 0 is added at the end of the code.
  *
  * self		pointer to module object
  * name		filename (may include path)
- * return	1 if succesfull else 0
+ * return	1 if successfull else 0
  */
 static int load(Module *self, const char *name)
 {

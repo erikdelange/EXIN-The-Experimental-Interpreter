@@ -10,7 +10,7 @@
 typedef struct reader {
 	struct module *current;	/* currently reading from this module */
 	char *pos;				/* position of next character to read */
-	char *bol;				/* beginning of current line */
+	char *bol;				/* position of beginning of current line */
 	
 	int (*nextch)(void);	/* read the next character */
 	int (*peekch)(void);	/* peek the next character */

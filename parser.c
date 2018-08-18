@@ -2,7 +2,8 @@
  *
  * Code parser.
  *
- * See also: https://en.wikipedia.org/wiki/Recursive_descent_parser
+ * See also: https://en.wikipedia.org/wiki/Recursive_descent_parser for
+ * an explanation of the setup of the parser.
  *
  * 1995	K.W.E. de Lange
  */
@@ -560,7 +561,7 @@ Object *function_call(PositionObject *addr)
 	if (setjmp(return_address) == 0)  /* for return statement */
 		block();
 	memcpy(&return_address, &temp, sizeof(jmp_buf));
-	
+
 	debug_printf(DEBUGLEVEL2, "\n-----: %s", "End function");
 
 	/* now returned from function */

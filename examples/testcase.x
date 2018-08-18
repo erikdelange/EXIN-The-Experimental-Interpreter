@@ -1,2 +1,3 @@
-for i in [0,1,2,3]
-    print "i = ", i, "\n"
+while 0
+    while 0
+        pass

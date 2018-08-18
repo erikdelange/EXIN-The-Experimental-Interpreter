@@ -22,9 +22,10 @@
  */
 static int nextch(void)
 {
-	if (*reader.pos == 0)
+	if (*reader.pos == 0) {
+        reader.bol = reader.pos;
 		return EOF;
-	else {
+	} else {
 		if (reader.pos > reader.current->code && *(reader.pos - 1) == '\n')
 			reader.bol = reader.pos;
 		return (unsigned int)*reader.pos++;
@@ -134,7 +135,7 @@ static void import(const char *filename)
 	jmp_buf temp;
 
 	if (module.search(filename) != NULL)
-		return;  /* import only done once */
+		return;  /* import is only done once */
 
 	reader.current = module.new(filename);
 	reader.reset();
