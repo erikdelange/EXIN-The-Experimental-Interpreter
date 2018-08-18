@@ -207,6 +207,8 @@ void statement(void)
 		do_break = 1;
 	else if (accept(CONTINUE))
 		do_continue = 1;
+    else if (accept(ENDMARKER))
+        ;
 	else
 		expression_stmnt();
 }
