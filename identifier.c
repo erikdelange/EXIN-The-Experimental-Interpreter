@@ -84,7 +84,7 @@ static Identifier *addIdentifier(Scope *level, const char *name)
 			error(OutOfMemoryError);
 
 		*id = identifier;
-		
+
 		id->next = level->first;
 		level->first = id;
 		if ((id->name = strdup(name)) == NULL)
@@ -107,8 +107,8 @@ static Identifier *addIdentifier(Scope *level, const char *name)
  */
 static void unbind(Identifier *self)
 {
-	debug_printf(DEBUGLEVEL3, "\nunbind: %s, %p", self->name, (void *)self->object);
-	
+	debug_printf(DEBUGALLOC, "\nunbind: %s, %p", self->name, (void *)self->object);
+
 	if (self->object) {
 		obj_decref(self->object);
 		self->object = NULL;
@@ -123,8 +123,8 @@ static void bind(Identifier *self, Object *obj)
 	if (self->object)
 		unbind(self);
 
-	debug_printf(DEBUGLEVEL3, "\nbind  : %s, %p", self->name, (void *)obj);
-	
+	debug_printf(DEBUGALLOC, "\nbind  : %s, %p", self->name, (void *)obj);
+
 	self->object = obj;
 }
 
@@ -151,7 +151,7 @@ static void appendScopeLevel(void)
 		error(OutOfMemoryError);
 
 	*level = scope;
-	
+
 	level->parent = local;
 
 	local = level;

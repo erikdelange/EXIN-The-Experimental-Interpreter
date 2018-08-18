@@ -38,7 +38,7 @@ extern jmp_buf return_address;
 #ifdef DEBUG
 	#define debug_printf(level, fmt, ...) \
 				do { \
-					if (config.debug >= level) \
+					if (config.debug & (level)) \
 						fprintf(stderr, fmt, __VA_ARGS__); } \
 				while (0)
 #else
@@ -48,9 +48,10 @@ extern jmp_buf return_address;
 
 /* debug logging detail levels:
  */
-#define DEBUGLEVEL0	0		/* no debug output */
-#define DEBUGLEVEL1	1		/* tokens only */
-#define DEBUGLEVEL2	2		/* LEVEL1 + function and block entry & exit */
-#define	DEBUGLEVEL3	3		/* LEVEL2 + object alloc() & free() * (un)bind() */
+#define NODEBUG 	    0	/* no debug output */
+#define DEBUGTOKEN      1	/* show tokens during execution */
+#define DEBUGBLOCK	    2	/* show function and block entry & exit */
+#define	DEBUGALLOC	    4	/* show object alloc() & free() * (un)bind() */
+#define DEBUGSCANONLY   8   /* show tokens during function scan */
 
 #endif

@@ -94,7 +94,8 @@ static void function_declaration(void)
 	reader.reset();
 
 	/* avoid debug output when scanning for functions */
-	tmp = config.debug, config.debug = 0;
+	tmp = config.debug;
+    config.debug = (config.debug & DEBUGSCANONLY) ? DEBUGTOKEN : 0;
 
 	do {
 		if (accept(DEFFUNC)) {
@@ -110,7 +111,7 @@ static void function_declaration(void)
 
 	config.debug = tmp;
 
-	debug_printf(DEBUGLEVEL2, "\n-----: %s", "Start execution");
+	debug_printf(DEBUGBLOCK, "\n-----: %s", "Start execution");
 
 	reader.reset();
 }
@@ -123,7 +124,7 @@ static void function_declaration(void)
  */
 static void skip_function(void)
 {
-	debug_printf(DEBUGLEVEL2, "\n-----: %s", "Skip function");
+	debug_printf(DEBUGBLOCK, "\n-----: %s", "Skip function");
 
 	expect(IDENTIFIER);
 	expect(LPAR);
@@ -133,7 +134,7 @@ static void skip_function(void)
 
 	skip_block();
 
-	debug_printf(DEBUGLEVEL2, "\n-----: %s", "End skip function");
+	debug_printf(DEBUGBLOCK, "\n-----: %s", "End skip function");
 }
 
 
@@ -147,7 +148,7 @@ static void skip_block(void)
 {
 	int level = 1;
 
-	debug_printf(DEBUGLEVEL2, "\n-----: %s", "Skip block");
+	debug_printf(DEBUGBLOCK, "\n-----: %s", "Skip block");
 
 	expect(NEWLINE);
 	expect(INDENT);
@@ -160,7 +161,7 @@ static void skip_block(void)
 			level--;
 	} while (level && scanner.token != ENDMARKER);
 
-	debug_printf(DEBUGLEVEL2, "\n-----: %s", "End skip block");
+	debug_printf(DEBUGBLOCK, "\n-----: %s", "End skip block");
 
 	scanner.next();
 }
@@ -223,7 +224,7 @@ void statement(void)
  */
 static void block(void)
 {
-	debug_printf(DEBUGLEVEL2, "\n-----: %s", "Start block");
+	debug_printf(DEBUGBLOCK, "\n-----: %s", "Start block");
 
 	expect(NEWLINE);
 	expect(INDENT);
@@ -245,7 +246,7 @@ static void block(void)
 		}
 	}
 
-	debug_printf(DEBUGLEVEL2, "\n-----: %s", "End block");
+	debug_printf(DEBUGBLOCK, "\n-----: %s", "End block");
 }
 
 
@@ -545,7 +546,7 @@ Object *function_call(PositionObject *addr)
 	jmp_buf temp;
 	Object *obj;
 
-	debug_printf(DEBUGLEVEL2, "\n-----: %s", "Start function");
+	debug_printf(DEBUGBLOCK, "\n-----: %s", "Start function");
 
 	arglist = push_arguments();
 	/* token is now RPAR of function call */
@@ -564,7 +565,7 @@ Object *function_call(PositionObject *addr)
 		block();
 	memcpy(&return_address, &temp, sizeof(jmp_buf));
 
-	debug_printf(DEBUGLEVEL2, "\n-----: %s", "End function");
+	debug_printf(DEBUGBLOCK, "\n-----: %s", "End function");
 
 	/* now returned from function */
 	if (return_value == NULL)

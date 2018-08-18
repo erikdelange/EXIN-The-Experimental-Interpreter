@@ -102,7 +102,7 @@ Object *obj_alloc(objecttype_t type)
 	if (obj == NULL)
 		error(OutOfMemoryError);
 
-	debug_printf(DEBUGLEVEL3, "\n%p: alloc %s", (void *)obj, TYPENAME(obj));
+	debug_printf(DEBUGALLOC, "\n%p: alloc %s", (void *)obj, TYPENAME(obj));
 
 	obj_incref(obj);  /* initial refcount = 1 */
 	return obj;

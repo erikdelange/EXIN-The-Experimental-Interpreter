@@ -16,7 +16,7 @@ static NoneObject *none_alloc(void)
 
 static void none_free(NoneObject *obj)
 {
-	debug_printf(DEBUGLEVEL3, "\n%p: free %s", (void *)obj, TYPENAME(obj));
+	debug_printf(DEBUGALLOC, "\n%p: free %s", (void *)obj, TYPENAME(obj));
 }
 
 

@@ -36,7 +36,7 @@ static void list_free(ListObject *list)
 {
 	Object *obj;
 
-	debug_printf(DEBUGLEVEL3, "\n%p: free %s\n", (void *)list, TYPENAME(list));
+	debug_printf(DEBUGALLOC, "\n%p: free %s\n", (void *)list, TYPENAME(list));
 
 	while ((obj = listnode_remove(list, 0)) != NULL)
 		obj_decref(obj);
@@ -108,7 +108,7 @@ static ListNode *listnode_alloc(void)
  */
 static void listnode_free(ListNode *node)
 {
-	debug_printf(DEBUGLEVEL3, "\n%p: free %s", (void *)node, TYPENAME(node));
+	debug_printf(DEBUGALLOC, "\n%p: free %s", (void *)node, TYPENAME(node));
 
 	if (node->obj)
 		obj_decref(node->obj);

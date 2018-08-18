@@ -1,4 +1,4 @@
-# EXIN - The Experimental Interpreter
+# EXIN - An Experimental Interpreter
 
 EXIN is an exercise in defining a progamming language and writing an interpreter for it. Both are meant to be as simple as possible to make it easy to understand how the interpreter code is structured and to be able to add new features. The language resembles Basic, C and Python. This is an example of EXIN code:
 ```
