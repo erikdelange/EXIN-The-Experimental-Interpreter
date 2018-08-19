@@ -210,7 +210,7 @@ def fibonacci(n)
     return fib
 
 int n = 10
-print " for ", n, " elements: ", fibonacci(n), "\n\n"
+print "for ", n, " elements: ", fibonacci(n), "\n\n"
 
 
 # -----------------------------------

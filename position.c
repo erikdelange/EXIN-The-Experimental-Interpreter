@@ -29,7 +29,7 @@ static PositionObject *pos_alloc(void)
 
 static void pos_free(PositionObject *obj)
 {
-	debug_printf(DEBUGALLOC, "\n%p: free %s", (void *)obj, TYPENAME(obj));
+	debug_printf(DEBUGALLOC, "\n%p: free %-17s", (void *)obj, TYPENAME(obj));
 	free(obj);
 }
 

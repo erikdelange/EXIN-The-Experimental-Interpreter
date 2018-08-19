@@ -1,6 +1,7 @@
 /* main.c
  *
- * This is the interpreters main program.
+ * The interpreters main program. Handles command line arguments
+ * and starts execution of the code in the first module.
  *
  * 2018	K.W.E. de Lange
  */
@@ -51,6 +52,7 @@ int	main(int argc, char **argv)
 	char ch;
 	char *executable = basename(*argv);
 
+    /* decode flags on the command line */
 	while (--argc > 0 && (*++argv)[0] == '-') {
 		ch = *++argv[0];
         switch (ch) {
@@ -72,7 +74,7 @@ int	main(int argc, char **argv)
                     config.tabsize = TABSIZE;
                 break;
             default:
-                fprintf(stderr, "%s: unknown option %c\n", executable, ch);
+                fprintf(stderr, "%s: unknown option -%c\n", executable, ch);
                 usage(executable);
                 return 0;
         }

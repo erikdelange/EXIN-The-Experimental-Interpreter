@@ -33,7 +33,7 @@ static StrObject *str_alloc(void)
 
 static void str_free(StrObject *obj)
 {
-	debug_printf(DEBUGALLOC, "\n%p: free %s", (void *)obj, TYPENAME(obj));
+	debug_printf(DEBUGALLOC, "\n%p: free %-17s", (void *)obj, TYPENAME(obj));
 
 	free(obj->sptr);
 	free(obj);

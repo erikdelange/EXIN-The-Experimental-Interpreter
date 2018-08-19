@@ -120,7 +120,7 @@ static token_t next_token(void)
 		scanner.peeked = 0;
 	}
 
-	debug_printf(DEBUGTOKEN, "\ntoken: %-20s %-20s", \
+	debug_printf(DEBUGTOKEN, "\ntoken: %-33s%s", \
 							  tokenName(scanner.token), scanner.string);
 
 	return scanner.token;

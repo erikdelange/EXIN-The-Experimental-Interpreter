@@ -2,7 +2,7 @@
  *
  * Code parser.
  *
- * See also: https://en.wikipedia.org/wiki/Recursive_descent_parser for
+ * See https://en.wikipedia.org/wiki/Recursive_descent_parser for
  * an explanation of the setup of the parser.
  *
  * 1995	K.W.E. de Lange
@@ -111,7 +111,7 @@ static void function_declaration(void)
 
 	config.debug = tmp;
 
-	debug_printf(DEBUGBLOCK, "\n-----: %s", "Start execution");
+	debug_printf(DEBUGBLOCK, "\n------: %-32s", "Start execution");
 
 	reader.reset();
 }
@@ -124,7 +124,7 @@ static void function_declaration(void)
  */
 static void skip_function(void)
 {
-	debug_printf(DEBUGBLOCK, "\n-----: %s", "Skip function");
+	debug_printf(DEBUGBLOCK, "\n------: %-32s%s", "Skip function", scanner.string);
 
 	expect(IDENTIFIER);
 	expect(LPAR);
@@ -134,7 +134,7 @@ static void skip_function(void)
 
 	skip_block();
 
-	debug_printf(DEBUGBLOCK, "\n-----: %s", "End skip function");
+	debug_printf(DEBUGBLOCK, "\n------: %-32s", "End skip function");
 }
 
 
@@ -148,7 +148,7 @@ static void skip_block(void)
 {
 	int level = 1;
 
-	debug_printf(DEBUGBLOCK, "\n-----: %s", "Skip block");
+	debug_printf(DEBUGBLOCK, "\n------: %-32s", "Skip block");
 
 	expect(NEWLINE);
 	expect(INDENT);
@@ -161,7 +161,7 @@ static void skip_block(void)
 			level--;
 	} while (level && scanner.token != ENDMARKER);
 
-	debug_printf(DEBUGBLOCK, "\n-----: %s", "End skip block");
+	debug_printf(DEBUGBLOCK, "\n------: %-32s", "End skip block");
 
 	scanner.next();
 }
@@ -224,7 +224,7 @@ void statement(void)
  */
 static void block(void)
 {
-	debug_printf(DEBUGBLOCK, "\n-----: %s", "Start block");
+	debug_printf(DEBUGBLOCK, "\n------: %-32s", "Start block");
 
 	expect(NEWLINE);
 	expect(INDENT);
@@ -246,7 +246,7 @@ static void block(void)
 		}
 	}
 
-	debug_printf(DEBUGBLOCK, "\n-----: %s", "End block");
+	debug_printf(DEBUGBLOCK, "\n------: %-32s", "End block");
 }
 
 
@@ -492,7 +492,14 @@ static void	print_stmnt(void)
 
 	do {
 		obj = assignment_expr();
+        #ifdef DEBUG
+        //set ANSI color (does not work, so use indent)
+        printf("\n>>>>>:%-33s%c", " ", '>');
+        #endif
 		obj_print(obj);
+        #ifdef DEBUG
+        //reset color
+        #endif
 		obj_decref(obj);
 	} while (accept(COMMA));
 
@@ -546,7 +553,7 @@ Object *function_call(PositionObject *addr)
 	jmp_buf temp;
 	Object *obj;
 
-	debug_printf(DEBUGBLOCK, "\n-----: %s", "Start function");
+	debug_printf(DEBUGBLOCK, "\n------: %-32s", "Start function");
 
 	arglist = push_arguments();
 	/* token is now RPAR of function call */
@@ -565,7 +572,7 @@ Object *function_call(PositionObject *addr)
 		block();
 	memcpy(&return_address, &temp, sizeof(jmp_buf));
 
-	debug_printf(DEBUGBLOCK, "\n-----: %s", "End function");
+	debug_printf(DEBUGBLOCK, "\n------: %-32s", "End function");
 
 	/* now returned from function */
 	if (return_value == NULL)
