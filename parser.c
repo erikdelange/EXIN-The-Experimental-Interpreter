@@ -493,13 +493,10 @@ static void	print_stmnt(void)
 	do {
 		obj = assignment_expr();
         #ifdef DEBUG
-        //set ANSI color (does not work, so use indent)
-        printf("\n>>>>>:%-33s%c", " ", '>');
+        if (config.debug >= DEBUGTOKEN)
+            printf("\n>>>>>:%-33s%c", " ", '>');
         #endif
 		obj_print(obj);
-        #ifdef DEBUG
-        //reset color
-        #endif
 		obj_decref(obj);
 	} while (accept(COMMA));
 
