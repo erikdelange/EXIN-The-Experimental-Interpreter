@@ -59,9 +59,9 @@ void error(int number, ...)
 		reader.print_current_line();
 	}
 
-	fprintf(stderr, "%s", errors[number].description);
+	fprintf(stderr, "%s", errors[i].description);
 
-	if (errors[number].print_extra_info == 1) {
+	if (errors[i].print_extra_info == 1) {
 		fprintf(stderr, ": ");
 		format = va_arg(argp, char *);
 		if (format)

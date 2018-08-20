@@ -38,7 +38,7 @@ static Module *search(const char *name)
 }
 
 
-/* Load the code for a module. A closing newline and 0 are added at the end
+/* Load the code for a module. Two closing newlines and 0 are added at the end
  * of the code.
  *
  * self		pointer to module object
@@ -54,12 +54,13 @@ static int load(Module *self, const char *name)
 
 	if (_stat(name, &stat_buffer) == 0) {
 		self->size = stat_buffer.st_size;
-		if ((self->code = calloc(self->size + 2, sizeof(char))) != NULL) {
+		if ((self->code = calloc(self->size + 3, sizeof(char))) != NULL) {
 			if ((fp = fopen(name, "r")) != NULL) {
 				self->size = fread(self->code, sizeof(char), self->size, fp);
 				fclose(fp);
                 self->code[self->size] = '\n';
-				self->code[self->size + 1] = 0;
+				self->code[self->size + 1] = '\n';
+                self->code[self->size + 2] = 0;
 				return 1;
 			} else {
 				free(self->code);

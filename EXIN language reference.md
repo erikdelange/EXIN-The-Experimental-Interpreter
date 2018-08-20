@@ -1,7 +1,7 @@
 # EXIN Language Reference
 
 ##### General
-EXIN is an easy to understand language which contains elements of Basic, C and Python.
+EXIN is a language which is easy to understand and contains elements of Basic, C and Python.
 ##### Keywords
 The following keywords are reserved and may not be used as variable or function name.
 ```
@@ -39,7 +39,7 @@ Code execution always starts at the top of a file.
 ##### Data types
 The three primitive data types are *char*, *int* and *float*. They are used for storing characters, integers and floating point numbers and match the C data types char, long and double.
 
-Two additional data types are built on top of the primitive types: strings and lists. These are sequence data types as the can store multiple values which can be accessed by index. Lists can contain any data type, including other lists. Their data type is *list*. A special variant of the list is the string (data type *str*) which can contain only characters.
+On top of these primitive types two additional data types are built: strings and lists. These are sequence data types as the can store multiple values which can be accessed by index. Lists can contain any data type, including other lists. Their data type is *list*. A special variant of the list is the string (data type *str*) which can contain only characters.
 
 EXIN is strongly typed and requires that every variable is declared before it can be used.
 ```
@@ -59,7 +59,7 @@ float x = 3.14, y = 1E10
 str s = "abcd", t = "\n", u = ""
 list l = ['a', 2.1, "xyz"], m = []
 ```
-The type of a variable or constant can be determined via the *.type* method.
+The type of a variable or constant can be retreived via the *.type* method.
 ``` python
 >>> "abc".type
 = str

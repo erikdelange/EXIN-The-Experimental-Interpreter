@@ -1,6 +1,6 @@
 # EXIN Software Architecture
 
-The interpreter is designed to be simple to make it easy to understand its workings. The interpreter implements the language grammar as described in [EXIN EBNF Syntax Diagram](EXIN%20syntax%20diagram.pdf).
+The interpreters design is simple to make it easy to understand its workings. The interpreter implements the language grammar as described in [EXIN EBNF Syntax Diagram](EXIN%20syntax%20diagram.pdf).
 ##### Interpreter code
 The interpreter is written in C. To build the interpreter I used the GCC C compiler (version 8.1.0) from MinGW-w64. As IDE I used CodeLite. When setting up a project in CodeLite add DEBUG to the preprocessor constants if you want the interpreter to be able to show various levels of debug information. If you want to debug the C code using CodeLite also install the advised TDM compiler suite and set the debugger path to gdb64 in the TDM directory.
 Every source code file has an accompanying header file (e.g. *object.c*, *object.h*). All source and header files reside in the same directory. At the beginning of most files an short explanation of its function is placed in the comments.

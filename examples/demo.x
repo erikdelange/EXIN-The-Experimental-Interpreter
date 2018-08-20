@@ -107,10 +107,10 @@ print newline, "while loop", newline
 
 def while_loop(v)
     while (v += 1) != 5
-        print "v = ", v, " "
+        print "v = ", v, newline
 
 while_loop(0)
-print '\n', '\n'
+print '\n'
 
 
 # -------------
@@ -120,11 +120,11 @@ print "do while loop", newline
 
 def do_loop(v)
     do
-        print "v = ", v += 1, " "
+        print "v = ", v += 1, newline
     while v < 5
 
 do_loop(0)
-print '\n', '\n'
+print '\n'
 
 
 # -------------------
@@ -192,8 +192,6 @@ print "create_list(6)[2:-2]= ", create_list(6)[2:-2], "\n\n"
 # ---------------------------------------------------------
 # Prepare Fibonacci sequence for n elements, return as list
 #
-print "Fibonacci sequence"
-
 def fibonacci(n)
     list fib
     int f0 = 0, f1 = 1, fn, i
@@ -210,7 +208,7 @@ def fibonacci(n)
     return fib
 
 int n = 10
-print "for ", n, " elements: ", fibonacci(n), "\n\n"
+print "Fibonacci sequence for ", n, " elements: ", fibonacci(n), "\n\n"
 
 
 # -----------------------------------
@@ -238,15 +236,16 @@ def power(g, e)
     return x
 
 print "Direct use of function return value: "
+
 print "2^3 + 1.1 = ", power(2, 3) + 1.1, newline, newline
 
 
 # ----------------------------------------------------------------------
-print "Scientific notation of float constants: 2.1E2 = ", 2.1E2, newline
+print "Scientific notation of float constants: 2.1E2 = ", 2.1E2, newline, newline
 
 
 # -----------------------------------------------------------
 # Return from EXIN with a calculated value (script exit code must be 7)
 #
-print "\nThis script will now exit with a return value of ", 1 + 2 * 3
+print "This script will now exit with a return value of ", 1 + 2 * 3
 return 1 + 2 * 3

@@ -368,7 +368,7 @@ void listnode_insert(ListObject *list, int index, Object *obj)
 
 /* Remove a listnode from a list.
  *
- * Index must exists (nmbering starts at 0).
+ * Index must exist (numbering starts at 0).
  * A negative index counts back from the end of the list. Index -1
  * points to the last listnode.
  */
