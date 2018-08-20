@@ -492,10 +492,7 @@ static void	print_stmnt(void)
 
 	do {
 		obj = assignment_expr();
-        #ifdef DEBUG
-        if (config.debug >= DEBUGTOKEN)
-            printf("\n>>>>>:%-33s%c", " ", '>');
-        #endif
+        debug_printf(~NODEBUG, "\n>>>>>:%-33s%c", " ", '>');
 		obj_print(obj);
 		obj_decref(obj);
 	} while (accept(COMMA));
