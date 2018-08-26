@@ -161,16 +161,21 @@ Object *list_length(ListObject *list)
 Object *list_concat(ListObject *op1, ListObject *op2)
 {
 	ListObject *list;
+    ListNode *item;
 	int_t i;
 
 	list = (ListObject *)obj_alloc(LIST_T);
 
-	for (i = 0; i < length(op1); i++)
-		listnode_append(list, obj_copy(list_item(op1, i)->obj));
-
-	for (i = 0; i < length(op2); i++)
-		listnode_append(list, obj_copy(list_item(op2, i)->obj));
-
+	for (i = 0; i < length(op1); i++) {
+        item = list_item(op1, i);
+		listnode_append(list, obj_copy(item->obj));
+        obj_decref(item);
+    }
+	for (i = 0; i < length(op2); i++) {
+        item = list_item(op2, i);
+		listnode_append(list, obj_copy(item->obj));
+        obj_decref(item);
+    }
 	return (Object *)list;
 }
 
@@ -180,6 +185,7 @@ Object *list_concat(ListObject *op1, ListObject *op2)
 Object *list_repeat(Object *op1, Object *op2)
 {
 	ListObject *list;
+    ListNode *item;
 	size_t times;
 
 	Object *s = TYPE(op1) == LIST_T ? op1 : op2;
@@ -190,8 +196,11 @@ Object *list_repeat(Object *op1, Object *op2)
 	list = (ListObject *)obj_alloc(LIST_T);
 
 	while (times--)
-		for (int_t i = 0; i < length((ListObject *)s); i++)
-			listnode_append(list, obj_copy(list_item((ListObject *)s, i)->obj));
+		for (int_t i = 0; i < length((ListObject *)s); i++) {
+			item = list_item((ListObject *)s, i);
+            listnode_append(list, obj_copy(item->obj));
+            obj_decref(item);
+        }
 
 	return (Object *)list;
 }
@@ -199,7 +208,7 @@ Object *list_repeat(Object *op1, Object *op2)
 
 /* Compare the content of two lists by index (math: tuple).
  */
-static int lst_cmp(ListObject *op1, ListObject *op2)
+static int list_cmp(ListObject *op1, ListObject *op2)
 {
 	bool r;
 	Object *obj;
@@ -228,7 +237,7 @@ static int lst_cmp(ListObject *op1, ListObject *op2)
 
 Object *list_eql(ListObject *op1, ListObject *op2)
 {
-	int r = lst_cmp(op1, op2);
+	int r = list_cmp(op1, op2);
 
 	return obj_create(INT_T, (int_t)r);
 }
@@ -236,13 +245,14 @@ Object *list_eql(ListObject *op1, ListObject *op2)
 
 Object *list_neq(ListObject *op1, ListObject *op2)
 {
-	int r = lst_cmp(op1, op2);
+	int r = list_cmp(op1, op2);
 
 	return obj_create(INT_T, (int_t)!r);
 }
 
 
-/* Retrieve a listnode from a list by index. The refcount
+/* Retrieve a listnode from a list by index.
+ * Beware: The refcount of the listnode is increased by 1.
  */
 ListNode *list_item(ListObject *list, int index)
 {

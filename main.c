@@ -31,6 +31,7 @@ static void usage(char *executable)
 {
 	fprintf(stderr, "\n%s version %s\n", executable, VERSION);
 	fprintf(stderr, "usage: %s [options] file\n", executable);
+    fprintf(stderr, "file: code to execute\n");
 	fprintf(stderr, "options\n");
 	#ifdef DEBUG
 	fprintf(stderr, "-d[detail] = show debug info\n");
@@ -40,7 +41,7 @@ static void usage(char *executable)
     fprintf(stderr, "    option 2: show block entry and exit\n");
     fprintf(stderr, "    option 4: show memory allocation\n");
     fprintf(stderr, "    option 8: show tokens during function scan\n");
-    fprintf(stderr, "    option 16: dump identifier and object table\n");
+    fprintf(stderr, "    option 16: dump identifier and object table to disk\n");
 	#endif
 	fprintf(stderr, "-h = show usage information\n");
 	fprintf(stderr, "-t[tabsize] = set tab size in spaces\n");
