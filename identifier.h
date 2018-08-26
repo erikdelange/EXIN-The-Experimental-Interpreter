@@ -14,6 +14,7 @@ typedef struct identifier {
 	struct identifier *(*add)(const char *name);
 	struct identifier *(*search)(const char *name);
 	void (*bind)(struct identifier *self, Object *o);
+    void (*unbind)(struct identifier *self);
 } Identifier;
 
 extern Identifier identifier;

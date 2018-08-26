@@ -14,7 +14,7 @@
 typedef struct listobject {
 	OBJ_HEAD;
 	struct listnode *head;	/* first node in the list, NULL for empty list */
-	struct listnode *tail;	/* last node in the list, NULL for lege list */
+	struct listnode *tail;	/* last node in the list, NULL for empty list */
 } ListObject;
 
 typedef struct listnode {

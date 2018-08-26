@@ -36,8 +36,6 @@ static void list_free(ListObject *list)
 {
 	Object *obj;
 
-	debug_printf(DEBUGALLOC, "\n%p: free %-17s", (void *)list, TYPENAME(list));
-
 	while ((obj = listnode_remove(list, 0)) != NULL)
 		obj_decref(obj);
 
@@ -108,8 +106,6 @@ static ListNode *listnode_alloc(void)
  */
 static void listnode_free(ListNode *node)
 {
-	debug_printf(DEBUGALLOC, "\n%p: free %-17s", (void *)node, TYPENAME(node));
-
 	if (node->obj)
 		obj_decref(node->obj);
 
@@ -203,20 +199,25 @@ Object *list_repeat(Object *op1, Object *op2)
 
 /* Compare the content of two lists by index (math: tuple).
  */
-static int lstcmp(ListObject *op1, ListObject *op2)
+static int lst_cmp(ListObject *op1, ListObject *op2)
 {
 	bool r;
 	Object *obj;
 	int_t i, l1;
+    ListNode *item1, *item2;
 
 	l1 = length(op1);
 
 	if (l1 != length(op2))
 		return 0;
 
-	for (i = 0; i < l1; i++) {
-		obj = obj_eql((Object *)list_item(op1, i), (Object *)list_item(op2, i));
+	for (r = 1, i = 0; i < l1; i++) {
+        item1 = list_item(op1, i);
+        item2 = list_item(op2, i);
+		obj = obj_eql((Object *)item1, (Object *)item2);
 		r = obj_as_bool(obj);
+        obj_decref(item1);
+        obj_decref(item2);
 		obj_decref(obj);
 		if (r == 0)
 			break;  /* stop compare at first mismatch */
@@ -227,7 +228,7 @@ static int lstcmp(ListObject *op1, ListObject *op2)
 
 Object *list_eql(ListObject *op1, ListObject *op2)
 {
-	int r = lstcmp(op1, op2);
+	int r = lst_cmp(op1, op2);
 
 	return obj_create(INT_T, (int_t)r);
 }
@@ -235,13 +236,13 @@ Object *list_eql(ListObject *op1, ListObject *op2)
 
 Object *list_neq(ListObject *op1, ListObject *op2)
 {
-	int r = lstcmp(op1, op2);
+	int r = lst_cmp(op1, op2);
 
 	return obj_create(INT_T, (int_t)!r);
 }
 
 
-/* Retrieve a listnode from a list by index.
+/* Retrieve a listnode from a list by index. The refcount
  */
 ListNode *list_item(ListObject *list, int index)
 {
@@ -276,6 +277,7 @@ ListNode *list_item(ListObject *list, int index)
 ListObject *list_slice(ListObject *list, int start, int end)
 {
 	ListObject *slice;
+    ListNode *node;
 	int_t len;
 
 	len = length(list);
@@ -294,8 +296,11 @@ ListObject *list_slice(ListObject *list, int start, int end)
 
 	slice = (ListObject *)obj_alloc(LIST_T);
 
-	for (int_t i = start; i < end; i++)
-		listnode_append(slice, obj_copy(list_item(list, i)->obj));
+	for (int_t i = start; i < end; i++) {
+        node = list_item(list, i);
+		listnode_append(slice, obj_copy(node->obj));
+        obj_decref(node);
+    }
 
 	return slice;
 }

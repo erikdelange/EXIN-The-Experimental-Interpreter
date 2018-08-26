@@ -446,6 +446,7 @@ static void for_stmnt(void)
 	for (int_t i = 0; i < len && !do_break; i++) {
 		identifier.bind(id, obj_item(sequence, i));
 		block();
+        identifier.unbind(id);
 		do_continue = 0;
 		reader.jump(loop);
 	}

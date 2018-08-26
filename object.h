@@ -12,9 +12,19 @@ typedef enum { UNDEFINED, CHAR_T, INT_T, FLOAT_T, STR_T,
 			   LIST_T, LISTNODE_T, POSITION_T, NONE_T } objecttype_t;
 
 
-#define OBJ_HEAD	int refcount; 	\
-					objecttype_t type; 	\
-					struct typeobject *typeobj
+#ifdef DEBUG
+    /* debug version of object contains nextobj / prevobj pointers so it
+     * can be put in a double linked list */
+    #define OBJ_HEAD	int refcount;   \
+                        objecttype_t type;  \
+                        struct typeobject *typeobj;  \
+                        struct object *nextobj;    \
+                        struct object *prevobj
+#else
+    #define OBJ_HEAD	int refcount; 	\
+                        objecttype_t type; 	\
+                        struct typeobject *typeobj
+#endif
 
 typedef struct object {
 	OBJ_HEAD;

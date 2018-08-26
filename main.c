@@ -40,6 +40,7 @@ static void usage(char *executable)
     fprintf(stderr, "    option 2: show block entry and exit\n");
     fprintf(stderr, "    option 4: show memory allocation\n");
     fprintf(stderr, "    option 8: show tokens during function scan\n");
+    fprintf(stderr, "    option 16: dump identifier and object table\n");
 	#endif
 	fprintf(stderr, "-h = show usage information\n");
 	fprintf(stderr, "-t[tabsize] = set tab size in spaces\n");
@@ -85,7 +86,18 @@ int	main(int argc, char **argv)
 		usage(executable);
 	} else if (argc == 1) {
 		reader.import(*argv);
-		if (return_value && isNumber(return_value))
+
+        #ifdef DEBUG
+        void dump_identifier(void);
+        void dump_object(void);
+
+        if (config.debug & DEBUGDUMP) {
+            dump_identifier();
+            dump_object();
+        }
+        #endif
+
+        if (return_value && isNumber(return_value))
 			return obj_as_int(return_value);
 	} else {
 		fprintf(stderr, "%s: to many modules\n", executable);

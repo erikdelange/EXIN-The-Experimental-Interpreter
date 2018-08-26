@@ -63,6 +63,14 @@
 #include "none.h"
 #include "str.h"
 
+#ifdef DEBUG
+Object *head = NULL;    /* head of doubly linked list with objects */
+Object *tail = NULL;    /* tail of doubly linked list with objects */
+
+void enqueue(Object *item);
+void dequeue(Object *obj);
+#endif
+
 
 /* Create a new object of type 'type' and assign the default initial value.
  */
@@ -102,6 +110,10 @@ Object *obj_alloc(objecttype_t type)
 	if (obj == NULL)
 		error(OutOfMemoryError);
 
+    #ifdef DEBUG
+    enqueue(obj);
+    #endif
+
 	debug_printf(DEBUGALLOC, "\n%p: alloc %-16s", (void *)obj, TYPENAME(obj));
 
 	obj_incref(obj);  /* initial refcount = 1 */
@@ -135,6 +147,12 @@ Object *obj_create(objecttype_t type, ...)
  */
 void obj_free(Object *obj)
 {
+    #ifdef DEBUG
+    dequeue(obj);
+    #endif
+
+	debug_printf(DEBUGALLOC, "\n%p: free %-17s", (void *)obj, TYPENAME(obj));
+
 	TYPEOBJ(obj)->free(obj);
 }
 
@@ -480,6 +498,7 @@ Object *obj_and(Object *op1, Object *op2)
 Object *obj_in(Object *op1, Object *op2)
 {
 	Object *result = NULL;
+    Object *item;
 	int_t len;
 
 	op1 = isListNode(op1) ? obj_from_listnode(op1) : op1;
@@ -493,7 +512,9 @@ Object *obj_in(Object *op1, Object *op2)
 	for (int_t i = 0; i < len; i++) {
 		if (result != NULL)
 			obj_decref(result);
-		result = obj_eql(op1, obj_item(op2, i));
+        item = obj_item(op2, i);
+		result = obj_eql(op1, item);
+        obj_decref(item);
 		if (obj_as_int(result) == 1)
 			break;
 	}
@@ -556,16 +577,22 @@ Object *obj_slice(Object *sequence, int start, int end)
  */
 int_t obj_length(Object *sequence)
 {
+    int_t len;
+    Object *obj = NULL;
+
 	sequence = isListNode(sequence) ? obj_from_listnode(sequence) : sequence;
 
 	if (TYPE(sequence) == STR_T)
-		return obj_as_int(str_length((StrObject *)sequence));
+        obj = str_length((StrObject *)sequence);
 	else if (TYPE(sequence) == LIST_T)
-		return obj_as_int(list_length((ListObject *)sequence));
+        obj = list_length((ListObject *)sequence);
 	else
 		error(TypeError, "type %s is not subscriptable", TYPENAME(sequence));
 
-	return 0;
+    len = obj_as_int(obj);
+    obj_decref(obj);
+
+    return len;
 }
 
 
@@ -789,18 +816,69 @@ Object *obj_to_strobj(Object *obj)
 }
 
 
-#if 0
-/* Place string representation of f in buffer.
+/*  Add item to the end of the queue
  */
-char *float_to_str(float_t f, char *buffer, size_t buffersize)
+void enqueue(Object *item)
 {
-	int count;
+#ifdef DEBUG
+    if (head == NULL) {
+        head = item;
+        item->prevobj = NULL;
+    } else {
+        item->prevobj = tail;
+        tail->nextobj = item;
+    }
+    tail = item;
+    item->nextobj = NULL;
+#else
+    item = NULL;
+#endif
+}
 
-	count = snprintf(buffer, buffersize, "%.16lG", f);
 
-	if (count == -1 || count == buffersize)
-		error(ValueError, "error while printing");
+/*  Remove item from the queue
+ */
+void dequeue(Object *item)
+{
+#ifdef DEBUG
+    if (item->nextobj == NULL) {
+        if (item->prevobj == NULL) {
+            head = tail = NULL;
+        } else {
+            tail = item->prevobj;
+            tail->nextobj = NULL;
+        }
+    } else {
+        if (item->prevobj == NULL){
+            head = item->nextobj;
+            head->prevobj = NULL;
+        } else {
+            item->prevobj->nextobj = item->nextobj;
+            item->nextobj->prevobj = item->prevobj;
+        }
+    }
+#else
+    item = NULL;
+#endif
+}
 
-	return buffer;
+
+#ifdef DEBUG
+/*  Print all objects to a semi-colon separated file.
+ *  Note: changes previous stdout
+ */
+void dump_object(void)
+{
+    FILE *fp;
+
+    if ((fp = freopen("object.dsv", "w", stdout)) != NULL) {
+        printf("object;refcount;type;value\n");
+        for (Object *obj = head; obj; obj = obj->nextobj) {
+            printf("%p;%d;%s;", (void *)obj, obj->refcount,TYPENAME(obj));
+            obj_print(obj);
+            printf("\n");
+        }
+        fclose(fp);
+    }
 }
 #endif

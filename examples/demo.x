@@ -8,34 +8,36 @@ str newline = "\n"
 #
 print "Create list which includes another list", newline
 
-list outer, inner
-int i = 0, j
+def list_with_two_dimensions()
+    list outer, inner
+    int i = 0, j
 
-while i != 3
-    j = 0
-    inner = []
-    while j < 4
-        inner.append((i + 1) * 10 + j)
-        j += 1
-    outer.append(inner)
-    print "inner = ", inner, newline
-    i = i + 1
+    while i != 3
+        j = 0
+        inner = []
+        while j < 4
+            inner.append((i + 1) * 10 + j)
+            j += 1
+        outer.append(inner)
+        print "inner = ", inner, newline
+        i = i + 1
 
-print "outer = ", outer, newline * 2
+    print "outer = ", outer, newline * 2
 
-print "Print list which includes another list", newline
+    print "Print list which includes another list", newline
 
-i = 0
-do
-    j = 0
-    while j < outer[i].len
-        print outer[i][j], " "
-        j += 1
-    i += 1
-while i < outer.len
+    i = 0
+    do
+        j = 0
+        while j < outer[i].len
+            print outer[i][j], " "
+            j += 1
+        i += 1
+    while i < outer.len
 
-print "\n\n"
+    print "\n\n"
 
+list_with_two_dimensions()
 
 # ------------------------------------------
 # Function with arguments and a return value
@@ -175,7 +177,7 @@ def create_list(i)
     list l
 
     while i
-        l.insert(0, i)  # insert before element nr 0
+        l.insert(0, i)  # insert i before element nr 0
         i -= 1
 
     return l
@@ -241,7 +243,8 @@ print "2^3 + 1.1 = ", power(2, 3) + 1.1, newline, newline
 
 
 # ----------------------------------------------------------------------
-print "Scientific notation of float constants: 2.1E2 = ", 2.1E2, newline, newline
+print "Scientific notation of float constants: 2.1E2 = "
+print 2.1E2, newline, newline
 
 
 # -----------------------------------------------------------

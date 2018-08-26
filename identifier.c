@@ -183,6 +183,36 @@ static void removeScopeLevel(void)
 }
 
 
+#ifdef DEBUG
+/*  Print identifiers per level to a semi-colon separated file.
+ *  Note: changes previous stdout
+ */
+void dump_identifier(void)
+{
+    int n;
+    FILE *fp;
+    Scope *level;
+    Identifier *id;
+
+    for (level = local, n = 0; level; level = level->parent, n++)
+        ;
+
+    if ((fp = freopen("identifier.dsv", "w", stdout)) != NULL) {
+        printf("level;name;object\n");
+        for (level = local; level; level = level->parent) {
+            for (id = level->first; id; id = id->next) {
+                printf("%d;%s;", n, id->name);
+                if (id->object != NULL)
+                    printf("%p", (void *)id->object);
+                printf("\n");
+            }
+        }
+        fclose(fp);
+    }
+}
+#endif
+
+
 /* The identifier API.
  */
 Identifier identifier = {
@@ -191,7 +221,8 @@ Identifier identifier = {
 	.object = NULL,
 	.add = add,
 	.search = search,
-	.bind = bind
+	.bind = bind,
+    .unbind = unbind
 };
 
 
