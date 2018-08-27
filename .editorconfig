@@ -1,3 +1,4 @@
+# see https://editorconfig.org/
 [*.{c,h}]
 indent_style = tab
 indent_size = 4
