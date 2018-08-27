@@ -60,7 +60,7 @@ str s = "abcd", t = "\n", u = ""
 list l = ['a', 2.1, "xyz"], m = []
 ```
 The type of a variable or constant can be retreived via the *.type* method.
-``` python
+``` c
 >>> "abc".type
 = str
 ```
@@ -103,7 +103,7 @@ It is also possible to take slices of a list or string using indices. The absenc
 = a
 ```
 The number of elements in a list or number of characters in a string is returned by the *.len* method.
-```
+``` c
 >>> "abcdef".len
 = 6
 
@@ -112,7 +112,7 @@ The number of elements in a list or number of characters in a string is returned
 ```
 ###### Adding and removing values
 Characters, numbers and strings can be added to a string via the *+* operator.
-```
+``` c
 >>> "ab" + 'c'
 = abc
 
@@ -120,19 +120,19 @@ Characters, numbers and strings can be added to a string via the *+* operator.
 = xy3.14
 ```
 Literal values can be appended to a list via the *+* operator if the literal is represented as a list constant.
-```
+``` c
 >>> [3] + ["alfa"]
 = [3,"alfa"]
 ```
 The best way to append an element at the end of a list is via the *.append* method.
-```
+``` c
 >>> list m
 >>> m.append(3.14)
 >>> print m
 [3.14]
 ```
 Inserting an element at any place in a list is done via *.insert(before_index, element)*. Removing an element can only be done via its index. As always this can be an index from the beginning or from the end of the list.
-```
+``` c
 >>> list m
 >>> m.insert(0, 3.14)  # insert at beginning of list
 >>> print m
@@ -144,8 +144,8 @@ Inserting an element at any place in a list is done via *.insert(before_index, e
 ```
 ##### Operators
 ###### Arithmetic
-The binary operators are +, -, \*, / and the modulo operator %. Modulo can only be used on integers. For usage in assignments the shorthands operators +=, -=, \*=, /= and \%= are available instead of (for example) n = n + 1. Using addition on lists or strings will result in list - or string concatenation. Multiplication of a list or string by a number results in the repetition of the list or string.
-```
+The binary operators are +, -, \*, / and the modulo operator %. Modulo can only be used on integers. For usage in assignments the shorthands operators +=, -=, \*=, /= and \%= are available instead of (for example) n = n + 1. Using addition on lists or strings will result in list or string concatenation. Multiplication of a list or string by a number results in the repetition of the list or string.
+``` python
 >>> "abc" + "def"
 = abcdef
 
