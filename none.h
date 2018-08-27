@@ -3,7 +3,7 @@
  * 2016	K.W.E. de Lange
  */
 #ifndef _NONE_
-#define NONE
+#define _NONE_
 
 #include "object.h"
 

@@ -189,26 +189,26 @@ static void removeScopeLevel(void)
  */
 void dump_identifier(void)
 {
-    int n;
-    FILE *fp;
-    Scope *level;
-    Identifier *id;
+	int n;
+	FILE *fp;
+	Scope *level;
+	Identifier *id;
 
-    for (level = local, n = 0; level; level = level->parent, n++)
-        ;
+	for (level = local, n = 0; level; level = level->parent, n++)
+		;
 
-    if ((fp = freopen("identifier.dsv", "w", stdout)) != NULL) {
-        printf("level;name;object\n");
-        for (level = local; level; level = level->parent) {
-            for (id = level->first; id; id = id->next) {
-                printf("%d;%s;", n, id->name);
-                if (id->object != NULL)
-                    printf("%p", (void *)id->object);
-                printf("\n");
-            }
-        }
-        fclose(fp);
-    }
+	if ((fp = freopen("identifier.dsv", "w", stdout)) != NULL) {
+		printf("level;name;object\n");
+		for (level = local; level; level = level->parent) {
+			for (id = level->first; id; id = id->next) {
+				printf("%d;%s;", n, id->name);
+				if (id->object != NULL)
+					printf("%p", (void *)id->object);
+				printf("\n");
+			}
+		}
+		fclose(fp);
+	}
 }
 #endif
 
@@ -222,7 +222,7 @@ Identifier identifier = {
 	.add = add,
 	.search = search,
 	.bind = bind,
-    .unbind = unbind
+	.unbind = unbind
 };
 
 

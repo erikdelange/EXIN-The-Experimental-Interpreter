@@ -12,14 +12,14 @@
 #include <stdio.h>
 
 #define VERSION		"1.08"
-#define	BUFSIZE		256		/* maximum length of identifier name excl '\0' */
+#define BUFSIZE		256		/* maximum length of identifier name excl '\0' */
 #define LINESIZE 	256		/* maximum length of input line excl '\0' */
 #define MAXINDENT 	132		/* maximum number of indents */
 #define TABSIZE 	4		/* default spaces per tab */
 
-#define	char_t	char		/* Basic type for CHAR_T */
-#define	int_t	long		/* Basic type for INT_T */
-#define	float_t	double		/* Basic type for FLOAT_T */
+#define char_t	char		/* Basic type for CHAR_T */
+#define int_t	long		/* Basic type for INT_T */
+#define float_t	double		/* Basic type for FLOAT_T */
 
 /* 	Struct containing all global configuration variables.
  */
@@ -48,10 +48,10 @@ extern jmp_buf return_address;
 
 /* debug logging detail levels:
  */
-#define NODEBUG 	    0	/* no debug output */
+#define NODEBUG         0	/* no debug output */
 #define DEBUGTOKEN      1	/* show tokens during execution */
-#define DEBUGBLOCK	    2	/* show function and block entry & exit */
-#define	DEBUGALLOC	    4	/* show object alloc() & free() * (un)bind() */
+#define DEBUGBLOCK      2	/* show function and block entry & exit */
+#define DEBUGALLOC      4	/* show object alloc() & free() * (un)bind() */
 #define DEBUGSCANONLY   8   /* show tokens during function scan */
 #define DEBUGDUMP       16  /* dump identifiers and objects at end of program */
 

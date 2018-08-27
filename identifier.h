@@ -14,7 +14,7 @@ typedef struct identifier {
 	struct identifier *(*add)(const char *name);
 	struct identifier *(*search)(const char *name);
 	void (*bind)(struct identifier *self, Object *o);
-    void (*unbind)(struct identifier *self);
+	void (*unbind)(struct identifier *self);
 } Identifier;
 
 extern Identifier identifier;
@@ -30,7 +30,7 @@ typedef struct scope {
 
 extern Scope scope;
 
-#define SCOPE_INIT	{ .parent = NULL, .first = NULL, .indentlevel = 0, .indentation[0] = 0 }
+#define SCOPE_INIT { .parent = NULL, .first = NULL, .indentlevel = 0, .indentation[0] = 0 }
 
 extern Scope *local;
 

@@ -23,10 +23,10 @@ static void skip_block(void);
 static void function_declaration(void);
 static void variable_declaration(objecttype_t type);
 static void if_stmnt(void);
-static void	while_stmnt(void);
+static void while_stmnt(void);
 static void do_stmnt(void);
 static void for_stmnt(void);
-static void	print_stmnt(void);
+static void print_stmnt(void);
 static void input_stmnt(void);
 static void return_stmt(void);
 static void import_stmt(void);
@@ -44,11 +44,11 @@ static int do_continue = 0;		/* Busy quiting loop because of continue */
  */
 int accept(token_t t)
 {
-    if (scanner.token == t) {
-        scanner.next();
-        return 1;
-    }
-    return 0;
+	if (scanner.token == t) {
+		scanner.next();
+		return 1;
+	}
+	return 0;
 }
 
 
@@ -57,12 +57,12 @@ int accept(token_t t)
  */
 int expect(token_t t)
 {
-    if (accept(t))
-        return 1;
+	if (accept(t))
+		return 1;
 
-    error(SyntaxError, "expected %s instead of %s", \
+	error(SyntaxError, "expected %s instead of %s", \
 					   tokenName(t), tokenName(scanner.token));
-    return 0;
+	return 0;
 }
 
 
@@ -95,7 +95,7 @@ static void function_declaration(void)
 
 	/* avoid debug output when scanning for functions */
 	tmp = config.debug;
-    config.debug = (config.debug & DEBUGSCANONLY) ? DEBUGTOKEN : 0;
+	config.debug = (config.debug & DEBUGSCANONLY) ? DEBUGTOKEN : 0;
 
 	do {
 		if (accept(DEFFUNC)) {
@@ -208,8 +208,8 @@ void statement(void)
 		do_break = 1;
 	else if (accept(CONTINUE))
 		do_continue = 1;
-    else if (accept(ENDMARKER))
-        ;
+	else if (accept(ENDMARKER))
+		;
 	else
 		expression_stmnt();
 }
@@ -446,7 +446,7 @@ static void for_stmnt(void)
 	for (int_t i = 0; i < len && !do_break; i++) {
 		identifier.bind(id, obj_item(sequence, i));
 		block();
-        identifier.unbind(id);
+		identifier.unbind(id);
 		do_continue = 0;
 		reader.jump(loop);
 	}
@@ -493,7 +493,7 @@ static void	print_stmnt(void)
 
 	do {
 		obj = assignment_expr();
-        debug_printf(~NODEBUG, "\n>>>>>:%-33s%c", " ", '>');
+		debug_printf(~NODEBUG, "\n>>>>>:%-33s%c", " ", '>');
 		obj_print(obj);
 		obj_decref(obj);
 	} while (accept(COMMA));

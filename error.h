@@ -9,8 +9,8 @@
 
 /* Error number is used as program return code, so numbering starts at 1
  * because return code 0 indicates no error */
-#define	NameError 1
-#define	TypeError 2
+#define NameError 1
+#define TypeError 2
 #define SyntaxError 3
 #define ValueError 4
 #define SystemError 5

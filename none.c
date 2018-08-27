@@ -16,7 +16,7 @@ static NoneObject *none_alloc(void)
 
 static void none_free(NoneObject *obj)
 {
-    ;
+	;
 }
 
 

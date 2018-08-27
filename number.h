@@ -45,5 +45,4 @@ extern Object *number_and(Object *op1, Object *op2);
 
 extern Object *number_negate(Object *op1);
 
-
 #endif

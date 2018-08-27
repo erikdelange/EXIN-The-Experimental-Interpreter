@@ -22,7 +22,7 @@ static inline char *tokenName(token_t t)  /* inline requires at least C99 */
 	static char *string[] = {
 	"UNKNOWN TOKEN", "CHARACTER LITERAL", "INTEGER LITERAL", "FLOAT LITERAL",
 	"STRING LITERAL", "STAR", "DIV", "PLUS", "MINUS", "EQEQUAL", "NOTEQUAL",
-	"LESS",	"LESSEQUAL", "GREATER", "GREATEREQUAL", "COMMA", "RPAR", "ELSE",
+	"LESS", "LESSEQUAL", "GREATER", "GREATEREQUAL", "COMMA", "RPAR", "ELSE",
 	"DO", "LPAR", "EQUAL", "NUMBER", "IDENTIFIER", "IF", "WHILE", "INPUT",
 	"PRINT", "DEFCHAR", "DEFINT", "DEFFLOAT", "DEFSTR", "DEFFUNC", "DOT",
 	"ENDMARKER", "RETURN", "PERCENT", "AND", "OR", "PLUSEQUAL", "MINUSEQUAL",
@@ -43,8 +43,8 @@ static inline char *tokenName(token_t t)  /* inline requires at least C99 */
  * internal use only.
  */
 typedef struct scanner {
-	token_t	token;
-	token_t peeked;  	/* private */
+	token_t token;
+	token_t peeked;		/* private */
 	bool at_bol;
 	char string[BUFSIZE + 1];
 	token_t (*next)(void);

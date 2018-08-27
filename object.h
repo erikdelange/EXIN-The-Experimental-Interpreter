@@ -13,17 +13,17 @@ typedef enum { UNDEFINED, CHAR_T, INT_T, FLOAT_T, STR_T,
 
 
 #ifdef DEBUG
-    /* debug version of object contains nextobj / prevobj pointers so it
-     * can be put in a double linked list */
-    #define OBJ_HEAD	int refcount;   \
-                        objecttype_t type;  \
-                        struct typeobject *typeobj;  \
-                        struct object *nextobj;    \
-                        struct object *prevobj
+	/* debug version of object contains nextobj / prevobj pointers so it
+	 * can be put in a double linked list */
+	#define OBJ_HEAD	int refcount;  \
+						objecttype_t type;  \
+						struct typeobject *typeobj;  \
+						struct object *nextobj;  \
+						struct object *prevobj
 #else
-    #define OBJ_HEAD	int refcount; 	\
-                        objecttype_t type; 	\
-                        struct typeobject *typeobj
+	#define OBJ_HEAD	int refcount;  \
+						objecttype_t type;  \
+						struct typeobject *typeobj
 #endif
 
 typedef struct object {
@@ -31,11 +31,11 @@ typedef struct object {
 } Object;
 
 
-#define TYPE_HEAD	char *name; \
-					Object *(*alloc)(void); \
-					void (*free)(Object *obj); \
-					void (*print)(Object *obj); \
-					Object *(*set)();  /* undefined argument to suppress compiler warnings */ \
+#define TYPE_HEAD	char *name;  \
+					Object *(*alloc)(void);  \
+					void (*free)(Object *obj);  \
+					void (*print)(Object *obj);  \
+					Object *(*set)();  /* undefined argument to suppress compiler warnings */  \
 					Object *(*vset)(Object *obj, va_list argp)
 
 typedef struct typeobject {
