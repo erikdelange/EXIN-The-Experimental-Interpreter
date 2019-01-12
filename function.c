@@ -21,7 +21,9 @@
 	expect(LPAR);
 	obj = comma_expr();
 	expect(RPAR);
-	result = obj_type(obj);
+
+	result = isListNode(obj) ? obj_type(obj_from_listnode(obj)) : obj_type(obj);
+
 	obj_decref(obj);
 
 	return result;
