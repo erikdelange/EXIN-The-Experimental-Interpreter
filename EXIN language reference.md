@@ -59,9 +59,9 @@ float x = 3.14, y = 1E10
 str s = "abcd", t = "\n", u = ""
 list l = ['a', 2.1, "xyz"], m = []
 ```
-The type of a variable or constant can be retreived via the *.type* method.
+The type of a variable or constant can be retreived via the builtin *type()* function.
 ``` c
->>> "abc".type
+>>> type("abc")
 = str
 ```
 ##### Literals
@@ -124,7 +124,7 @@ Literal values can be appended to a list via the *+* operator if the literal is 
 >>> [3] + ["alfa"]
 = [3,"alfa"]
 ```
-The best way to append an element at the end of a list is via the *.append* method.
+The most efficient way to append an element at the end of a list is via the *.append* method.
 ``` c
 >>> list m
 >>> m.append(3.14)
@@ -159,7 +159,7 @@ The binary operators are +, -, \*, / and the modulo operator %. Modulo can only 
 = [1,2,1,2]
 ```
 ###### Comparison
-The comparison operators are *==, !=, in, <>, <, <=, >, >=*. Note that equality comparison uses two equal characters where assignment only used one. Lists and strings can be only be compared using *==* and *!=*. The *in* operator is used to check if a value can be found in a sequence.
+The comparison operators are *==, !=, in, <>, <, <=, >, >=*. Note that equality comparison uses two equal characters where assignment only uses one. Lists and strings can be only be compared using *==* and *!=*. The *in* operator is used to check if a value can be found in a sequence.
 ###### Logical
 The logical operators are *and*, *or* and *!* (being not). True is represented by a non-zero integer, falso being zero.
 ###### Order of evaluation
@@ -215,7 +215,7 @@ This loop is executed infinitly because 1 always evaluates to true. However even
 The *for .. in sequence* loop cycles through the content of a list of string. As with the other loops *break* and *continue* can be used here.
 ```
 for element in [1, 2.0, "abc", 'c']
-    print element, " ", element.type, "\n"
+    print element, " ", type(element), "\n"
 ```
 It is not neccesary to define variable *element* upfront because it is just a reference to a variable in the list. In C this would be called a pointer. You can use it to change the value in the list. The types of the values which are assigned can be different for each element of the list. If the sequence used in the *for .. in* loop is a string then of course *element* is only assigned characters. Strings are read only.
 ##### Function definition
@@ -264,6 +264,7 @@ input first_name, last_name
 ```
 ##### Various
 The *pass* keyword is a no-operation statement and can be used as a placeholder during program development.
+Statements cannot be used as identifier (variable or function) name. However the name of builtin functions (like type) can be used as identifier name. This will shadow the builtin function.
 ##### Grammar in EBNF
 For a graphical representation of the syntax see [EXIN syntax diagram](EXIN%20syntax%20diagram.pdf).
 For an explantion of the EBNF notation used below see [EBNF syntax.txt](EBNF%20syntax.txt).
@@ -315,6 +316,10 @@ pass_stmnt ::= 'pass' NEWLINE
 
 expression_stmnt ::= expression NEWLINE
 
+/* builtin functions */
+
+type_function ::= 'type' '(' expression ')'
+
 /* expressions */
 
 expression ::= assignment_expr ( ',' expression )*
@@ -349,13 +354,9 @@ sequence_variable ::= ( string_variable | list_variable ) ( subscript? )
 
 sequence ::= ( string_variable | list_variable ) ( '[' slice ']' )?
 
-method ::= type | list_insert | list_append | list_remove | list_len | string_len
+method ::= list_insert | list_append | list_remove | sequence_len
 
-type ::= 'type'
-
-string_len ::= 'len'
-
-list_len ::= 'len'
+sequence_len ::= 'len'
 
 list_insert ::= 'insert' '(' index ','  logical_or_expr ')'
 
@@ -401,9 +402,9 @@ escape ::= '\' [bnfrtv\'"0]
 
 number ::= integer | float
 
-integer ::= ( '+' | '-' )? digit+
+integer ::= digit+
 
-float ::= ( '+' | '-' )? digit+ '.' ( digit+ )? ( ('e' | 'E') ( '+' | '-' )? digit+ )?
+float ::= digit+ '.' ( digit+ )? ( ('e' | 'E') ( '+' | '-' )? digit+ )?
 
 digit ::= [0-9]
 

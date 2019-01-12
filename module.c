@@ -1,9 +1,9 @@
 /* module.c
  *
- * Code is grouped in modules. Each module is a file. Modules are loaded via
- * the module.new() function. Every module object contains a reference to
- * the loaded code of that module. Module objects are stored in a
- * singly linked list starting at 'modulehead'.
+ * Code is stored in modules. Each module is a file. Modules are loaded via
+ * the (global) module.new() function. Every module object contains a
+ * reference to the loaded code of that module. Module objects are
+ * stored in a singly linked list starting at 'modulehead'.
  *
  * 1995	K.W.E. de Lange
  */
@@ -38,12 +38,12 @@ static Module *search(const char *name)
 }
 
 
-/* Load the code for a module. Two closing newlines and 0 are added at the end
- * of the code.
+/* Load the code for a module. Two closing newlines and '\0' are added
+ * at the end of the code.
  *
  * self		pointer to module object
  * name		filename (may include path)
- * return	1 if successfull else 0
+ * return	1 if successful else 0
  */
 static int load(Module *self, const char *name)
 {
@@ -58,9 +58,9 @@ static int load(Module *self, const char *name)
 			if ((fp = fopen(name, "r")) != NULL) {
 				self->size = fread(self->code, sizeof(char), self->size, fp);
 				fclose(fp);
-                self->code[self->size] = '\n';
+				self->code[self->size] = '\n';
 				self->code[self->size + 1] = '\n';
-                self->code[self->size + 2] = 0;
+				self->code[self->size + 2] = 0;
 				return 1;
 			} else {
 				free(self->code);
@@ -75,7 +75,7 @@ static int load(Module *self, const char *name)
 /* Create a new module and load the code.
  *
  * name		module's filename (may include path)
- * return	module object (else program fails)
+ * return	module object (else an error is raised and the the program exits)
  */
 static Module *new(const char *name)
 {

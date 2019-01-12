@@ -1,18 +1,18 @@
 /* scanner.c
  *
- * Token scanner (also called symbol scanner)
+ * Token scanner (in literature also called symbol scanner)
  *
  * A program consist of a sequence of tokens. A token is a group of one or
  * more characters which have a special meaning in the programming language.
  * The scanner reads a program character by character (using the reader
- * object) and converts them into tokens.
+ * object) and converts these into tokens.
  *
- * Object scanner is the API to the token scanner. Only one scanner object
- * exists. See also scanner.h.
+ * Object 'scanner' is the API to the token scanner. Only one scanner object
+ * exists. For its definition see scanner.h.
  *
- * After reading the next token scanner.token contains the token type and
- * scanner.string - if applicable - the identifier, the number the
- * character of the string.
+ * After reading the next token 'scanner.token' contains the token and
+ * 'scanner.string' - if applicable - the identifier, the number, the
+ * character or the string.
  *
  * 1994	K.W.E. de Lange
  */
@@ -24,7 +24,7 @@
 #include "reader.h"
 #include "error.h"
 
-/*	Table containing all keywords and corresponding token.
+/*	Table containing all keywords and corresponding tokens.
  */
 static struct {
 	char *keyword;
@@ -68,7 +68,7 @@ static void scanner_jump(struct scanner *);
 static void scanner_init(struct scanner *);
 
 
-/*	Token scanner API and data.
+/*	Token scanner API and data with initial settings.
  */
 Scanner scanner = {
 	.token = UNKNOWN,
@@ -138,12 +138,12 @@ static token_t peek_token(void)
 
 /* Read the next token.
  *
- * After reading the buffer contains:
+ * After reading buffer contains:
  *    the identifier if token == IDENTIFIER
  *    the number if token == INTEGER or FLOAT
  *    the string if token == STRING
  *    the character if token == CHAR
- *    and is empty for all other tokens
+ *    and an empty string for all other tokens
  */
 static token_t read_next_token(char *buffer)
 {
@@ -333,14 +333,14 @@ static token_t read_string(char *string)
 /* Read an integer or a floating point number.
  *
  * Scientific notation (e, E) is recognized.
- * Examples: 2  0.2  2.0  1E+2  1E2  1E-2  0.1E+2
+ * Examples: 2  2.  0.2  2.0  1E+2  1E2  1E-2  0.1e+2
  */
 static token_t read_number(char *number)
 {
 	char ch;
 	int dot = 0;
 	int exp = 0;
-	int	count = 0;
+	int count = 0;
 
 	while (1) {
 		ch = reader.nextch();
@@ -392,7 +392,7 @@ static token_t read_number(char *number)
 static token_t read_identifier(char *name)
 {
 	char ch;
-	int	count = 0, l, h, m, d;
+	int count = 0, l, h, m, d;
 
 	while (1) {
 		ch = reader.nextch();

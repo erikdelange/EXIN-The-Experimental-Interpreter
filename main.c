@@ -16,8 +16,8 @@
 #include "config.h"
 
 
-jmp_buf	return_address;			/* Return adress at end of function */
-Object *return_value = NULL;	/* Result of the last function call */
+jmp_buf	return_address;			/* Return address at end of function */
+Object	*return_value = NULL;	/* Result of the last function call */
 
 Config config = {
 	.debug = NODEBUG,

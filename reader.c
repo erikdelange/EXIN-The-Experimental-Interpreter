@@ -1,6 +1,6 @@
 /* reader.c
  *
- * The reader object reads characters from the source code. The reader can also
+ * The reader object reads characters from the source code. It can also
  * jump to other places in the code. The reader contains a pointer to the
  * module object from which it is currently reading. (See also reader.h).
  * Only one (global) reader object exists.
@@ -23,7 +23,7 @@
 static int nextch(void)
 {
 	if (*reader.pos == 0) {
-        reader.bol = reader.pos;
+		reader.bol = reader.pos;
 		return EOF;
 	} else {
 		if (reader.pos > reader.current->code && *(reader.pos - 1) == '\n')
@@ -46,8 +46,8 @@ static int peekch(void)
 
 /*	Undo the read of a character.
  *
- *	Note: this implementation only set the read pointer back one position and
- *	does nothing with ch. Properly this should be done via a stack.
+ *	Note: this implementation only sets the read pointer back one position
+ *	and does nothing with ch. Properly this should be done via a stack.
  */
 static int pushch(int ch)
 {
@@ -87,7 +87,7 @@ static void reader_jump(PositionObject *position)
 }
 
 
-/*	Store the current postion of the reader and status of the scanner.
+/*	Store the current position of the reader and status of the scanner.
  */
 static PositionObject *reader_save(void)
 {
@@ -103,7 +103,7 @@ static PositionObject *reader_save(void)
 }
 
 
-/*	Display the code from the currently excuted line.
+/*	Display the code from the currently executed line.
  */
 static void print_current_line(void)
 {

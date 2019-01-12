@@ -35,7 +35,7 @@ static ListObject *push_arguments(void);
 static void pop_arguments(ListObject *arglist);
 
 
-static int do_break = 0;		/* Busy quiting loop because of break  */
+static int do_break = 0;		/* Busy quiting loop because of break */
 static int do_continue = 0;		/* Busy quiting loop because of continue */
 
 
@@ -93,7 +93,7 @@ static void function_declaration(void)
 
 	reader.reset();
 
-	/* avoid debug output when scanning for functions */
+	/* surpress debug output when scanning for functions */
 	tmp = config.debug;
 	config.debug = (config.debug & DEBUGSCANONLY) ? DEBUGTOKEN : 0;
 
@@ -138,7 +138,7 @@ static void skip_function(void)
 }
 
 
-/* Skip statements in a block, considering sub-blocks.
+/* Skip statements in a block, also considering sub-blocks.
  *
  * in:  token = first token of block; must be NEWLINE, else error
  * out: token = first token after DEDENT at end of block

@@ -17,7 +17,7 @@ typedef enum { 	UNKNOWN=0, CHAR, INT, FLOAT, STR, STAR, SLASH,
 				PERCENTEQUAL, NOT, LSQB, RSQB, NEWLINE, INDENT, DEDENT,
 				PASS, BREAK, CONTINUE, DEFLIST, COLON, IMPORT, FOR, IN } token_t;
 
-static inline char *tokenName(token_t t)  /* inline requires at least C99 */
+static inline char *tokenName(token_t t)  /* 'inline' requires at least C99 */
 {
 	static char *string[] = {
 	"UNKNOWN TOKEN", "CHARACTER LITERAL", "INTEGER LITERAL", "FLOAT LITERAL",
@@ -33,7 +33,7 @@ static inline char *tokenName(token_t t)  /* inline requires at least C99 */
 }
 
 
-/* This struct is the API to the Scanner object, containing both data and
+/* This struct is the API to the scanner object, containing both data and
  * function adresses.
  *
  * Function next() reads the next token, and places it in variable 'token'.

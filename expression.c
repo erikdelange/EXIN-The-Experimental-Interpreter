@@ -2,7 +2,7 @@
  *
  * Expression evaluator
  *
- * Evaluates an expression recursively in the following order:
+ * Recursively evaluate an expression in the following order:
  *
  * - first variables (including subscripts and slices), constants,
  *   then function calls, object methods and parenthesized expressions,
@@ -26,6 +26,7 @@
 #include "expression.h"
 #include "identifier.h"
 #include "position.h"
+#include "function.h"
 #include "scanner.h"
 #include "parser.h"
 #include "error.h"
@@ -161,9 +162,6 @@ static Object *method(Object *object)
 		} else if (TYPE(object) == STR_T && strcmp("len", scanner.string) == 0) {
 			expect(IDENTIFIER);
 			obj = str_length((StrObject *)object);
-		} else if (strcmp("type", scanner.string) == 0) {
-			expect(IDENTIFIER);
-			obj = obj_type(object);
 		} else
 			error(SyntaxError, "unknown method %s for type %s", scanner.string, TYPENAME(object));
 	} else
@@ -240,8 +238,13 @@ static Object *primary_expr(void)
 			}
 			break;
 		case IDENTIFIER:  /* variabele or function identifier */
-			if ((id = identifier.search(scanner.string)) == NULL)
-				error(NameError, "identifier %s is not defined", scanner.string);
+			/* rule: user defined identifiers shadow builtins */
+			if ((id = identifier.search(scanner.string)) == NULL) {
+				if ((obj = builtin(scanner.string)) != NULL)
+					break;
+				else
+					error(NameError, "identifier %s is not defined", scanner.string);
+			}
 			expect(IDENTIFIER);
 			if (TYPE(id->object) == POSITION_T) {
 				obj = function_call((PositionObject *)id->object);
@@ -381,7 +384,7 @@ static Object *relational_expr(void)
 }
 
 
-/* Operators: ==  !=  <>  in 
+/* Operators: ==  !=  <>  in
  */
 static Object *equality_expr(void)
 {
@@ -518,5 +521,4 @@ Object *comma_expr(void)
 			lvalue = comma_expr();
 		} else
 			return lvalue;
-
 }
