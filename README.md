@@ -19,8 +19,11 @@ str s
 # First a short demo
 #
 s = reverse("abracadabra")
+
 print s, "\n\n"  # this will print 'arbadacarba'
+
 s = reverse(s)   # turn s back in the original string
+
 print s, "\n\n"
 
 # Let the user enter strings

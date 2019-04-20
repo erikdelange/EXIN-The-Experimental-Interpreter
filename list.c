@@ -426,7 +426,6 @@ Object *listnode_remove(ListObject *list, int index)
 }
 
 
-
 /* List object API.
  */
 TypeObject listobject = {

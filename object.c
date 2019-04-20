@@ -2,54 +2,55 @@
  *
  * Operations on objects (variables, functions, ...)
  *
- * All variables and functions are modelled as objects. An object contains its
- * data but also a number of methods. Every object has mandatory set of
- * methods. This set is: alloc, free, set, vset and print. Which other methods
- * are available depends in the type of the object. See: number.c, str.c,
- * list.c, position.c and none.c.
+ * Variables and functions are repesented as objects. An object contains its
+ * data but also a number of methods. Every object has minimal and thus
+ * mandatory set of methods. This set is: alloc, free, set, vset and print.
+ * Which other methods are available depends in the type of the object.
+ * See: number.c, str.c, list.c, position.c and none.c.
  *
  * All operations on and between objects are found in object.c and are
  * accessed via function names like obj_... followed by the operation,
  * e.g. obj_add().
  *
- * We distinguish unary and binary operations. For unary operations only one
- * operand is required:
+ * There are two types of operations: unary and binary. Unary operations
+ * require only one operand:
  *
- *          result = operator operand
+ *  result = operator operand
  *
  * The unary operators are:
  *
- *          -   negation of the operand
- *          +   retuns the operand (so does nothing)
- *          !   logical negation of the operand (so 0 or 1)
+ *  -   negation of the operand
+ *  +   retuns the operand (so does nothing)
+ *  !   logical negation of the operand (returns 0 or 1)
  *
- * For binary operators the two operands as used as input for the operations:
+ * Binary operators require two operands:
  *
- *          result = operand1 operator operand2
+ *  result = operand1 operator operand2
  *
- *          The artihmetic operators are:   +  -  *  /  %
- *          The comparison operators are:   ==  !=  <>  <  <=  >  >=  in
- *          The logical operators are:      and  or
+ *  Artihmetic operators are:   +  -  *  /  %
+ *  Comparison operators are:   ==  !=  <>  <  <=  >  >=  in
+ *  Logical operators are:      and  or
  *
  * Which operations are supported depends on the object type. Numerical object
- * will support almost everything, list or strings have less operations.
+ * will support almost everything, lists or strings have less operations.
  *
  * Two operations are only meant for use on list or string objects:
  *
- *          item[index]
- *          slice[start:end]
+ *  item[index]
+ *  slice[start:end]
  *
- * As C-functions the unary- and binary operations look like:
+ * As C functions unary- and binary operations look like:
  *
- *      result *operator(*operand1)
- *      result *operator(*operand1, *operand2)
+ *  result *operator(*operand1)
+ *  result *operator(*operand1, *operand2)
  *
- * Operand1 and operand2 always remain unchanged. Result is a newly created
- * object. Its type is dependent on operand1 and optionally operand2.
+ * Function arguments operand1 and operand2 - although being pointers - always
+ * remain unchanged. Result is a newly created object. Its type is dependent
+ * on operand1 and optionally operand2.
  * See function coerce() in number.c for the rules for determining the type
  * of the result for arithmetic operations. For locical and comparison
- * operations the result is always an INTEGER as we do not have a boolean
- * type.
+ * operations the result is always an INTEGER as the language does not have
+ * a boolean type.
  *
  * 1994 K.W.E. de Lange
  */
@@ -73,6 +74,8 @@ void dequeue(Object *obj);
 
 
 /* Create a new object of type 'type' and assign the default initial value.
+ *
+ * The initial refcount of the new object is 1.
  */
 Object *obj_alloc(objecttype_t type)
 {
@@ -141,7 +144,7 @@ Object *obj_create(objecttype_t type, ...)
 }
 
 
-/* Free the memory which was reserverd for an object.
+/* Free the memory which was reserved for an object.
  */
 void obj_free(Object *obj)
 {
@@ -153,7 +156,7 @@ void obj_free(Object *obj)
 }
 
 
-/* Print value on stdout.
+/* Print object value on stdout.
  */
 void obj_print(Object *obj)
 {
@@ -161,7 +164,7 @@ void obj_print(Object *obj)
 }
 
 
-/* Read a value from stdin.
+/* Read object value from stdin.
  */
 Object *obj_scan(objecttype_t type)
 {
@@ -631,6 +634,8 @@ int_t obj_as_int(Object *op1)
 			return (int_t)((IntObject *)op1)->ival;
 		case FLOAT_T:
 			return (int_t)((FloatObject *)op1)->fval;
+		case STR_T:
+			return str_to_int(((StrObject *)op1)->sptr);
 		default:
 			error(ValueError, "cannot convert %s to integer", TYPENAME(op1));
 	}
@@ -651,6 +656,8 @@ float_t obj_as_float(Object *op1)
 			return (float_t)((IntObject *)op1)->ival;
 		case FLOAT_T:
 			return (float_t)((FloatObject *)op1)->fval;
+		case STR_T:
+			return str_to_float(((StrObject *)op1)->sptr);
 		default:
 			error(ValueError, "cannot convert %s to float", TYPENAME(op1));
 	}

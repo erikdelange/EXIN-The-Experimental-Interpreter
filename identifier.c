@@ -3,11 +3,11 @@
  * Identifier management.
  *
  * Identifiers are names which refer to variables or functions. An identifier
- * has a certain scope. When entering a function a new (lowest) scope level
+ * has a certain scope. At any moment only two scope levels are relevant; the
+ * global scope at program level, and the local scope within the currently
+ * executed function. When entering a function a new (lowest) scope level
  * is created.
  *
- * At any moment only two scope levels are relevant; the global scope at
- * program level, and the local scope within the currently executed function.
  * For example an identifier 'alpha' may occur in all levels in a scope
  * hierarchy. However the name is only searched at local, and if not found
  * there, at global level.
@@ -71,9 +71,9 @@ static Identifier *search(const char *name)
 
 /* Create a new identifier in a specific scope list.
  *
- * level    list to which to add the identifier
+ * level    list in which to add the identifier
  * name     identifier name
- * return   *Identifier object or NULL if the identifier already existed
+ * return   *Identifier object or NULL if the identifier already exists
  */
 static Identifier *addIdentifier(Scope *level, const char *name)
 {
@@ -116,7 +116,7 @@ static void unbind(Identifier *self)
 }
 
 
-/* Bind an object to an identifier. First remove an existing binding.
+/* Bind an object to an identifier. First remove an existing binding (if any).
  */
 static void bind(Identifier *self, Object *obj)
 {
@@ -219,6 +219,7 @@ Identifier identifier = {
 	.name = NULL,
 	.next = NULL,
 	.object = NULL,
+
 	.add = add,
 	.search = search,
 	.bind = bind,
@@ -233,6 +234,7 @@ Scope scope = {
 	.first = NULL,
 	.indentlevel = 0,
 	.indentation[0] = 0,
+
 	.append_level = appendScopeLevel,
 	.remove_level = removeScopeLevel
 };

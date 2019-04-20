@@ -130,8 +130,8 @@ static Object *number_vset(Object *obj, va_list argp)
 /* Determine the type of the result of an arithmetic operations using two
  * operands according to the following rules:
  *
- * FLOAT is one of both operands is FLOAT,
- * else INTEGER if one of both operands in INTEGER
+ * FLOAT if at least one operand is FLOAT,
+ * else INTEGER if at least one operand in INTEGER
  * else CHAR
  */
 static objecttype_t coerce(Object *op1, Object *op2)

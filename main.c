@@ -1,7 +1,8 @@
 /* main.c
  *
  * The interpreters main program. Handles command line arguments
- * and starts execution of the code in the first module.
+ * and starts execution of the code in the first module specified
+ * on the command line.
  *
  * 2018	K.W.E. de Lange
  */
@@ -25,7 +26,7 @@ Config config = {
 };
 
 
-/* Print a usage message.
+/* Print the usage message.
  */
 static void usage(char *executable)
 {

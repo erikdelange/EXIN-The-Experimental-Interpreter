@@ -15,7 +15,7 @@
 #include "error.h"
 
 
-/*	Forward declarations.
+/* Forward declarations.
  */
 static void block(void);
 static void skip_function(void);

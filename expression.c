@@ -4,7 +4,7 @@
  *
  * Recursively evaluate an expression in the following order:
  *
- * - first variables (including subscripts and slices), constants,
+ * - first variables (including subscripts and slices) and constants,
  *   then function calls, object methods and parenthesized expressions,
  * - then the unary operators + - and !
  * - then multiplication and division (normal and modulo)
@@ -36,7 +36,7 @@
 static Object *logical_or_expr(void);
 
 
-/* Decode the next expression and convert to integer.
+/* Decode the next expression and convert the result to an integer.
  *
  * To be used when subscript indices must be read.
  */
@@ -55,7 +55,7 @@ static int int_expression()
 
 /* Decode subscripts [index] and [start:end] for sequences.
  *
- * Index is mandatory, start en end are optional. The result can be another
+ * Index is mandatory, start and end are optional. The result can be another
  * sequence with subscripts. Decoding continues until no subscripts are left.
  *
  * The opening LSQB of the subscript has already been read.
@@ -115,7 +115,7 @@ static Object *subscript(Object *sequence)
 }
 
 
-/* Call methods: seq.len, seq.append, seq.remove, seq.insert, *.type
+/* Call methods: seq.len, seq.append, seq.remove, seq.insert
  *
  * The DOT which indicates a method will follow has already been read.
  *
@@ -193,7 +193,7 @@ static Object *trailer(Object *obj)
 		rv = method(obj);
 		obj_decref(obj);
 	}
-	if (rv == NULL)  /* not a subscript and not a method */
+	if (rv == NULL)  /* neither a subscript nor a method */
 		rv = obj;
 
 	return rv;
@@ -238,7 +238,7 @@ static Object *primary_expr(void)
 			}
 			break;
 		case IDENTIFIER:  /* variabele or function identifier */
-			/* rule: user defined identifiers shadow builtins */
+			/* precedence rule: user defined identifiers shadow builtins */
 			if ((id = identifier.search(scanner.string)) == NULL) {
 				if ((obj = builtin(scanner.string)) != NULL)
 					break;

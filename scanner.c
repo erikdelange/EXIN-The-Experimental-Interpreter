@@ -4,15 +4,16 @@
  *
  * A program consist of a sequence of tokens. A token is a group of one or
  * more characters which have a special meaning in the programming language.
- * The scanner reads a program character by character (using the reader
+ * The scanner reads a program character by character (by using the 'reader'
  * object) and converts these into tokens.
  *
  * Object 'scanner' is the API to the token scanner. Only one scanner object
  * exists. For its definition see scanner.h.
  *
- * After reading the next token 'scanner.token' contains the token and
- * 'scanner.string' - if applicable - the identifier, the number, the
- * character or the string.
+ * The next token is read by calling 'scanner.next'. On return variable
+ * 'scanner.token' contains the token and 'scanner.string' - if applicable - the
+ * identifier, the number, the character or the string. In all other cases it
+ * contains an empty string ("").
  *
  * 1994	K.W.E. de Lange
  */
@@ -24,12 +25,13 @@
 #include "reader.h"
 #include "error.h"
 
-/*	Table containing all keywords and corresponding tokens.
+
+/* Table containing all language keywords and their corresponding tokens.
  */
 static struct {
 	char *keyword;
 	token_t token;
-} keywordTable[] = {  /* Note: sort keyword strings alphabetically */
+} keywordTable[] = {  /* Note: keyword strings must be sorted alphabetically */
 	{ "and",		AND },
 	{ "break",		BREAK },
 	{ "char",		DEFCHAR },
@@ -41,7 +43,7 @@ static struct {
 	{ "for",		FOR },
 	{ "if",			IF },
 	{ "import",		IMPORT },
-	{ "in", 		IN },
+	{ "in",			IN },
 	{ "input",		INPUT },
 	{ "int",		DEFINT },
 	{ "list",		DEFLIST},
@@ -54,7 +56,7 @@ static struct {
 };
 
 
-/*	Forward declarations.
+/* Forward declarations.
  */
 static token_t read_next_token(char *buffer);
 static token_t read_identifier(char *buffer);
@@ -68,7 +70,7 @@ static void scanner_jump(struct scanner *);
 static void scanner_init(struct scanner *);
 
 
-/*	Token scanner API and data with initial settings.
+/* Token scanner API and data, including the initial settings.
  */
 Scanner scanner = {
 	.token = UNKNOWN,
@@ -84,10 +86,14 @@ Scanner scanner = {
 };
 
 
+/* API: Initialize scanner object 'sc'.
+ */
 static void scanner_init(struct scanner *sc)
 {
+	/* load the function addresses from the global scanner */
 	*sc = scanner;
 
+	/* reset all object variables to their initial states */
 	sc->token = UNKNOWN;
 	sc->peeked = 0;
 	sc->at_bol = true;
@@ -95,7 +101,7 @@ static void scanner_init(struct scanner *sc)
 }
 
 
-/*	Save the global scanner state in sc.
+/* API: Save the global scanner state in sc.
  */
 static void scanner_save(struct scanner *sc)
 {
@@ -103,7 +109,7 @@ static void scanner_save(struct scanner *sc)
 }
 
 
-/*	Load the global scanner state from sc.
+/* API: Load the global scanner state from sc.
  */
 static void scanner_jump(struct scanner *sc)
 {
@@ -111,6 +117,10 @@ static void scanner_jump(struct scanner *sc)
 }
 
 
+/* API: Read the next token.
+ *
+ * If previously a peek was executed then return the peeked token.
+ */
 static token_t next_token(void)
 {
 	if (scanner.peeked == 0)
@@ -127,6 +137,10 @@ static token_t next_token(void)
 }
 
 
+/* API: Look at the next token, without actually considering it read.
+ *
+ * Only a single peek is possible, you cannot look more then 1 token ahead.
+ */
 static token_t peek_token(void)
 {
 	if (scanner.peeked == 0)
@@ -138,12 +152,12 @@ static token_t peek_token(void)
 
 /* Read the next token.
  *
- * After reading buffer contains:
+ * After reading 'buffer' contains:
  *    the identifier if token == IDENTIFIER
  *    the number if token == INTEGER or FLOAT
  *    the string if token == STRING
  *    the character if token == CHAR
- *    and an empty string for all other tokens
+ *    and an empty string ("") for all other tokens
  */
 static token_t read_next_token(char *buffer)
 {
@@ -151,7 +165,7 @@ static token_t read_next_token(char *buffer)
 
 	buffer[0] = 0;
 
-	/*	Determine the level of indentation. If it has increased compared to the
+	/* 	Determine the level of indentation. If it has increased compared to the
 	 * 	previous line then token is INDENT. Has it decreased then check if it
 	 * 	was equal to the previous (smaller) indentation. If so then the token
 	 * 	is DEDENT, else there is an indentation error.
@@ -296,28 +310,29 @@ static token_t read_next_token(char *buffer)
 /* Read a string.
  *
  * Strings are surrounded by double quotes. Escape sequences are recognized.
- * Examples: "abc"  ""  "xyz\n"
+ * Examples: "abc"  "xyz\n"  ""
  */
 static token_t read_string(char *string)
 {
 	char ch;
-	int	count = 0;
+	int count = 0;
 
 	while (1) {
 		ch = reader.nextch();
 		if (ch != EOF && ch != '\"') {
 			if (ch == '\\')
 				switch (reader.peekch()) {
-					case 'b' :	reader.nextch(); ch = '\b'; break;
-					case 'f' :	reader.nextch(); ch = '\f'; break;
-					case 'n' :	reader.nextch(); ch = '\n'; break;
-					case 'r' :	reader.nextch(); ch = '\r'; break;
-					case 't' :	reader.nextch(); ch = '\t'; break;
-					case 'v' :	reader.nextch(); ch = '\v'; break;
-					case '\\':	reader.nextch(); ch = '\\'; break;
-					case '\'':	reader.nextch(); ch = '\''; break;
-					case '\"':	reader.nextch(); ch = '\"'; break;
 					case '0' :	reader.nextch(); ch = '\0'; break;
+					case 'a' :	reader.nextch(); ch = '\a'; break;
+					case 'b' :	reader.nextch(); ch = '\b'; break;
+					case 't' :	reader.nextch(); ch = '\t'; break;
+					case 'n' :	reader.nextch(); ch = '\n'; break;
+					case 'v' :	reader.nextch(); ch = '\v'; break;
+					case 'f' :	reader.nextch(); ch = '\f'; break;
+					case 'r' :	reader.nextch(); ch = '\r'; break;
+					case '\"':	reader.nextch(); ch = '\"'; break;
+					case '\'':	reader.nextch(); ch = '\''; break;
+					case '\\':	reader.nextch(); ch = '\\'; break;
 				}
 			if (count < BUFSIZE)
 				string[count++]= ch;
@@ -427,9 +442,10 @@ static token_t read_identifier(char *name)
 }
 
 
-/* Read a character constant. This can a single letter or an escape sequence.
+/* Read a character constant. This can be a single letter or an escape sequence.
  *
  * A character constant is surrounded by single quotes.
+ * Examples: 'a'  '\n'
  */
 static token_t read_character(char *c)
 {
@@ -440,16 +456,17 @@ static token_t read_character(char *c)
 	if (ch == '\\') {  /* is an escape sequence */
 		ch = reader.nextch();
 		switch (ch) {
-			case 'b' :	c[0] = '\b'; break;
-			case 'f' :	c[0] = '\f'; break;
-			case 'n' :	c[0] = '\n'; break;
-			case 'r' :	c[0] = '\r'; break;
-			case 't' :	c[0] = '\t'; break;
-			case 'v' :	c[0] = '\v'; break;
-			case '\\':	c[0] = '\\'; break;
-			case '\'':	c[0] = '\''; break;
-			case '\"':	c[0] = '\"'; break;
 			case '0' :	c[0] = '\0'; break;
+			case 'a' :	c[0] = '\a'; break;
+			case 'b' :	c[0] = '\b'; break;
+			case 't' :	c[0] = '\t'; break;
+			case 'n' :	c[0] = '\n'; break;
+			case 'v' :	c[0] = '\v'; break;
+			case 'f' :	c[0] = '\f'; break;
+			case 'r' :	c[0] = '\r'; break;
+			case '\"':	c[0] = '\"'; break;
+			case '\'':	c[0] = '\''; break;
+			case '\\':	c[0] = '\\'; break;
 			default  :	error(SyntaxError, "unknown escape sequence: %c", ch);
 		}
 	} else {  /* not an escape sequence */

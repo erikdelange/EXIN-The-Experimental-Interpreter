@@ -318,7 +318,7 @@ expression_stmnt ::= expression NEWLINE
 
 /* builtin functions */
 
-type_function ::= 'type' '(' expression ')'
+type_function ::= 'type' '(' assignment_expr ')'
 
 /* expressions */
 

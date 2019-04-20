@@ -1,6 +1,6 @@
 /* function.c
  *
- * Builtin functions.
+ * Builtin (aka intrinsic) functions.
  *
  * 2019	K.W.E. de Lange
  */
@@ -10,7 +10,7 @@
 
 /* Builtin: determine the type of an expression
  *
- * in:	token is LPAR of argument list
+ * in:	token = LPAR of argument list
  * out:	token = token after RPAR of function call argument list
  *
  * Syntax: type(expression)
@@ -19,10 +19,34 @@
 	Object *obj, *result;
 
 	expect(LPAR);
-	obj = comma_expr();
+	obj = assignment_expr();
 	expect(RPAR);
 
 	result = isListNode(obj) ? obj_type(obj_from_listnode(obj)) : obj_type(obj);
+
+	obj_decref(obj);
+
+	return result;
+}
+
+
+/* Builtin: return character representation of integer
+ *
+ * in:	token = LPAR of argument list
+ * out:	token = token after RPAR of function call argument list
+ *
+ * Syntax: chr(integer expression)
+ */
+ static Object *chr(void) {
+	 Object *obj, *result;
+	 char buffer[BUFSIZE+1];
+
+	expect(LPAR);
+	obj = assignment_expr();
+	expect(RPAR);
+
+	snprintf(buffer, BUFSIZE, "%c", obj_as_char(obj));
+	result = obj_create(STR_T, buffer);  // VERBETER: 10 als \n printen
 
 	obj_decref(obj);
 
@@ -35,24 +59,26 @@
 static struct {
 	char *functionname;
 	Object *(*functionaddr)();
-} builtinTable[] = { /* Note: sort functionname strings alphabetically */
+} builtinTable[] = { /* Note: functionnames must be sorted alphabetically */
+	{"chr", chr},
 	{"type", type}
 };
 
 
 /* Check if functionname is an builtin function, and if so execute it.
  *
- * functionname		identifier to check for builtin
- * return			Object* if functionname was a builtin else NULL
+ * functionname	identifier to check for builtin function
+ * return		Object* with function results if functionname
+ * 				was a builtin else NULL
  */
-Object *builtin(char *functioname) {
+Object *builtin(char *functionname) {
 	int l, h, m, d;
 
 	l = 0, h = (int)(sizeof builtinTable / sizeof builtinTable[0]) - 1;
 
 	while (l <= h) {
 		m = (l + h) / 2;
-		d = strcmp(&functioname[0], builtinTable[m].functionname);
+		d = strcmp(&functionname[0], builtinTable[m].functionname);
 		if (d < 0)
 			h = m - 1;
 		if (d > 0)
