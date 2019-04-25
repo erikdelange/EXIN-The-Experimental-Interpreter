@@ -817,7 +817,7 @@ Object *obj_to_strobj(Object *obj)
 }
 
 
-/*  Add item to the end of the queue
+/*  Add object item to the end of the object queue
  */
 void enqueue(Object *item)
 {
@@ -837,7 +837,7 @@ void enqueue(Object *item)
 }
 
 
-/*  Remove item from the queue
+/*  Remove object item from the object queue
  */
 void dequeue(Object *item)
 {
@@ -866,7 +866,8 @@ void dequeue(Object *item)
 
 #ifdef DEBUG
 /*  Print all objects to a semi-colon separated file.
- *  Note: changes previous stdout
+ *  Note: redirects stdout to a file.
+ *        this cannot be undone in a cross-platform way.
  */
 void dump_object(void)
 {

@@ -1,7 +1,7 @@
 # EXIN Language Reference
 
 ##### General
-EXIN is a language which is easy to understand and contains elements of Basic, C and Python.
+EXIN is a simple language and contains elements of Basic, C and Python.
 ##### Keywords
 The following keywords are reserved and may not be used as variable or function name.
 ```
@@ -39,7 +39,7 @@ Code execution always starts at the top of a file.
 ##### Data types
 The three primitive data types are *char*, *int* and *float*. They are used for storing characters, integers and floating point numbers and match the C data types char, long and double.
 
-On top of these primitive types two additional data types are built: strings and lists. These are sequence data types as the can store multiple values which can be accessed by index. Lists can contain any data type, including other lists. Their data type is *list*. A special variant of the list is the string (data type *str*) which can contain only characters.
+On top of these primitive types two additional data types are built: strings and lists. These are sequence data types as they can store multiple values which can be accessed by index. Lists can contain any data type, including other lists. Their data type is *list*. A special variant of the list is the string (data type *str*) which can contain only characters.
 
 EXIN is strongly typed and requires that every variable is declared before it can be used.
 ```
@@ -57,7 +57,7 @@ char a = 'A', b = '\n', c
 int i = 10
 float x = 3.14, y = 1E10
 str s = "abcd", t = "\n", u = ""
-list l = ['a', 2.1, "xyz"], m = []
+list l = ['a', 2.1, "xyz"], m = [], n
 ```
 The type of a variable or constant can be retreived via the builtin *type()* function.
 ``` c
@@ -88,7 +88,7 @@ Elements in lists and strings are accessed via their index. Index numbers start 
 >>> "abc"[-1]
 = c
 ```
-It is also possible to take slices of a list or string using indices. The absence of an index identifies either the start or the end of a list or string. Out of bound indices are adjusted to the nearest possible value.
+It is also possible to take slices of a list or string using indices. The absence of an index identifies either the start or the end of a list or string. Out of bound indices are silently adjusted to the nearest possible value.
 ``` python
 >>> "abcdef"[:]
 = abcdef
@@ -178,7 +178,7 @@ Expression evaluation follows the following rules of precedence:
 
 ##### Control structures
 ###### If .. else
-The *if* keyword is followed by a conditional expression and when this evalutes to true the statement block following *if* is executed. Optionally an *else* block can be defined. *If* statements can be nested.
+The *if* keyword is followed by a conditional expression and when this evaluates to true the statement block following *if* is executed. Optionally an *else* block can be defined. *If* statements can be nested.
 ```
 if i > 0
     print "i is greater then zero"
@@ -202,7 +202,7 @@ while (m += 1) < 10
 ```
 According to the rules of precedence the parenthesized part of the conditional expression from the do .. while loop is executed before the comparison is made, so loop counter m is incremented first.
 
-An exit from a loop can be forced at any point by the *break* and *continue* statement. When using *break* the innermost loop is exited and the conditional expression is considered to be false. Via *continue* the rest of the statement block of the loop is skipped, causing the conditonal expression to be evaluated again.
+An exit from a loop can be forced at any point by the *break* and *continue* statement. When using *break* the innermost loop is exited and its conditional expression is considered to be false. Via *continue* the rest of the statement block of the loop is skipped, causing the loops conditonal expression to be evaluated again.
 ```
 int n
 while 1
