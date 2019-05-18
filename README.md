@@ -16,7 +16,7 @@ def reverse(s)
 
 str s
 
-# First a short demo
+# First do a short demo
 #
 s = reverse("abracadabra")
 
@@ -24,9 +24,9 @@ print s, "\n\n"  # this will print 'arbadacarba'
 
 s = reverse(s)   # turn s back in the original string
 
-print s, "\n\n"
+print s, 2*"\n"
 
-# Let the user enter strings
+# Now let the user enter strings
 #
 do
     input "Please enter a string to reverse (empty line to end): " s

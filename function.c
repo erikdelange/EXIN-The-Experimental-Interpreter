@@ -30,7 +30,7 @@
 }
 
 
-/* Builtin: return character representation of integer
+/* Builtin: return string representation of integer
  *
  * in:	token = LPAR of argument list
  * out:	token = token after RPAR of function call argument list
@@ -38,8 +38,8 @@
  * Syntax: chr(integer expression)
  */
  static Object *chr(void) {
-	 Object *obj, *result;
-	 char buffer[BUFSIZE+1];
+	Object *obj, *result;
+	char buffer[BUFSIZE+1];
 
 	expect(LPAR);
 	obj = assignment_expr();

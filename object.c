@@ -67,10 +67,10 @@
 #ifdef DEBUG
 Object *head = NULL;    /* head of doubly linked list with objects */
 Object *tail = NULL;    /* tail of doubly linked list with objects */
+#endif
 
 void enqueue(Object *item);
 void dequeue(Object *obj);
-#endif
 
 
 /* Create a new object of type 'type' and assign the default initial value.
@@ -115,7 +115,7 @@ Object *obj_alloc(objecttype_t type)
 
 	enqueue(obj);
 
-	debug_printf(DEBUGALLOC, "\n%p: alloc %-16s", (void *)obj, TYPENAME(obj));
+	debug_printf(DEBUGALLOC, "\nalloc : %p %s", (void *)obj, TYPENAME(obj));
 
 	obj_incref(obj);  /* initial refcount = 1 */
 	return obj;
@@ -150,7 +150,7 @@ void obj_free(Object *obj)
 {
 	dequeue(obj);
 
-	debug_printf(DEBUGALLOC, "\n%p: free %-17s", (void *)obj, TYPENAME(obj));
+	debug_printf(DEBUGALLOC, "\nfree  : %p %s", (void *)obj, TYPENAME(obj));
 
 	TYPEOBJ(obj)->free(obj);
 }
@@ -161,6 +161,7 @@ void obj_free(Object *obj)
 void obj_print(Object *obj)
 {
 	TYPEOBJ(obj)->print(obj);
+	fflush(stdout);
 }
 
 
@@ -224,6 +225,8 @@ Object *obj_copy(Object *op1)
  */
 void obj_assign(Object *op1, Object *op2)
 {
+	Object *obj;
+
 	switch (TYPE(op1)) {
 		case CHAR_T:
 			TYPEOBJ(op1)->set(op1, obj_as_char(op2));
@@ -235,7 +238,9 @@ void obj_assign(Object *op1, Object *op2)
 			TYPEOBJ(op1)->set(op1, obj_as_float(op2));
 			break;
 		case STR_T:
-			TYPEOBJ(op1)->set(op1, obj_as_str(op2));
+			obj = obj_to_strobj(op2);
+			TYPEOBJ(op1)->set(op1, obj_as_str(obj));
+			obj_decref(obj);
 			break;
 		case LIST_T:
 			TYPEOBJ(op1)->set(op1, obj_as_list(op2));

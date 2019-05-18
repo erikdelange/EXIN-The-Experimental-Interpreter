@@ -111,7 +111,7 @@ static void function_declaration(void)
 
 	config.debug = tmp;
 
-	debug_printf(DEBUGBLOCK, "\n------: %-32s", "Start execution");
+	debug_printf(DEBUGBLOCK, "\n------: %s", "Start execution");
 
 	reader.reset();
 }
@@ -124,7 +124,7 @@ static void function_declaration(void)
  */
 static void skip_function(void)
 {
-	debug_printf(DEBUGBLOCK, "\n------: %-32s%s", "Skip function", scanner.string);
+	debug_printf(DEBUGBLOCK, "\n------: %s %s", "Skip function", scanner.string);
 
 	expect(IDENTIFIER);
 	expect(LPAR);
@@ -134,7 +134,7 @@ static void skip_function(void)
 
 	skip_block();
 
-	debug_printf(DEBUGBLOCK, "\n------: %-32s", "End skip function");
+	debug_printf(DEBUGBLOCK, "\n------: %s", "End skip function");
 }
 
 
@@ -148,7 +148,7 @@ static void skip_block(void)
 {
 	int level = 1;
 
-	debug_printf(DEBUGBLOCK, "\n------: %-32s", "Skip block");
+	debug_printf(DEBUGBLOCK, "\n------: %s", "Skip block");
 
 	expect(NEWLINE);
 	expect(INDENT);
@@ -161,7 +161,7 @@ static void skip_block(void)
 			level--;
 	} while (level && scanner.token != ENDMARKER);
 
-	debug_printf(DEBUGBLOCK, "\n------: %-32s", "End skip block");
+	debug_printf(DEBUGBLOCK, "\n------: %s", "End skip block");
 
 	scanner.next();
 }
@@ -224,7 +224,7 @@ void statement(void)
  */
 static void block(void)
 {
-	debug_printf(DEBUGBLOCK, "\n------: %-32s", "Start block");
+	debug_printf(DEBUGBLOCK, "\n------: %s", "Start block");
 
 	expect(NEWLINE);
 	expect(INDENT);
@@ -246,7 +246,7 @@ static void block(void)
 		}
 	}
 
-	debug_printf(DEBUGBLOCK, "\n------: %-32s", "End block");
+	debug_printf(DEBUGBLOCK, "\n------: %s", "End block");
 }
 
 
@@ -493,8 +493,14 @@ static void	print_stmnt(void)
 
 	do {
 		obj = assignment_expr();
-		debug_printf(~NODEBUG, "\n>>>>>:%-33s%c", " ", '>');
+		debug_printf(~NODEBUG, "\nprint :%c", ' ');
+		#ifdef VT100
+		debug_printf(~NODEBUG, "%c[042m", 27);  /* VT100 green background */
+		#endif
 		obj_print(obj);
+		#ifdef VT100
+		debug_printf(~NODEBUG, "%c[0m", 27);  /* VT100 standard background */
+		#endif
 		obj_decref(obj);
 	} while (accept(COMMA));
 
@@ -517,6 +523,7 @@ static void input_stmnt(void)
 	do {
 		if (scanner.token == STR) {
 			printf("%s", scanner.string);
+			fflush(stdout);
 			scanner.next();
 		}
 		if (scanner.token != IDENTIFIER)
@@ -548,7 +555,7 @@ Object *function_call(PositionObject *addr)
 	jmp_buf temp;
 	Object *obj;
 
-	debug_printf(DEBUGBLOCK, "\n------: %-32s", "Start function");
+	debug_printf(DEBUGBLOCK, "\n------: %s", "Start function");
 
 	arglist = push_arguments();
 	/* token is now RPAR of function call */
@@ -567,7 +574,7 @@ Object *function_call(PositionObject *addr)
 		block();
 	memcpy(&return_address, &temp, sizeof(jmp_buf));
 
-	debug_printf(DEBUGBLOCK, "\n------: %-32s", "End function");
+	debug_printf(DEBUGBLOCK, "\n------: %s", "End function");
 
 	/* now returned from function */
 	if (return_value == NULL)
@@ -668,4 +675,3 @@ static void return_stmt(void)
 	 */
 	longjmp(return_address, 1);
 }
-

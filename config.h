@@ -11,15 +11,16 @@
 #include <setjmp.h>
 #include <stdio.h>
 
-#define VERSION		"1.09"
+#define LANGUAGE	"EXIN"
+#define VERSION		"1.10"
 #define BUFSIZE		256		/* maximum length of identifier name excl '\0' */
 #define LINESIZE	256		/* maximum length of input line excl '\0' */
 #define MAXINDENT	132		/* maximum number of indents */
 #define TABSIZE		4		/* default spaces per tab */
 
-#define char_t	char		/* Basic type for CHAR_T */
-#define int_t	long		/* Basic type for INT_T */
-#define float_t	double		/* Basic type for FLOAT_T */
+#define char_t	char		/* basic type for CHAR_T */
+#define int_t	long		/* basic type for INT_T */
+#define float_t	double		/* basic type for FLOAT_T */
 
 /* 	All global configuration variables.
  */
@@ -38,9 +39,11 @@ extern jmp_buf return_address;
 #ifdef DEBUG
 	#define debug_printf(level, fmt, ...) \
 				do { \
-					if (config.debug & (level)) \
-						fprintf(stderr, fmt, __VA_ARGS__); } \
-				while (0)
+					if (config.debug & (level)) { \
+						fprintf(stderr, fmt, __VA_ARGS__); \
+						fflush(stderr); \
+					} \
+				} while (0)
 #else
 	#define debug_printf(level, fmt, ...) \
 				do { } while (0)

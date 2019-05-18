@@ -30,7 +30,7 @@ Config config = {
  */
 static void usage(char *executable)
 {
-	fprintf(stderr, "\n%s version %s\n", executable, VERSION);
+	fprintf(stderr, "\n%s version %s\n", LANGUAGE, VERSION);
 	fprintf(stderr, "usage: %s [options] file\n", executable);
 	fprintf(stderr, "file: code to execute\n");
 	fprintf(stderr, "options\n");
@@ -46,7 +46,8 @@ static void usage(char *executable)
 	#endif
 	fprintf(stderr, "-h = show usage information\n");
 	fprintf(stderr, "-t[tabsize] = set tab size in spaces\n");
-	fprintf(stderr, "    tabsize = >= 1\n");
+	fprintf(stderr, "    tabsize = >= 1 (default = %d)\n", TABSIZE);
+	fprintf(stderr, "-v = show version information\n");
 }
 
 
@@ -71,11 +72,19 @@ int	main(int argc, char **argv)
 				usage(executable);
 				return 0;
 			case 't':
-				if (isdigit(*++argv[0]))
+				if (isdigit(*++argv[0])) {
 					config.tabsize = (int)str_to_int(&(*argv[0]));
-				else
+					if (config.tabsize < 1) {
+						fprintf(stderr, "%s: invalid tabsize %d\n", \
+										executable, config.tabsize);
+						config.tabsize = TABSIZE;
+					}
+				} else
 					config.tabsize = TABSIZE;
 				break;
+			case 'v':
+				fprintf(stdout, "%s version %s\n", LANGUAGE, VERSION);
+				return 0;
 			default:
 				fprintf(stderr, "%s: unknown option -%c\n", executable, ch);
 				usage(executable);

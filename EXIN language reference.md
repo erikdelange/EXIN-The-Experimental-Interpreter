@@ -144,7 +144,7 @@ Inserting an element at any place in a list is done via *.insert(before_index, e
 ```
 ##### Operators
 ###### Arithmetic
-The binary operators are +, -, \*, / and the modulo operator %. Modulo can only be used on integers. For usage in assignments the shorthands operators +=, -=, \*=, /= and \%= are available instead of (for example) n = n + 1. Using addition on lists or strings will result in list or string concatenation. Multiplication of a list or string by a number results in the repetition of the list or string.
+The binary operators are +, -, \*, / and the modulo operator %. Modulo can only be used on integers. For usage in assignments the shorthand operators +=, -=, \*=, /= and \%= are available instead of (for example) n = n + 1. Using addition on lists or strings will result in list or string concatenation. Multiplication of a list or string by a number results in the repetition of the list or string.
 ``` python
 >>> "abc" + "def"
 = abcdef
@@ -189,7 +189,7 @@ else
         print "i is less then zero"
 ```
 ###### Loops
-The language has three types of loops: *while*, *do .. while* and *for .. in*. The while loop evaluates the conditional expression before the loop is entered, whereas for the do .. while loop this is only done after the loop has been executed. So the statement block of a do .. while loop is executed at least once.
+Three types of loops are available: *while*, *do .. while* and *for .. in*. The while loop evaluates the conditional expression before the loop is entered, whereas for the do .. while loop this is only done after the loop has been executed. So the statement block of a do .. while loop is executed at least once.
 ```
 int n = 0
 while n
@@ -210,14 +210,14 @@ while 1
         break
     n += 1
 ```
-This loop is executed infinitly because 1 always evaluates to true. However eventually the *if* statement with *break* makes sure the loop is terminiated once n equals 10.
+This loop is executed infinitly because 1 always evaluates to true. However the *if* statement with *break* makes sure the loop is terminiated once n equals 10.
 ##### Looping through lists and strings
 The *for .. in sequence* loop cycles through the content of a list of string. As with the other loops *break* and *continue* can be used here.
 ```
 for element in [1, 2.0, "abc", 'c']
     print element, " ", type(element), "\n"
 ```
-It is not neccesary to define variable *element* upfront because it is just a reference to a variable in the list. In C this would be called a pointer. You can use it to change the value in the list. The types of the values which are assigned can be different for each element of the list. If the sequence used in the *for .. in* loop is a string then of course *element* is only assigned characters. Strings are read only.
+It is not neccesary to define variable *element* upfront because it is just a reference to a variable in the list. In C this would be called a pointer. It can be used to change the value in the list. The types of the values which are assigned can be different for each element of the list. If the sequence used in the *for .. in* loop is a string then of course *element* is only assigned characters. Strings are read only.
 ##### Function definition
 Functions are defined using the *def* keyword followed by a function name and a pair of parenthesis containing the argument names separated by comma's. Even if a function has no arguments the parenthesis are mandatory. All arguments are passed by value. There is no type checking when the function is called, and more arguments can be sent to the function then are stated in the definition. Sending less arguments will result in an error.
 ```
@@ -244,7 +244,7 @@ print "Fibonacci sequence for ", n, " elements: ", fibonacci(n), "\n\n"
 A function returns when it reaches the end of its statement block or when a *return* statement is encountered. When using the *return* statement a return value can be explicitly specified. Without this statement, or when using just *return* the return value is considered to be integer 0. The return value of a function can be used immediately, so a function can appear everywhere where a variable can appear. Any data type can be returned by a function, including lists and strings.
 Variables are defined within the scope of a function. Any variable defined outside of a function is considered global. Functions are always defined globally.
 ##### Importing modules
-Via the *import* statement program code from other files can be loaded. The code in any file which is imported is executed immediately. Its functions are added to the global list and any statement or declaration outside a function definition is executed. A module will only be imported once, repeated calls importing an already imported file have no effect. Imports can be nested.
+The *import* statement loads program code from other files. The imported code is executed immediately after loading. Its functions are added to the global list and any statement or declaration outside a function definition is executed. A module will only be imported once so repeated calls importing an already imported file have no effect. Imports can be nested.
 ```
 str file = "file1.ext"
 
