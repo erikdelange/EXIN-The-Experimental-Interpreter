@@ -40,8 +40,8 @@ extern jmp_buf return_address;
 	#define debug_printf(level, fmt, ...) \
 				do { \
 					if (config.debug & (level)) { \
-						fprintf(stderr, fmt, __VA_ARGS__); \
-						fflush(stderr); \
+						fprintf(stdout, fmt, __VA_ARGS__); \
+						fflush(stdout); \
 					} \
 				} while (0)
 #else

@@ -298,19 +298,19 @@ static Object *mult_expr(void)
 
 	while (1)
 		if (accept(STAR)) {
-			rvalue = mult_expr();
+			rvalue = unary_expr();
 			result = obj_mult(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
 			lvalue = result;
 		} else if (accept(SLASH)) {
-			rvalue = mult_expr();
+			rvalue = unary_expr();
 			result = obj_divs(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
 			lvalue = result;
 		} else if (accept(PERCENT)) {
-			rvalue = mult_expr();
+			rvalue = unary_expr();
 			result = obj_mod(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
@@ -330,13 +330,13 @@ static Object *additive_expr(void)
 
 	while (1)
 		if (accept(PLUS)) {
-			rvalue = additive_expr();
+			rvalue = mult_expr();
 			result = obj_add(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
 			lvalue = result;
 		} else if (accept(MINUS)) {
-			rvalue = additive_expr();
+			rvalue = mult_expr();
 			result = obj_sub(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
@@ -356,25 +356,25 @@ static Object *relational_expr(void)
 
 	while (1)
 		if (accept(LESS)) {
-			rvalue = relational_expr();
+			rvalue = additive_expr();
 			result = obj_lss(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
 			lvalue = result;
 		} else if (accept(LESSEQUAL)) {
-			rvalue = relational_expr();
+			rvalue = additive_expr();
 			result = obj_leq(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
 			lvalue = result;
 		} else if (accept(GREATER)) {
-			rvalue = relational_expr();
+			rvalue = additive_expr();
 			result = obj_gtr(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
 			lvalue = result;
 		} else if (accept(GREATEREQUAL)) {
-			rvalue = relational_expr();
+			rvalue = additive_expr();
 			result = obj_geq(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
@@ -394,19 +394,19 @@ static Object *equality_expr(void)
 
 	while (1)
 		if (accept(EQEQUAL)) {
-			rvalue = equality_expr();
+			rvalue = relational_expr();
 			result = obj_eql(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
 			lvalue = result;
 		} else if (accept(NOTEQUAL)) {
-			rvalue = equality_expr();
+			rvalue = relational_expr();
 			result = obj_neq(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
 			lvalue = result;
 		} else if (accept(IN)) {
-			rvalue = equality_expr();
+			rvalue = relational_expr();
 			result = obj_in(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
@@ -426,7 +426,7 @@ static Object *logical_and_expr(void)
 
 	while (1)
 		if (accept(AND)) {
-			rvalue = logical_and_expr();
+			rvalue = equality_expr();
 			result= obj_and(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
@@ -446,7 +446,7 @@ static Object *logical_or_expr(void)
 
 	while (1)
 		if (accept(OR)) {
-			rvalue = logical_or_expr();
+			rvalue = logical_and_expr();
 			result = obj_or(lvalue, rvalue);
 			obj_decref(lvalue);
 			obj_decref(rvalue);
@@ -466,7 +466,7 @@ Object *assignment_expr(void)
 
 	while (1)
 		if (accept(EQUAL)) {
-			rvalue = assignment_expr();
+			rvalue = logical_or_expr();
 			obj_assign(lvalue, rvalue);
 			obj_decref(rvalue);
 		} else if (accept(PLUSEQUAL)) {
@@ -513,12 +513,12 @@ Object *comma_expr(void)
 {
 	Object *lvalue;
 
-	lvalue = assignment_expr();
+	lvalue = logical_or_expr();
 
 	while (1)
 		if (accept(COMMA)) {
 			obj_decref(lvalue);
-			lvalue = comma_expr();
+			lvalue = logical_or_expr();
 		} else
 			return lvalue;
 }
