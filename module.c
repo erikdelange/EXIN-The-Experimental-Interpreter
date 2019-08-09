@@ -10,9 +10,11 @@
 #include <sys/stat.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 #include <stdio.h>
 #include "module.h"
+#include "strdup.h"
 #include "error.h"
 
 

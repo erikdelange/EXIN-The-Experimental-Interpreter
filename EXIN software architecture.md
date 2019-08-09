@@ -26,15 +26,12 @@ options
 By specifying a file this is loaded and the code is executed. The filename must include its extension (if any), the interpreter does not guess.
 
 ##### C version
-The interpreter is written in C99. For development I used MinGW-w64's GCC C compiler (then version 8.1.0) and CodeLite as IDE. The MinGW compiler must be manually installed, it is not included in CodeLite's distribution.
+The interpreter is written in C99. For development I used MinGW's GCC C compiler (then version 6.3.0) and CodeLite as IDE.
 
 ##### Debugging
 There are two ways to debug the interpreter;
 1. the most low level approach is debugging the actual C code
 2. have the interpreter print debugging messages when running
-
-###### Debugging the C code
-For debugging with CodeLite install the TDM compiler suite. This is automatically proposed when installing CodeLite for the first time. Make sure the debugger path is set to gdb64 in the TDM installation directory. Do *not* use TDM for compilation as its version (then 5.1.0, released mid 2015) does not implement C99 completely; compilation will fail.
 
 ###### Debugging messages
 The interpreter can produce extensive debugging output. For this add DEBUG to the preprocessor constants. Search for `debug_printf()` in the code to see where the messages are generated. As an example, when running the following program with -d7 as debug level ...

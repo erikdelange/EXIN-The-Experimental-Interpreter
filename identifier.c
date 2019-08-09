@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "identifier.h"
+#include "strdup.h"
 #include "error.h"
 
 

@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include "strndup.h"
+#include "strdup.h"
 #include "error.h"
 #include "str.h"
 
