@@ -5,6 +5,7 @@
  * 2016 K.W.E. de Lange
  */
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "object.h"
 #include "error.h"

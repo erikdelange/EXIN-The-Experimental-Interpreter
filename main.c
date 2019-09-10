@@ -20,7 +20,7 @@
 jmp_buf	return_address;			/* Return address at end of function */
 Object	*return_value = NULL;	/* Result of the last function call */
 
-Config config = {
+Config config = {               /* global configuration variables */
 	.debug = NODEBUG,
 	.tabsize = TABSIZE
 };
@@ -31,8 +31,8 @@ Config config = {
 static void usage(char *executable)
 {
 	fprintf(stderr, "\n%s version %s\n", LANGUAGE, VERSION);
-	fprintf(stderr, "usage: %s [options] file\n", executable);
-	fprintf(stderr, "file: code to execute\n");
+	fprintf(stderr, "usage: %s [options] module\n", executable);
+	fprintf(stderr, "module: name of file containing code to execute\n");
 	fprintf(stderr, "options\n");
 	#ifdef DEBUG
 	fprintf(stderr, "-d[detail] = show debug info\n");
@@ -42,7 +42,7 @@ static void usage(char *executable)
 	fprintf(stderr, "    option 2: show block entry and exit\n");
 	fprintf(stderr, "    option 4: show memory allocation\n");
 	fprintf(stderr, "    option 8: show tokens during function scan\n");
-	fprintf(stderr, "    option 16: dump identifier and object table to disk\n");
+	fprintf(stderr, "    option 16: dump identifier and object table to disk after program end\n");
 	#endif
 	fprintf(stderr, "-h = show usage information\n");
 	fprintf(stderr, "-t[tabsize] = set tab size in spaces\n");
@@ -110,7 +110,7 @@ int	main(int argc, char **argv)
 
 		if (return_value && isNumber(return_value))
 			return obj_as_int(return_value);
-	} else {
+	} else {  /* more then 1 argument */
 		fprintf(stderr, "%s: to many modules\n", executable);
 		usage(executable);
 	}

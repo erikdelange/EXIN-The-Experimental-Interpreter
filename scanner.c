@@ -17,6 +17,7 @@
  *
  * 1994	K.W.E. de Lange
  */
+#include <assert.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -90,6 +91,8 @@ Scanner scanner = {
  */
 static void scanner_init(struct scanner *sc)
 {
+    assert(sc != NULL);
+
 	/* load the function addresses from the global scanner */
 	*sc = scanner;
 
@@ -105,6 +108,8 @@ static void scanner_init(struct scanner *sc)
  */
 static void scanner_save(struct scanner *sc)
 {
+    assert(sc != NULL);
+
 	*sc = scanner;
 }
 
@@ -113,6 +118,8 @@ static void scanner_save(struct scanner *sc)
  */
 static void scanner_jump(struct scanner *sc)
 {
+    assert(sc != NULL);
+
 	scanner = *sc;
 }
 
@@ -162,6 +169,8 @@ static token_t peek_token(void)
 static token_t read_next_token(char *buffer)
 {
 	char ch;
+
+    assert(buffer != NULL);
 
 	buffer[0] = 0;
 

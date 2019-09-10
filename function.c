@@ -15,7 +15,8 @@
  *
  * Syntax: type(expression)
  */
- static Object *type(void) {
+ static Object *type(void)
+ {
 	Object *obj, *result;
 
 	expect(LPAR);
@@ -37,7 +38,8 @@
  *
  * Syntax: chr(integer expression)
  */
- static Object *chr(void) {
+ static Object *chr(void)
+ {
 	Object *obj, *result;
 	char buffer[BUFSIZE+1];
 
@@ -71,7 +73,8 @@ static struct {
  * return		Object* with function results if functionname
  * 				was a builtin else NULL
  */
-Object *builtin(char *functionname) {
+Object *builtin(char *functionname)
+{
 	int l, h, m, d;
 
 	l = 0, h = (int)(sizeof builtinTable / sizeof builtinTable[0]) - 1;

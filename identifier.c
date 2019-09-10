@@ -186,7 +186,9 @@ static void removeScopeLevel(void)
 
 #ifdef DEBUG
 /*  Print identifiers per level to a semi-colon separated file.
- *  Note: changes previous stdout
+ *
+ *  Note: redirects stdout to a file. This cannot be undone in a
+ *        cross-platform way, so only use when exiting the interpreter.
  */
 void dump_identifier(void)
 {

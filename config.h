@@ -7,7 +7,6 @@
 #ifndef _CONFIG_
 #define _CONFIG_
 
-#include <stdbool.h>
 #include <setjmp.h>
 #include <stdio.h>
 
@@ -25,8 +24,8 @@
 /* 	All global configuration variables.
  */
 typedef struct {
-	int debug;
-	int tabsize;
+	int debug;      /* debug logging level */
+	int tabsize;    /* spaces per tab */
 } Config;
 
 extern Config config;
@@ -44,12 +43,12 @@ extern jmp_buf return_address;
 						fflush(stdout); \
 					} \
 				} while (0)
-#else
+#else  /* not DEBUG */
 	#define debug_printf(level, fmt, ...) \
 				do { } while (0)
 #endif
 
-/* debug logging detail levels:
+/* debug logging detail levels
  */
 #define NODEBUG         0	/* no debug output */
 #define DEBUGTOKEN      1	/* show tokens during execution */

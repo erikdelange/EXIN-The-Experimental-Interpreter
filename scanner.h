@@ -47,6 +47,7 @@ typedef struct scanner {
 	token_t peeked;		/* private */
 	bool at_bol;
 	char string[BUFSIZE + 1];
+
 	token_t (*next)(void);
 	token_t (*peek)(void);
 	void (*init)(struct scanner *);

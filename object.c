@@ -64,13 +64,24 @@
 #include "none.h"
 #include "str.h"
 
-#ifdef DEBUG
-Object *head = NULL;    /* head of doubly linked list with objects */
-Object *tail = NULL;    /* tail of doubly linked list with objects */
-#endif
 
-void enqueue(Object *item);
-void dequeue(Object *obj);
+#ifdef DEBUG
+
+static Object *head = NULL;    /* head of doubly linked list with objects */
+static Object *tail = NULL;    /* tail of doubly linked list with objects */
+
+static void _enqueue(Object *obj);
+static void _dequeue(Object *obj);
+
+#define enqueue(o)	_enqueue(o)
+#define dequeue(o)  _dequeue(o)
+
+#else  /* not DEBUG */
+
+#define enqueue(o)	((void)0)
+#define dequeue(o)  ((void)0)
+
+# endif
 
 
 /* Create a new object of type 'type' and assign the default initial value.
@@ -118,6 +129,7 @@ Object *obj_alloc(objecttype_t type)
 	debug_printf(DEBUGALLOC, "\nalloc : %p %s", (void *)obj, TYPENAME(obj));
 
 	obj_incref(obj);  /* initial refcount = 1 */
+
 	return obj;
 }
 
@@ -339,7 +351,6 @@ Object *obj_mod(Object *op1, Object *op2)
 	else
 		error(TypeError, "unsupported operand type(s) for operation %%: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
-
 	return NULL;
 }
 
@@ -821,12 +832,11 @@ Object *obj_to_strobj(Object *obj)
 	}
 }
 
-
-/*  Add object item to the end of the object queue
- */
-void enqueue(Object *item)
-{
 #ifdef DEBUG
+/*  Add object 'item' to the end of the object queue
+ */
+static void _enqueue(Object *item)
+{
 	if (head == NULL) {
 		head = item;
 		item->prevobj = NULL;
@@ -836,17 +846,15 @@ void enqueue(Object *item)
 	}
 	tail = item;
 	item->nextobj = NULL;
-#else
-	item = NULL;
-#endif
 }
+#endif
 
 
-/*  Remove object item from the object queue
- */
-void dequeue(Object *item)
-{
 #ifdef DEBUG
+/*  Remove object 'item' from the object queue
+ */
+static void _dequeue(Object *item)
+{
 	if (item->nextobj == NULL) {
 		if (item->prevobj == NULL) {
 			head = tail = NULL;
@@ -863,16 +871,15 @@ void dequeue(Object *item)
 			item->nextobj->prevobj = item->prevobj;
 		}
 	}
-#else
-	item = NULL;
-#endif
 }
+#endif
 
 
 #ifdef DEBUG
 /*  Print all objects to a semi-colon separated file.
- *  Note: redirects stdout to a file.
- *        this cannot be undone in a cross-platform way.
+ *
+ *  Note: redirects stdout to a file. This cannot be undone in a
+ *        cross-platform way, so only use when exiting the interpreter.
  */
 void dump_object(void)
 {

@@ -37,7 +37,7 @@ static struct {
  *
  * error(TypeError, "%s is not subscriptable", TYPENAME(sequence));
  */
-void error(int number, ...)
+void error(const int number, ...)
 {
 	int i = 0;
 	char *format;

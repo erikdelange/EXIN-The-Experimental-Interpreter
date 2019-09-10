@@ -13,18 +13,19 @@ typedef enum { UNDEFINED, CHAR_T, INT_T, FLOAT_T, STR_T,
 
 
 #ifdef DEBUG
-	/* debug version of object contains nextobj / prevobj pointers so it
-	 * can be put in a double linked list */
+	/* the debug version of Object contains nextobj / prevobj pointers
+	 * so it can be put in a double linked list */
 	#define OBJ_HEAD	int refcount;  \
 						objecttype_t type;  \
 						struct typeobject *typeobj;  \
 						struct object *nextobj;  \
 						struct object *prevobj
-#else
+#else  /* not DEBUG */
 	#define OBJ_HEAD	int refcount;  \
 						objecttype_t type;  \
 						struct typeobject *typeobj
 #endif
+
 
 typedef struct object {
 	OBJ_HEAD;

@@ -18,7 +18,7 @@
 #include "error.h"
 
 
-/* Pointer to the list of loaded modules
+/* Pointer to the list of loaded modules.
  */
 static Module *modulehead = NULL;
 
@@ -31,6 +31,9 @@ static Module *modulehead = NULL;
 static Module *search(const char *name)
 {
 	Module *m;
+
+    assert(name != NULL);
+    assert(*name != '\0');
 
 	for (m = modulehead; m; m = m->next)
 		if (strcmp(name, m->name) == 0)
@@ -53,6 +56,8 @@ static int load(Module *self, const char *name)
 	struct _stat stat_buffer;
 
 	assert(self != NULL);
+    assert(name != NULL);
+    assert(*name != '\0');
 
 	if (_stat(name, &stat_buffer) == 0) {
 		self->size = stat_buffer.st_size;
@@ -74,7 +79,7 @@ static int load(Module *self, const char *name)
 }
 
 
-/* Create a new module and load the code.
+/* Create a new module object and load the code.
  *
  * name		module's filename (may include path)
  * return	module object (else an error is raised and the the program exits)
@@ -83,19 +88,25 @@ static Module *new(const char *name)
 {
 	Module *m;
 
+    assert(name != NULL);
+    assert(*name != '\0');
+
 	if ((m = calloc(1, sizeof(Module))) == NULL)
 		error(OutOfMemoryError);
 	else
 		*m = module;
 
 	if (load(m, name) == 0)
-		error(SystemError, "error importing %s: %s (%d)", name, strerror(errno), errno);
+		error(SystemError, "error importing %s: %s (%d)", name, \
+                            strerror(errno), errno);
 
 	if ((m->name = strdup(name)) == NULL)
 		error(OutOfMemoryError);
 
 	m->next = modulehead;
 	modulehead = m;
+
+    assert(m != NULL);
 
 	return m;
 }

@@ -19,6 +19,6 @@
 #define ModNotAllowedError 8
 #define DivisionByZeroError 9
 
-extern void error(int number, ...);
+extern void error(const int number, ...);
 
 #endif

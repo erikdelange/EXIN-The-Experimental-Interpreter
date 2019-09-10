@@ -19,6 +19,8 @@
 
 
 /*	API: Read the next character.
+ *
+ *  return  the character read
  */
 static int nextch(void)
 {
@@ -34,6 +36,8 @@ static int nextch(void)
 
 
 /*	API: Look ahead to see what the next character is, but don't read it.
+ *
+ *  return  the next character to read
  */
 static int peekch(void)
 {
@@ -46,10 +50,13 @@ static int peekch(void)
 
 /*	API: Undo the read of a character.
  *
- *	Note: this implementation only sets the read pointer back one position
+ *  ch      the character to push back into the input stream
+ *  return  the character which was pushed back
+ *
+ *	Note: this implementation only puts the read pointer back one position
  *	and does nothing with ch. Properly this should be done via a stack.
  */
-static int pushch(int ch)
+static int pushch(const int ch)
 {
 	if (reader.pos > reader.current->code && ch != EOF) {
 		reader.pos--;
@@ -82,12 +89,16 @@ static void to_bol(void)
  */
 static void reader_jump(PositionObject *position)
 {
+    assert(position != NULL);
+
 	reader = position->reader;
 	scanner = position->scanner;
 }
 
 
 /*	API: Store the current position of the reader and status of the scanner.
+ *
+ *  return  pointer to POS object containing current position
  */
 static PositionObject *reader_save(void)
 {
@@ -98,6 +109,8 @@ static PositionObject *reader_save(void)
 
 	pos->reader = reader;
 	pos->scanner = scanner;
+
+    assert(pos != NULL);
 
 	return pos;
 }
@@ -129,10 +142,16 @@ static void print_current_line(void)
 
 
 /*	API: Load a module and execute the code.
+ *
+ *  filename    filename of module to load and execute
+ *  return      nothing
  */
 static void import(const char *filename)
 {
 	jmp_buf temp;
+
+    assert(filename != NULL);
+    assert(*filename != '\0');
 
 	if (module.search(filename) != NULL)
 		return;  /* importing a module will only be done once */
@@ -141,7 +160,7 @@ static void import(const char *filename)
 	reader.reset();
 
 	/* Direct struct copy by assignment (s1 = s2) does not work for jmp_buf
-	 * in gcc 8.1.0 (don't know why) so memcpy is needed instead.
+	 * in gcc 6.3.0 (don't know why) so memcpy is needed instead.
 	 */
 	memcpy(&temp, &return_address, sizeof(jmp_buf));
 	if (setjmp(return_address) == 0)
@@ -151,9 +170,14 @@ static void import(const char *filename)
 
 
 /*	API: Initialize reader object 'rd'.
+ *
+ *  rd      pointer to reader object
+ *  return  nothing
  */
 static void reader_init(struct reader *rd)
 {
+    assert(rd != NULL);
+
 	/* load the function addresses from the global reader */
 	*rd = reader;
 

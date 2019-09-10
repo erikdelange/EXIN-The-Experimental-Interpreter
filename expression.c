@@ -40,7 +40,7 @@ static Object *logical_or_expr(void);
  *
  * To be used when subscript indices must be read.
  */
-static int int_expression()
+static int int_expression(void)
 {
 	Object *obj;
 	int i;
