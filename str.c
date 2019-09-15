@@ -113,7 +113,8 @@ Object *str_length(StrObject *obj)
 Object *str_repeat(Object *op1, Object *op2)
 {
 	char *str;
-	size_t times, bytes;
+    int_t times;
+	size_t bytes;
 	Object *obj;
 
 	Object *s = TYPE(op1) == STR_T ? op1 : op2;

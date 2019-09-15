@@ -187,7 +187,7 @@ Object *list_repeat(Object *op1, Object *op2)
 {
 	ListObject *list;
 	ListNode *item;
-	size_t times;
+	int_t times;
 
 	Object *s = TYPE(op1) == LIST_T ? op1 : op2;
 	Object *n = TYPE(op1) == LIST_T ? op2 : op1;

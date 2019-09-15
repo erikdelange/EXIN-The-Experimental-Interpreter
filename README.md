@@ -1,6 +1,6 @@
 # EXIN - An Experimental Interpreter
 
-EXIN is an exercise in defining a progamming language and writing an interpreter for it. Both are meant to be as simple as possible to make it easy to understand how the interpreter code is structured and to be able to add new features. The language resembles Basic, C and Python. This is an example of EXIN code:
+EXIN is an exercise in defining a progamming language and writing an interpreter for it. Both are as simple as possible to make it easy to understand how the interpreter code is structured and to be able to add new features. The language resembles bits of Basic, C and Python. This is an example of EXIN code:
 ```
 # Reverse string s
 #
@@ -14,22 +14,22 @@ def reverse(s)
 
     return new
 
+# First a short demo
+#
 str s
 
-# First do a short demo
-#
 s = reverse("abracadabra")
 
 print s, "\n\n"  # this will print 'arbadacarba'
 
 s = reverse(s)   # turn s back in the original string
 
-print s, 2*"\n"
+print s, 2 * "\n"
 
 # Now let the user enter strings
 #
 do
-    input "Please enter a string to reverse (empty line to end): " s
+    input "Enter a string to reverse (empty line to end): " s
     if s == ""
         break
     print reverse(s), "\n"

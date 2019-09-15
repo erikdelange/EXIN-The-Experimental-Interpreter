@@ -40,10 +40,10 @@ static Object *logical_or_expr(void);
  *
  * To be used when subscript indices must be read.
  */
-static int int_expression(void)
+static int_t int_expression(void)
 {
 	Object *obj;
-	int i;
+	int_t i;
 
 	obj = logical_or_expr();
 	i = obj_as_int(obj);
@@ -68,7 +68,7 @@ static Object *subscript(Object *sequence)
 {
 	Object *lvalue, *rvalue, *original = sequence;
 	enum { INDEX, SLICE } type = INDEX;
-	int index = 0, start = 0, end = 0;
+	int_t index = 0, start = 0, end = 0;
 
 	if (!isSequence(sequence))
 		error(TypeError, "%s is not subscriptable", TYPENAME(sequence));
@@ -123,7 +123,7 @@ static Object *subscript(Object *sequence)
  */
 static Object *method(Object *object)
 {
-	int index;
+	int_t index;
 	Object *obj = NULL;
 
 	object = isListNode(object) ? obj_from_listnode(object) : object;

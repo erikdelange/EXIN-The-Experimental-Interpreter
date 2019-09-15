@@ -2,11 +2,19 @@
  *
  * Operations on objects (variables, functions, ...)
  *
- * Variables and functions are repesented as objects. An object contains its
+ * Variables and functions are represented as objects. An object contains
  * data but also a number of methods. Every object has minimal and thus
  * mandatory set of methods. This set is: alloc, free, set, vset and print.
- * Which other methods are available depends in the type of the object.
+ * Which other methods are available depends on the type of the object.
  * See: number.c, str.c, list.c, position.c and none.c.
+ *
+ * Object are created when required, but also automatically removed when
+ * no longer needed. For is purpose a reference counter is maintained.
+ * Every time an object is allocated the reference counter is incremented,
+ * once a routine no longer needs an object it must decrement the counter.
+ * The moment the reference counter hits zero the object is removed from
+ * memory. (Beware, if not programmed properly this can be a source of
+ * unexplainable bugs or excessive memory consumption).
  *
  * All operations on and between objects are found in object.c and are
  * accessed via function names like obj_... followed by the operation,
@@ -44,6 +52,11 @@
  *  result *operator(*operand1)
  *  result *operator(*operand1, *operand2)
  *
+ *  Examples:
+ *
+ *  Object *obj_negate(Object *op1)
+ *  Object *obj_add(Object *op1, Object *op2)
+ *
  * Function arguments operand1 and operand2 - although being pointers - always
  * remain unchanged. Result is a newly created object. Its type is dependent
  * on operand1 and optionally operand2.
@@ -73,12 +86,12 @@ static Object *tail = NULL;    /* tail of doubly linked list with objects */
 static void _enqueue(Object *obj);
 static void _dequeue(Object *obj);
 
-#define enqueue(o)	_enqueue(o)
+#define enqueue(o)  _enqueue(o)
 #define dequeue(o)  _dequeue(o)
 
 #else  /* not DEBUG */
 
-#define enqueue(o)	((void)0)
+#define enqueue(o)  ((void)0)
 #define dequeue(o)  ((void)0)
 
 # endif
@@ -87,6 +100,9 @@ static void _dequeue(Object *obj);
 /* Create a new object of type 'type' and assign the default initial value.
  *
  * The initial refcount of the new object is 1.
+ *
+ * type     type of the new object
+ * return   pointer to new object
  */
 Object *obj_alloc(objecttype_t type)
 {
@@ -136,8 +152,9 @@ Object *obj_alloc(objecttype_t type)
 
 /* Create a new object of type 'type' and assign an initial value.
  *
- * type type of the new object, also type of the initial value to assign
- * ...  value to assign (mandatory)
+ * type     type of the new object, also expected type of the initial value
+ * ...      value to assign (mandatory)
+ * return   pointer to new object
  */
 Object *obj_create(objecttype_t type, ...)
 {
@@ -146,7 +163,7 @@ Object *obj_create(objecttype_t type, ...)
 
 	va_start(argp, type);
 
-	obj = obj_alloc(type);
+	obj = obj_alloc(type);  /* sets refcount to 1 */
 
 	TYPEOBJ(obj)->vset(obj, argp);
 
@@ -169,6 +186,8 @@ void obj_free(Object *obj)
 
 
 /* Print object value on stdout.
+ *
+ * obj      pointer to object to print
  */
 void obj_print(Object *obj)
 {
@@ -178,6 +197,9 @@ void obj_print(Object *obj)
 
 
 /* Read object value from stdin.
+ *
+ * type     type of the value to read
+ * return   new object containing value
  */
 Object *obj_scan(objecttype_t type)
 {
@@ -617,6 +639,12 @@ Object *obj_type(Object *op1)
 }
 
 
+
+/* Various conversions
+ *
+ */
+
+
 /* result = (char_t)op1
  */
 char_t obj_as_char(Object *op1)
@@ -769,7 +797,7 @@ int_t str_to_int(char *s)
 
 	errno = 0;
 
-	i = strtol(s, &e, 10);
+	i = (int_t)strtol(s, &e, 10);
 
 	if (*e != 0 || errno != 0) {
 		if (errno != 0)
@@ -791,7 +819,7 @@ float_t str_to_float(char *s)
 
 	errno = 0;
 
-	f = strtod(s, &e);
+	f = (float_t)strtod(s, &e);
 
 	if (*e != 0 || errno != 0) {
 		if (errno != 0)
@@ -832,8 +860,9 @@ Object *obj_to_strobj(Object *obj)
 	}
 }
 
+
 #ifdef DEBUG
-/*  Add object 'item' to the end of the object queue
+/* Add object 'item' to the end of the object queue
  */
 static void _enqueue(Object *item)
 {
@@ -851,7 +880,7 @@ static void _enqueue(Object *item)
 
 
 #ifdef DEBUG
-/*  Remove object 'item' from the object queue
+/* Remove object 'item' from the object queue
  */
 static void _dequeue(Object *item)
 {
@@ -876,10 +905,10 @@ static void _dequeue(Object *item)
 
 
 #ifdef DEBUG
-/*  Print all objects to a semi-colon separated file.
+/* Print all objects to a semi-colon separated file.
  *
- *  Note: redirects stdout to a file. This cannot be undone in a
- *        cross-platform way, so only use when exiting the interpreter.
+ * Note: redirects stdout to a file. This cannot be undone in a
+ *       cross-platform way, so only use when exiting the interpreter.
  */
 void dump_object(void)
 {

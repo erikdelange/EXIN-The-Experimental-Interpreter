@@ -88,13 +88,13 @@ void parser(void)
  */
 static void function_declaration(void)
 {
-	int tmp;
+	Config tmp;
 	Identifier *id;
 
 	reader.reset();
 
 	/* surpress debug output when scanning for functions */
-	tmp = config.debug;
+	tmp.debug = config.debug;
 	config.debug = (config.debug & DEBUGSCANONLY) ? DEBUGTOKEN : 0;
 
 	do {
@@ -109,7 +109,7 @@ static void function_declaration(void)
 			scanner.next();
 	} while (scanner.token != ENDMARKER);
 
-	config.debug = tmp;
+	config.debug = tmp.debug;
 
 	debug_printf(DEBUGBLOCK, "\n------: %s", "Start execution");
 

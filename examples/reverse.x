@@ -1,8 +1,8 @@
 # reverse.x
 
 
-# Reverse a string
-
+# Reverse string s
+#
 def reverse(s)
     str new
     int index = s.len
@@ -13,19 +13,22 @@ def reverse(s)
 
     return new
 
+# First a short demo
+#
 str s
 
-# reverse string s
 s = reverse("abracadabra")
-print s, "\n"
 
-# and reverse it back to the original string
-s = reverse(s)
-print s, "\n"
+print s, "\n\n"  # this will print 'arbadacarba'
 
-# now let the user enter strings
+s = reverse(s)   # turn s back in the original string
+
+print s, 2 * "\n"
+
+# Now let the user enter strings
+#
 do
-    input "Please enter a string (return to exit): " s
+    input "Enter a string to reverse (empty line to end): " s
     if s == ""
         break
     print reverse(s), "\n"

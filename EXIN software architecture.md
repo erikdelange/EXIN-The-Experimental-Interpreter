@@ -1,6 +1,6 @@
 # EXIN Software Architecture
 
-The interpreters design is as simple as possible so its workings can be easily understood. The interpreter implements the language grammar as described in [EXIN EBNF Syntax Diagram](EXIN%20syntax%20diagram.pdf).
+The interpreters design is kept simple so its workings can be easily understood. The interpreter implements the language grammar as described in [EXIN EBNF Syntax Diagram](EXIN%20syntax%20diagram.pdf).
 
 ##### Running the interpreter
 When starting the interpreter with the -h argument - and if it has been compiled with the DEBUG macro (-D DEBUG) - the following message is printed.
