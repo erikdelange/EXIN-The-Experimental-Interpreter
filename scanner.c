@@ -64,34 +64,13 @@ static token_t read_identifier(char *buffer);
 static token_t read_character(char *buffer);
 static token_t read_string(char *buffer);
 static token_t read_number(char *buffer);
-static token_t next_token(void);
-static token_t peek_token(void);
-static void scanner_save(struct scanner *);
-static void scanner_jump(struct scanner *);
-static void scanner_init(struct scanner *);
-
-
-/* Token scanner API and data, including the initial settings.
- */
-Scanner scanner = {
-	.token = UNKNOWN,
-	.peeked = 0,
-	.at_bol = true,
-	.string[0] = 0,
-
-	.next = next_token,
-	.peek = peek_token,
-	.init = scanner_init,
-	.save = scanner_save,
-	.jump = scanner_jump
-};
 
 
 /* API: Initialize scanner object 'sc'.
  */
 static void scanner_init(struct scanner *sc)
 {
-    assert(sc != NULL);
+	assert(sc != NULL);
 
 	/* load the function addresses from the global scanner */
 	*sc = scanner;
@@ -108,7 +87,7 @@ static void scanner_init(struct scanner *sc)
  */
 static void scanner_save(struct scanner *sc)
 {
-    assert(sc != NULL);
+	assert(sc != NULL);
 
 	*sc = scanner;
 }
@@ -118,13 +97,15 @@ static void scanner_save(struct scanner *sc)
  */
 static void scanner_jump(struct scanner *sc)
 {
-    assert(sc != NULL);
+	assert(sc != NULL);
 
 	scanner = *sc;
 }
 
 
 /* API: Read the next token.
+ *
+ * return   token read
  *
  * If previously a peek was executed then return the peeked token.
  */
@@ -146,6 +127,8 @@ static token_t next_token(void)
 
 /* API: Look at the next token, without actually considering it read.
  *
+ * return   peeked token
+ *
  * Only a single peek is possible, you cannot look more then 1 token ahead.
  */
 static token_t peek_token(void)
@@ -159,6 +142,9 @@ static token_t peek_token(void)
 
 /* Read the next token.
  *
+ * buffer   pointer to buffer containing the token which was read
+ * return   obecttype which was read
+ *
  * After reading 'buffer' contains:
  *    the identifier if token == IDENTIFIER
  *    the number if token == INTEGER or FLOAT
@@ -170,15 +156,15 @@ static token_t read_next_token(char *buffer)
 {
 	char ch;
 
-    assert(buffer != NULL);
+	assert(buffer != NULL);
 
 	buffer[0] = 0;
 
-	/* 	Determine the level of indentation. If it has increased compared to the
-	 * 	previous line then token is INDENT. Has it decreased then check if it
-	 * 	was equal to the previous (smaller) indentation. If so then the token
-	 * 	is DEDENT, else there is an indentation error.
-	 * 	If the indentation has not changed then continue reading the next token.
+	/* Determine the level of indentation. If it has increased compared to the
+	 * previous line then token is INDENT. Has it decreased then check if it
+	 * was equal to the previous (smaller) indentation. If so then the token
+	 * is DEDENT, else there is an indentation error.
+	 * If the indentation has not changed then continue reading the next token.
 	 */
 	while (scanner.at_bol == true) {
 		int col = 0;
@@ -318,6 +304,9 @@ static token_t read_next_token(char *buffer)
 
 /* Read a string.
  *
+ * string   pointer to a buffer where the string will be stored
+ * return   objecttype which was read (by definition STR_T)
+ *
  * Strings are surrounded by double quotes. Escape sequences are recognized.
  * Examples: "abc"  "xyz\n"  ""
  */
@@ -355,6 +344,9 @@ static token_t read_string(char *string)
 
 
 /* Read an integer or a floating point number.
+ *
+ * number   pointer to buffer with string representation of the number read
+ * return   objecttype which was read (INT_T or FLOAT_T)
  *
  * Scientific notation (e, E) is recognized.
  * Examples: 2  2.  0.2  2.0  1E+2  1E2  1E-2  0.1e+2
@@ -410,6 +402,9 @@ static token_t read_number(char *number)
 
 /* Read a name and check whether it is a keyword or an identifier.
  *
+ * name     pointer to buffer with keyword or identifier
+ * return   keyword token (or IDENTIFIER in case of an identifier)
+ *
  * A name consist of digits, letters and underscores, and must start with
  * a letter.
  */
@@ -453,6 +448,9 @@ static token_t read_identifier(char *name)
 
 /* Read a character constant. This can be a single letter or an escape sequence.
  *
+ * c        pointer to buffer with the character read
+ * return   objecttype which was read (by definition CHAR_T)
+ *
  * A character constant is surrounded by single quotes.
  * Examples: 'a'  '\n'
  */
@@ -492,3 +490,19 @@ static token_t read_character(char *c)
 
 	return CHAR_T;
 }
+
+
+/* Token scanner API and data, including the initial settings.
+ */
+Scanner scanner = {
+	.token = UNKNOWN,
+	.peeked = 0,
+	.at_bol = true,
+	.string[0] = 0,
+
+	.next = next_token,
+	.peek = peek_token,
+	.init = scanner_init,
+	.save = scanner_save,
+	.jump = scanner_jump
+	};

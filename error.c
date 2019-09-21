@@ -32,8 +32,9 @@ static struct {
 
 /* Display an error message and stop the interpreter.
  *
- * number	error number (see error.h)
- * ...		optional printf style format string, optionally followed by arguments
+ * number   error number (see error.h)
+ * ...      optional printf style format string, optionally followed by arguments
+ * return   none, exits the program
  *
  * error(TypeError, "%s is not subscriptable", TYPENAME(sequence));
  */

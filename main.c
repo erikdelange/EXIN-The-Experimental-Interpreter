@@ -1,7 +1,7 @@
 /* main.c
  *
  * The interpreters main program. Handles command line arguments
- * and starts execution of the code in the first module specified
+ * and starts execution of the code in the (first) module specified
  * on the command line.
  *
  * 2018	K.W.E. de Lange
@@ -51,6 +51,10 @@ static void usage(char *executable)
 }
 
 
+/* The interpreter starts here.
+ *
+ * For command line options see function usage().
+ */
 int	main(int argc, char **argv)
 {
 	char ch;

@@ -23,7 +23,7 @@
 static Module *modulehead = NULL;
 
 
-/* Search a module in the list of loaded modules.
+/* API: Search a module in the list of loaded modules.
  *
  * name		filename of module (may include path)
  * return	module object or NULL if not found
@@ -32,8 +32,8 @@ static Module *search(const char *name)
 {
 	Module *m;
 
-    assert(name != NULL);
-    assert(*name != '\0');
+	assert(name != NULL);
+	assert(*name != '\0');
 
 	for (m = modulehead; m; m = m->next)
 		if (strcmp(name, m->name) == 0)
@@ -56,8 +56,8 @@ static int load(Module *self, const char *name)
 	struct _stat stat_buffer;
 
 	assert(self != NULL);
-    assert(name != NULL);
-    assert(*name != '\0');
+	assert(name != NULL);
+	assert(*name != '\0');
 
 	if (_stat(name, &stat_buffer) == 0) {
 		self->size = stat_buffer.st_size;
@@ -79,7 +79,7 @@ static int load(Module *self, const char *name)
 }
 
 
-/* Create a new module object and load the code.
+/* API: Create a new module object and load the code.
  *
  * name		module's filename (may include path)
  * return	module object (else an error is raised and the the program exits)
@@ -98,7 +98,7 @@ static Module *new(const char *name)
 
 	if (load(m, name) == 0)
 		error(SystemError, "error importing %s: %s (%d)", name, \
-                            strerror(errno), errno);
+							strerror(errno), errno);
 
 	if ((m->name = strdup(name)) == NULL)
 		error(OutOfMemoryError);
@@ -106,7 +106,7 @@ static Module *new(const char *name)
 	m->next = modulehead;
 	modulehead = m;
 
-    assert(m != NULL);
+	assert(m != NULL);
 
 	return m;
 }
@@ -122,4 +122,4 @@ Module module = {
 
 	.new = new,
 	.search = search
-};
+	};

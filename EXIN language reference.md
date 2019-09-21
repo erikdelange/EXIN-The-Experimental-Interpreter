@@ -217,7 +217,7 @@ The *for .. in sequence* loop cycles through the content of a list of string. As
 for element in [1, 2.0, "abc", 'c']
     print element, " ", type(element), "\n"
 ```
-It is not neccesary to define variable *element* upfront because it is just a reference to a variable in the list. In C this would be called a pointer. It can be used to change the value in the list. The types of the values which are assigned can be different for each element of the list. If the sequence used in the *for .. in* loop is a string then of course *element* is only assigned characters. Strings are read only.
+It is not neccesary to define variable *element* upfront because it is just a reference to a variable in the list. In C this would be called a pointer. It can be used to change the value in the list. The types of the values which are assigned can be different for each element of the list. If the sequence used in the *for .. in* loop is a string then of course *element* is only assigned characters. Strings are read-only.
 ##### Function definition
 Functions are defined using the *def* keyword followed by a function name and a pair of parenthesis containing the argument names separated by comma's. Even if a function has no arguments the parenthesis are mandatory. All arguments are passed by value. There is no type checking when the function is called, and more arguments can be sent to the function then are stated in the definition. Sending less arguments will result in an error.
 ```
@@ -264,7 +264,7 @@ input first_name, last_name
 ```
 ##### Various
 The *pass* keyword is a no-operation statement and can be used as a placeholder during program development.
-Statements cannot be used as identifier (variable or function) name. However the name of builtin functions (like type) can be used as identifier name. This will shadow the builtin function.
+Statements cannot be used as identifier (for a variable or function) name. However the name of builtin functions (like type) can be used as identifier name. This will shadow the builtin function.
 ##### Grammar in EBNF
 For a graphical representation of the syntax see [EXIN syntax diagram](EXIN%20syntax%20diagram.pdf).
 For an explantion of the EBNF notation used below see [EBNF syntax.txt](EBNF%20syntax.txt).

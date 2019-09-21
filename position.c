@@ -2,6 +2,10 @@
  *
  * Position object operations
  *
+ * The position object is used internally to store the current status of the
+ * reader and scanner. This is used in function calls; in the call the
+ * position is saved and on return it is reinstated.
+ *
  * 2018	K.W.E. de Lange
  */
 #include <stdlib.h>
@@ -56,10 +60,10 @@ static PositionObject *pos_vset(PositionObject *dest, va_list argp)
 /*	Position object API.
  */
 TypeObject posobject = {
-	"pos",
-	(Object *(*)())pos_alloc,
-	(void (*)(Object *))pos_free,
-	(void (*)(Object *))pos_print,
-	(Object *(*)())pos_set,
-	(Object *(*)(Object *, va_list))pos_vset
-};
+	.name = "pos",
+	.alloc = (Object *(*)())pos_alloc,
+	.free = (void (*)(Object *))pos_free,
+	.print = (void (*)(Object *))pos_print,
+	.set = (Object *(*)())pos_set,
+	.vset = (Object *(*)(Object *, va_list))pos_vset
+    };

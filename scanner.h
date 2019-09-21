@@ -53,7 +53,6 @@ typedef struct scanner {
 	void (*init)(struct scanner *);
 	void (*save)(struct scanner *);
 	void (*jump)(struct scanner *);
-
 } Scanner;
 
 extern Scanner scanner;

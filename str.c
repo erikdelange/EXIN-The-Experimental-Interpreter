@@ -218,4 +218,4 @@ TypeObject strobject = {
 	.print = (void (*)(Object *))str_print,
 	.set = (Object *(*)())str_set,
 	.vset = (Object *(*)(Object *, va_list))str_vset
-};
+    };

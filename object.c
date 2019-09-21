@@ -5,16 +5,20 @@
  * Variables and functions are represented as objects. An object contains
  * data but also a number of methods. Every object has minimal and thus
  * mandatory set of methods. This set is: alloc, free, set, vset and print.
+ *
  * Which other methods are available depends on the type of the object.
- * See: number.c, str.c, list.c, position.c and none.c.
+ * See: number.c, str.c, list.c, position.c and none.c. In the current
+ * implementation no other methods are defined. Operations on object
+ * are called via obj_... functions.
  *
  * Object are created when required, but also automatically removed when
  * no longer needed. For is purpose a reference counter is maintained.
- * Every time an object is allocated the reference counter is incremented,
- * once a routine no longer needs an object it must decrement the counter.
- * The moment the reference counter hits zero the object is removed from
- * memory. (Beware, if not programmed properly this can be a source of
- * unexplainable bugs or excessive memory consumption).
+ * Every time an object is allocated or assigned to an identifier the
+ * reference counter is incremented. Once a routine no longer needs an
+ * object it must decrement the counter. The moment the reference counter
+ * hits zero the object is removed from memory. (Beware, if not programmed
+ * properly this can be a source of unexplainable bugs or excessive memory
+ * consumption).
  *
  * All operations on and between objects are found in object.c and are
  * accessed via function names like obj_... followed by the operation,
@@ -67,8 +71,9 @@
  *
  * 1994 K.W.E. de Lange
  */
-#include <string.h>
+#include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "position.h"
 #include "number.h"
@@ -177,6 +182,8 @@ Object *obj_create(objecttype_t type, ...)
  */
 void obj_free(Object *obj)
 {
+	assert(obj);
+
 	dequeue(obj);
 
 	debug_printf(DEBUGALLOC, "\nfree  : %p %s", (void *)obj, TYPENAME(obj));
@@ -191,6 +198,8 @@ void obj_free(Object *obj)
  */
 void obj_print(Object *obj)
 {
+	assert(obj);
+
 	TYPEOBJ(obj)->print(obj);
 	fflush(stdout);
 }
@@ -533,7 +542,7 @@ Object *obj_and(Object *op1, Object *op2)
 Object *obj_in(Object *op1, Object *op2)
 {
 	Object *result = NULL;
-    Object *item;
+	Object *item;
 	int_t len;
 
 	op1 = isListNode(op1) ? obj_from_listnode(op1) : op1;
@@ -612,8 +621,8 @@ Object *obj_slice(Object *sequence, int start, int end)
  */
 int_t obj_length(Object *sequence)
 {
-    int_t len;
-    Object *obj = NULL;
+	int_t len;
+	Object *obj = NULL;
 
 	sequence = isListNode(sequence) ? obj_from_listnode(sequence) : sequence;
 
@@ -639,9 +648,7 @@ Object *obj_type(Object *op1)
 }
 
 
-
-/* Various conversions
- *
+/* Various conversions between variable and object types.
  */
 
 

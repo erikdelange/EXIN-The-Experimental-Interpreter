@@ -26,7 +26,7 @@ typedef struct scope {
 	int indentlevel;
 	int indentation[MAXINDENT];
 
-    void (*append_level)(void);
+	void (*append_level)(void);
 	void (*remove_level)(void);
 } Scope;
 

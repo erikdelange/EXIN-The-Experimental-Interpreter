@@ -54,7 +54,7 @@ static Identifier *searchIdentifierInScope(const Scope *level, const char *name)
 }
 
 
-/* Search an identifier, first at local then at global level.
+/* API: Search an identifier, first at local then at global level.
  *
  * name     identifier name
  * return   *Identifier object or NULL if not found
@@ -96,7 +96,10 @@ static Identifier *addIdentifier(Scope *level, const char *name)
 }
 
 
-/* Add an identifier to the local scope.
+/* API: Add an identifier to the local scope.
+ *
+ * name     identifier name
+ * return   indentifier object
  */
  static Identifier *add(const char *name)
  {
@@ -104,33 +107,46 @@ static Identifier *addIdentifier(Scope *level, const char *name)
  }
 
 
-/*	Unbind an object and an identifier.
+/* API: Unbind an object and an identifier.
+ *
+ * id       identifier to unbind
+ *
+ * Unbinding means there is one less reference to the object so
+ * the objects reference counter is decremented.
  */
-static void unbind(Identifier *self)
+static void unbind(Identifier *id)
 {
-	debug_printf(DEBUGALLOC, "\nunbind: %s, %p", self->name, (void *)self->object);
+	debug_printf(DEBUGALLOC, "\nunbind: %s, %p", id->name, (void *)id->object);
 
-	if (self->object) {
-		obj_decref(self->object);
-		self->object = NULL;
+	if (id->object) {
+		obj_decref(id->object);
+		id->object = NULL;
 	}
 }
 
 
-/* Bind an object to an identifier. First remove an existing binding (if any).
+/* API: Bind an object to an identifier. First remove an existing binding (if any).
+ *
+ * id       identifier to bind object to
+ * obj      object to bind to identifier
+ *
+ * Binding does *not* increment an objects reference counter. This must be
+ * done by the function using the bound object.
  */
-static void bind(Identifier *self, Object *obj)
+static void bind(Identifier *id, Object *obj)
 {
-	if (self->object)
-		unbind(self);
+	if (id->object)
+		unbind(id);
 
-	debug_printf(DEBUGALLOC, "\nbind  : %s, %p", self->name, (void *)obj);
+	debug_printf(DEBUGALLOC, "\nbind  : %s, %p", id->name, (void *)obj);
 
-	self->object = obj;
+	id->object = obj;
 }
 
 
 /* Remove an identifier and free the allocated memory.
+ *
+ * id       identifier to remove
  *
  * Also removes the link with the object.
  */
@@ -142,7 +158,7 @@ static void removeIdentifier(Identifier *id)
 }
 
 
-/* Append a new lowest level to the scope hierarchy.
+/* API: Append a new lowest level to the scope hierarchy.
  */
 static void appendScopeLevel(void)
 {
@@ -162,7 +178,7 @@ static void appendScopeLevel(void)
 }
 
 
-/* Remove the lowest level from the scope hierachy.
+/* API: Remove the lowest level from the scope hierachy.
  *
  * Also releases all identifiers and the objects linked to them.
  */
@@ -227,7 +243,7 @@ Identifier identifier = {
 	.search = search,
 	.bind = bind,
 	.unbind = unbind
-};
+	};
 
 
 /* The scope API.
@@ -240,4 +256,4 @@ Scope scope = {
 
 	.append_level = appendScopeLevel,
 	.remove_level = removeScopeLevel
-};
+	};

@@ -430,22 +430,22 @@ Object *listnode_remove(ListObject *list, int index)
 /* List object API.
  */
 TypeObject listobject = {
-	"list",
-	(Object *(*)())list_alloc,
-	(void (*)(Object *))list_free,
-	(void (*)(Object *))list_print,
-	(Object *(*)())list_set,
-	(Object *(*)(Object *, va_list))list_vset
-};
+	.name = "list",
+	.alloc = (Object *(*)())list_alloc,
+	.free = (void (*)(Object *))list_free,
+	.print = (void (*)(Object *))list_print,
+	.set = (Object *(*)())list_set,
+	.vset = (Object *(*)(Object *, va_list))list_vset
+    };
 
 
 /* Listnode object API.
  */
 TypeObject listnodeobject = {
-	"listnode",
-	(Object *(*)())listnode_alloc,
-	(void (*)(Object *))listnode_free,
-	(void (*)(Object *))listnode_print,
-	(Object *(*)())listnode_set,
-	(Object *(*)(Object *, va_list))listnode_vset
-};
+	.name = "listnode",
+	.alloc = (Object *(*)())listnode_alloc,
+	.free = (void (*)(Object *))listnode_free,
+	.print = (void (*)(Object *))listnode_print,
+	.set = (Object *(*)())listnode_set,
+	.vset = (Object *(*)(Object *, va_list))listnode_vset
+    };

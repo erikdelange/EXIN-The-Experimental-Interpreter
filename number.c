@@ -77,8 +77,6 @@ static void number_print(Object *obj)
 			printf("%ld", obj_as_int(obj));
 			break;
 		case FLOAT_T:
-//			printf("%.*g", DECIMAL_DIG, obj_as_float(obj));
-//			http://stackoverflow.com/questions/16839658/printf-width-specifier-to-maintain-precision-of-floating-point-value
 			printf("%.*G", 15, obj_as_float(obj));
 			break;
 		default:
@@ -338,28 +336,28 @@ Object *number_negate(Object *op1)
 /* Number object API (separate for char_t, int_t and float_t).
  */
 TypeObject charobject = {
-	"char",
-	char_alloc,
-	number_free,
-	number_print,
-	(Object *(*)())char_set,
-	number_vset
-};
+	.name = "char",
+	.alloc = char_alloc,
+	.free = number_free,
+	.print = number_print,
+	.set = (Object *(*)())char_set,
+	.vset = number_vset
+	};
 
 TypeObject intobject = {
-	"int",
-	int_alloc,
-	number_free,
-	number_print,
-	(Object *(*)())int_set,
-	number_vset
-};
+	.name = "int",
+	.alloc = int_alloc,
+	.free = number_free,
+	.print = number_print,
+	.set = (Object *(*)())int_set,
+	.vset = number_vset
+	};
 
 TypeObject floatobject = {
-	"float",
-	float_alloc,
-	number_free,
-	number_print,
-	(Object *(*)())float_set,
-	number_vset
-};
+	.name = "float",
+	.alloc = float_alloc,
+	.free = number_free,
+	.print = number_print,
+	.set = (Object *(*)())float_set,
+	.vset = number_vset
+	};

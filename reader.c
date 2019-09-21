@@ -18,9 +18,9 @@
 #include "error.h"
 
 
-/*	API: Read the next character.
+/* API: Read the next character.
  *
- *  return  the character read
+ * return   the character read
  */
 static int nextch(void)
 {
@@ -35,9 +35,9 @@ static int nextch(void)
 }
 
 
-/*	API: Look ahead to see what the next character is, but don't read it.
+/* API: Look ahead to see what the next character is, but don't read it.
  *
- *  return  the next character to read
+ * return   the next character to read
  */
 static int peekch(void)
 {
@@ -48,13 +48,13 @@ static int peekch(void)
 }
 
 
-/*	API: Undo the read of a character.
+/* API: Undo the read of a character.
  *
- *  ch      the character to push back into the input stream
- *  return  the character which was pushed back
+ * ch       the character to push back into the input stream
+ * return   the character which was pushed back
  *
- *	Note: this implementation only puts the read pointer back one position
- *	and does nothing with ch. Properly this should be done via a stack.
+ * Note: this implementation only puts the read pointer back one position
+ * and does nothing with ch. Properly this should be done via a stack.
  */
 static int pushch(const int ch)
 {
@@ -66,7 +66,7 @@ static int pushch(const int ch)
 }
 
 
-/*	API: Set the read pointer to the start of the code.
+/* API: Set the read pointer to the start of the code.
  */
 static void reset(void)
 {
@@ -77,7 +77,7 @@ static void reset(void)
 }
 
 
-/*	API: Move the read pointer to the start of the current line.
+/* API: Move the read pointer to the start of the current line.
  */
 static void to_bol(void)
 {
@@ -85,20 +85,22 @@ static void to_bol(void)
 }
 
 
-/*	API: Jump to location 'position' in the code. This can be in another module.
+/* API: Jump to location 'position' in the code. This can be in another module.
+ *
+ * position location where to jump to
  */
 static void reader_jump(PositionObject *position)
 {
-    assert(position != NULL);
+	assert(position != NULL);
 
 	reader = position->reader;
 	scanner = position->scanner;
 }
 
 
-/*	API: Store the current position of the reader and status of the scanner.
+/* API: Store the current position of the reader and status of the scanner.
  *
- *  return  pointer to POS object containing current position
+ * return   pointer to position object containing current read position
  */
 static PositionObject *reader_save(void)
 {
@@ -110,13 +112,13 @@ static PositionObject *reader_save(void)
 	pos->reader = reader;
 	pos->scanner = scanner;
 
-    assert(pos != NULL);
+	assert(pos != NULL);
 
 	return pos;
 }
 
 
-/*	API: Display the code from the currently executed line.
+/* API: Display the code from the currently executed line.
  */
 static void print_current_line(void)
 {
@@ -141,17 +143,16 @@ static void print_current_line(void)
 }
 
 
-/*	API: Load a module and execute the code.
+/* API: Load a module and execute the code.
  *
- *  filename    filename of module to load and execute
- *  return      nothing
+ * filename     filename of module to load and execute
  */
 static void import(const char *filename)
 {
 	jmp_buf temp;
 
-    assert(filename != NULL);
-    assert(*filename != '\0');
+	assert(filename != NULL);
+	assert(*filename != '\0');
 
 	if (module.search(filename) != NULL)
 		return;  /* importing a module will only be done once */
@@ -169,14 +170,13 @@ static void import(const char *filename)
 }
 
 
-/*	API: Initialize reader object 'rd'.
+/* API: Initialize reader object 'rd'.
  *
- *  rd      pointer to reader object
- *  return  nothing
+ * rd       pointer to reader object
  */
 static void reader_init(struct reader *rd)
 {
-    assert(rd != NULL);
+	assert(rd != NULL);
 
 	/* load the function addresses from the global reader */
 	*rd = reader;
@@ -188,7 +188,7 @@ static void reader_init(struct reader *rd)
 }
 
 
-/*	Reader API and data, including the initial settings.
+/* Reader API and data, including the initial settings.
  */
 Reader reader = {
 	.current = NULL,
@@ -205,4 +205,4 @@ Reader reader = {
 	.save = reader_save,
 	.jump = reader_jump,
 	.print_current_line = print_current_line
-};
+    };

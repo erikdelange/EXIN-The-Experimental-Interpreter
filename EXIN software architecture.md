@@ -6,7 +6,7 @@ The interpreters design is kept simple so its workings can be easily understood.
 When starting the interpreter with the -h argument - and if it has been compiled with the DEBUG macro (-D DEBUG) - the following message is printed.
 ```
 > .\exin -h
-EXIN version 1.10
+EXIN version 1.11
 usage: exin [options] module
 module: name of file containing code to execute
 options
@@ -26,7 +26,7 @@ options
 By specifying a module it is loaded and executed. The module name must include its extension (if any), the interpreter does not guess.
 ##### Notes on coding
 ###### Include files
-If a source file requires a header (*.h*) file, this has the same name (*module.c, module.h*). Every header file has a guard to prevent double inclusion.  Every source or header file only includes the headers it needs, there is no general 'include all' header.
+If a source file requires a header (*.h*) file, this has the same name (*module.c, module.h*). Every header file has a guard to prevent double inclusion. Every source or header file only includes the headers it needs, no 'include all' approach.
 ###### Assertions
 Certain bugs such as NULL pointers can terminate the interpreter immediately and leave you clueless where things went wrong. To catch these bugs in many functions the validity of input and ouput values is checked using the assert() macro. In the release version assertions are removed by defining preprocessor macro NDEBUG.
 ###### Directory structure
@@ -42,7 +42,7 @@ Another way I used to structure the code is using structs containing function po
 /* definition of the object */
 typedef struct scanner {
 	token_t token;
-	token_t peeked;  	/* private */
+	token_t peeked;  /* private */
 	bool at_bol;
 	char string[BUFSIZE + 1];
 
@@ -68,19 +68,15 @@ Scanner scanner = {
 	.jump = scanner_jump
 };
 
-/* access methods and variables */
+/* How to access methods and variables */
 token = scanner.next();
 printf("%s", token.string);
 ```
+This way of structuring is used in scanner.c, reader.c, module.c and for generic object functions in object.c. For operations on objects - like copy, add or multiply - global functions like obj_add() are used. I thought this was more readable; compare obj_add(a,b) with TYPEOBJ(a)->add(a,b). (Ideally you would want to do a->add(b), but this won't work in C as the function add() does not know it is called from object a).
 ##### Versions
 The interpreter is written in C99. For development I used MinGW's GCC C compiler (then version 6.3.0) and the CodeLite IDE.
-##### Debugging
-There are two ways to debug the interpreter;
-1. the most low level approach is debugging the actual C code
-2. have the interpreter print debugging messages when running
-
-###### Debugging messages
-The interpreter can produce extensive debugging output. For this add DEBUG to the preprocessor macros. Search for `debug_printf()` in the code to see where the messages are generated. For example, when running the following program with -d7 as debug level ...
+##### Debug messages
+The interpreter can produce extensive debugging output. For this add DEBUG to the preprocessor macros when compiling. Search for `debug_printf()` in the code to see where the messages are generated. For example, when running the following program with -d7 as debug level ...
 ``` python
 int n = 3
 print n
@@ -110,7 +106,7 @@ reg add HKCU\Console /v VirtualTerminalLevel /t REG_DWORD /d 1
 ```
 Restart the shell afterwards. In Windows' bash shell the colors work out of the box. If the shell you are using does not support VT100 code remove *VT100* from the preprocessor macros and recompile.
 ##### Code structure
-The core function of the interpreter is *parser()* in file *parser.c*. The parser decodes the most recently read token from the program code and starts executing it. A token is a group of characters which have a special meaning in the language. For example the *while* statement or floating point constant *5.1E3*. The scanner translates groups of characters in the program code into tokens which the parser can digest.
+The core function of the interpreter is *parser()* in file *parser.c*. The parser decodes the most recently read token from the program code and starts executing it. A token is a group of characters which have a special meaning in the language. For example the *while* statement or floating point constant *5.1E3*. The scanner translates groups of characters in the program code into tokens which the parser can digest. The parser excutes statemants which requires the evaluation of expressions (like a = b + 1). Expressions are evaluated by *expresion.c* which on the background calls the various ob_xxx functions.
 EXIN program code is stored in modules which are loaded via the *import* statement. See *module.c* and struct *module* for details.
 The scanner uses the reader (struct *reader* in file *reader.c*) to read individual characters from the program code. Similar to the *scanner* struct only a single *reader* struct containing variables and function calls is used. The reader is able move the read pointer to other places in the same module when executing loops, or even between modules in case of function calls.
 

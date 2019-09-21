@@ -15,8 +15,8 @@
  *
  * Syntax: type(expression)
  */
- static Object *type(void)
- {
+static Object *type(void)
+{
 	Object *obj, *result;
 
 	expect(LPAR);
@@ -38,8 +38,8 @@
  *
  * Syntax: chr(integer expression)
  */
- static Object *chr(void)
- {
+static Object *chr(void)
+{
 	Object *obj, *result;
 	char buffer[BUFSIZE+1];
 
@@ -92,7 +92,7 @@ Object *builtin(char *functionname)
 
 	if (d == 0) {
 		expect(IDENTIFIER);
-		return builtinTable[m].functionaddr();
+		return builtinTable[m].functionaddr();  /* call */
 	} else
 		return NULL;
 }

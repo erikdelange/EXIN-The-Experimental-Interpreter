@@ -38,7 +38,7 @@ static Object *logical_or_expr(void);
 
 /* Decode the next expression and convert the result to an integer.
  *
- * To be used when subscript indices must be read.
+ * Used when subscript indices must be read.
  */
 static int_t int_expression(void)
 {

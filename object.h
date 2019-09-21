@@ -13,8 +13,9 @@ typedef enum { UNDEFINED, CHAR_T, INT_T, FLOAT_T, STR_T,
 
 
 #ifdef DEBUG
-	/* the debug version of Object contains nextobj / prevobj pointers
-	 * so it can be put in a double linked list */
+	/* The debug version of Object contains nextobj / prevobj pointers
+	 * so it can be put in a double linked list. When using a source
+	 * code debugger this makes is easier to find objects. */
 	#define OBJ_HEAD	int refcount;  \
 						objecttype_t type;  \
 						struct typeobject *typeobj;  \
@@ -67,6 +68,8 @@ typedef struct typeobject {
 
 #include "list.h"
 
+/* Global functions for operations on objects.
+ */
 extern Object *obj_alloc(objecttype_t type);
 extern Object *obj_create(objecttype_t type, ...);
 extern void obj_free(Object *obj);
@@ -102,6 +105,8 @@ extern Object *obj_slice(Object *sequence, int start, int end);
 
 extern Object *obj_type(Object *op1);
 
+/* Global functions for object conversions.
+ */
 extern char_t obj_as_char(Object *op1);
 extern int_t obj_as_int(Object *op1);
 extern float_t obj_as_float(Object *op1);
@@ -115,6 +120,8 @@ extern float_t str_to_float(char *s);
 
 extern Object *obj_to_strobj(Object *obj);
 
+/* Global variable to store a functions return value
+ */
 extern Object *return_value;
 
 #endif
