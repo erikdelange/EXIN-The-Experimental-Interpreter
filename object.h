@@ -66,7 +66,6 @@ typedef struct typeobject {
 					obj_free((Object *)obj); \
 			} while (0)
 
-#include "list.h"
 
 /* Global functions for operations on objects.
  */
@@ -74,7 +73,7 @@ extern Object *obj_alloc(objecttype_t type);
 extern Object *obj_create(objecttype_t type, ...);
 extern void obj_free(Object *obj);
 extern Object *obj_scan(objecttype_t objtype);
-extern void	obj_print(Object *a);
+extern void obj_print(Object *a);
 
 extern void	obj_assign(Object *a, Object *b);
 extern Object *obj_copy(Object *a);
@@ -111,6 +110,9 @@ extern char_t obj_as_char(Object *op1);
 extern int_t obj_as_int(Object *op1);
 extern float_t obj_as_float(Object *op1);
 extern char *obj_as_str(Object *op1);
+
+#include "list.h"
+
 extern ListObject *obj_as_list(Object *op1);
 extern int obj_as_bool(Object *a);
 

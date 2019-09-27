@@ -5,6 +5,12 @@
  * See https://en.wikipedia.org/wiki/Recursive_descent_parser for
  * an explanation of the setup of the parser.
  *
+ * Contrary to normal C code the comments preceding every function
+ * specify the state of the scanner at the entry and at the exit of
+ * the function (instead of the function arguments and return value).
+ *
+ * Syntax in comments is specified in EBNF metasyntax.
+ *
  * 1995	K.W.E. de Lange
  */
 #include <string.h>
@@ -120,7 +126,7 @@ static void function_declaration(void)
 /* Skip interpretation of the statements of a function.
  *
  * in:  token = functions IDENTIFIER
- * out: token = first token after DEDENT at end of function statement-block
+ * out: token = first token after DEDENT at end of a statement block
  */
 static void skip_function(void)
 {
@@ -215,7 +221,7 @@ void statement(void)
 }
 
 
-/* Execute a statement-block.
+/* Execute a statement block.
  *
  * Syntax: NEWLINE INDENT statement+ DEDENT
  *
@@ -266,7 +272,7 @@ static void expression_stmnt(void)
 }
 
 
-/* Declare variabele(s) and (optionally) assign an initial value.
+/* Declare variabele(s) and optionally assign an initial value.
  *
  * type: variabele(s) type - char, int, float, str, list
  *
@@ -328,7 +334,7 @@ static int condition(void)
  *     block
  *
  * in:  token = first token after IF
- * out: token = first token after DEDENT of last statement-block
+ * out: token = first token after DEDENT of last statement block
  */
 static void if_stmnt(void)
 {
@@ -352,7 +358,7 @@ static void if_stmnt(void)
  *     block
  *
  * in:  token = first token after WHILE
- * out: token = first token after DEDENT of statement-block
+ * out: token = first token after DEDENT of statement block
  */
 static void	while_stmnt(void)
 {
@@ -496,11 +502,11 @@ static void	print_stmnt(void)
 		debug_printf(~NODEBUG, "\nprint :%c", ' ');
 		#ifdef VT100
 		debug_printf(~NODEBUG, "%c[042m", 27);  /* VT100 green background */
-		#endif
+		#endif  /* VT100 */
 		obj_print(obj);
 		#ifdef VT100
 		debug_printf(~NODEBUG, "%c[0m", 27);  /* VT100 standard background */
-		#endif
+		#endif  /* VT100 */
 		obj_decref(obj);
 	} while (accept(COMMA));
 
@@ -569,6 +575,7 @@ Object *function_call(PositionObject *addr)
 	pop_arguments(arglist);
 	expect(RPAR);
 
+	/* Save the previous value of jmp_buf */
 	memcpy(&temp, &return_address, sizeof(jmp_buf));
 	if (setjmp(return_address) == 0)  /* for return statement */
 		block();
@@ -671,7 +678,7 @@ static void return_stmt(void)
 	expect(NEWLINE);
 
 	/* When returning from a function jump to function_call(),
-	 * else to main() (which will stop the interpreter).
+	 * else to import().
 	 */
 	longjmp(return_address, 1);
 }

@@ -32,8 +32,8 @@ extern Config config;
 
 extern jmp_buf return_address;
 
-/*	Define preprocessor macro DEBUG in the compiler options to enable
- *	debug logging.
+/*	Define preprocessor macro DEBUG in the compiler options
+ *	to enable debug logging.
  */
 #ifdef DEBUG
 	#define debug_printf(level, fmt, ...) \
@@ -48,7 +48,9 @@ extern jmp_buf return_address;
 				do { } while (0)
 #endif
 
-/* debug logging detail levels
+/* Debug logging detail levels
+ *
+ * The level numbers (except 0) are ascending powers of 2
  */
 #define NODEBUG         0	/* no debug output */
 #define DEBUGTOKEN      1	/* show tokens during execution */

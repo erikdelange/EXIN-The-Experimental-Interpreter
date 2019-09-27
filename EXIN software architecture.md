@@ -51,10 +51,9 @@ typedef struct scanner {
 	void (*init)(struct scanner *);
 	void (*save)(struct scanner *);
 	void (*jump)(struct scanner *);
-
 } Scanner;
 
-/* create an instance of the object */
+/* create an initialized instance of the object */
 Scanner scanner = {
 	.token = UNKNOWN,
 	.peeked = 0,
@@ -68,13 +67,15 @@ Scanner scanner = {
 	.jump = scanner_jump
 };
 
-/* How to access methods and variables */
+/* accessing methods and variables */
 token = scanner.next();
 printf("%s", token.string);
 ```
 This way of structuring is used in scanner.c, reader.c, module.c and for generic object functions in object.c. For operations on objects - like copy, add or multiply - global functions like obj_add() are used. I thought this was more readable; compare obj_add(a,b) with TYPEOBJ(a)->add(a,b). (Ideally you would want to do a->add(b), but this won't work in C as the function add() does not know it is called from object a).
+###### Non-local jumps
+When executing EXIN code a return - either the statement or when getting to the end of a module - can be encountered at many places. At that moment you want to get back to the place where you started execution of that block of code. That can be a function call or loading a module. But you might have a whole stack of C function calls and to travel back through this stac can be complex or at least requries a lot of code. I used an easier approach via parsimonious use of non-local jumps (or the C variant of goto's). An EXIN function is called via setjmp() which allows you to go back to the place it is called via longjmp(). See: https://en.wikipedia.org/wiki/Setjmp.h
 ##### Versions
-The interpreter is written in C99. For development I used MinGW's GCC C compiler (then version 6.3.0) and the CodeLite IDE.
+The interpreter is written in - and thus requires - C99. For development I used MinGW's GCC C compiler (then version 6.3.0) and the CodeLite IDE.
 ##### Debug messages
 The interpreter can produce extensive debugging output. For this add DEBUG to the preprocessor macros when compiling. Search for `debug_printf()` in the code to see where the messages are generated. For example, when running the following program with -d7 as debug level ...
 ``` python

@@ -20,7 +20,7 @@
 jmp_buf	return_address;			/* Return address at end of function */
 Object	*return_value = NULL;	/* Result of the last function call */
 
-Config config = {               /* global configuration variables */
+Config config = {				/* global configuration variables */
 	.debug = NODEBUG,
 	.tabsize = TABSIZE
 };
@@ -43,7 +43,7 @@ static void usage(char *executable)
 	fprintf(stderr, "    option 4: show memory allocation\n");
 	fprintf(stderr, "    option 8: show tokens during function scan\n");
 	fprintf(stderr, "    option 16: dump identifier and object table to disk after program end\n");
-	#endif
+	#endif  /* DEBUG */
 	fprintf(stderr, "-h = show usage information\n");
 	fprintf(stderr, "-t[tabsize] = set tab size in spaces\n");
 	fprintf(stderr, "    tabsize = >= 1 (default = %d)\n", TABSIZE);
@@ -71,7 +71,7 @@ int	main(int argc, char **argv)
 				else
 					config.debug = DEBUGTOKEN;
 				break;
-			#endif
+			#endif  /* DEBUG */
 			case 'h':
 				usage(executable);
 				return 0;
@@ -110,7 +110,7 @@ int	main(int argc, char **argv)
 			dump_identifier();
 			dump_object();
 		}
-		#endif
+		#endif  /* DEBUG */
 
 		if (return_value && isNumber(return_value))
 			return obj_as_int(return_value);
