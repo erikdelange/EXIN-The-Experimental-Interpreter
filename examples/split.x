@@ -6,7 +6,7 @@ def split(s)
     list words
     int wordlen
 
-	print "split: sentence = ", s, "\n"
+	print "split: sentence =", s
 
     while (s = strip(s)) != ""
         wordlen = wordlength(s)
@@ -20,14 +20,14 @@ def split(s)
 def strip(s)
     int i = 0
 
-	print "strip: string before = |", s, "| (len=", s.len, ")\n"
+	print -raw "strip: string before = |", s, "| (len=", s.len, ")\n"
 
     while i < s.len
         if !(s[i] == ' ' or s[i] == '\t')
             break
         i += 1
 
-    print "strip: string after  = |", s[i:], "| (len=", s[i:].len, ")\n"
+    print -raw "strip: string after  = |", s[i:], "| (len=", s[i:].len, ")\n"
 
 	return s[i:]
 
@@ -46,7 +46,7 @@ def wordlength(s)
     return i
 
 
-print split(" this is   a     sentence  "), "\n"
+print split(" this is   a     sentence  ")
 
 str s
 
@@ -54,5 +54,5 @@ do
     input "Enter a sentence: " s
     if s == ""
         break
-    print split(s), "\n"
+    print split(s)
 while 1

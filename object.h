@@ -6,11 +6,11 @@
 #define _OBJECT_
 
 #include <stdarg.h>
+#include <stdbool.h>
 #include "config.h"
 
 typedef enum { UNDEFINED, CHAR_T, INT_T, FLOAT_T, STR_T,
 			   LIST_T, LISTNODE_T, POSITION_T, NONE_T } objecttype_t;
-
 
 #ifdef DEBUG
 	/* The debug version of Object contains nextobj / prevobj pointers
@@ -114,7 +114,7 @@ extern char *obj_as_str(Object *op1);
 #include "list.h"
 
 extern ListObject *obj_as_list(Object *op1);
-extern int obj_as_bool(Object *a);
+extern bool obj_as_bool(Object *a);
 
 extern char_t str_to_char(char *s);
 extern int_t str_to_int(char *s);

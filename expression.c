@@ -137,7 +137,7 @@ static Object *method(Object *object)
 			index = int_expression();
 			expect(COMMA);
 			obj = logical_or_expr();
-			listnode_insert((ListObject *)object, index, obj_copy(obj));
+			listtype.insert((ListObject *)object, index, obj_copy(obj));
 			obj_decref(obj);
 			obj = obj_alloc(NONE_T);
 			expect(RPAR);
@@ -145,7 +145,7 @@ static Object *method(Object *object)
 			expect(IDENTIFIER);
 			expect(LPAR);
 			obj = logical_or_expr();
-			listnode_append((ListObject *)object, obj_copy(obj));
+			listtype.append((ListObject *)object, obj_copy(obj));
 			obj_decref(obj);
 			obj = obj_alloc(NONE_T);
 			expect(RPAR);
@@ -153,15 +153,15 @@ static Object *method(Object *object)
 			expect(IDENTIFIER);
 			expect(LPAR);
 			index = int_expression();
-			if ((obj = listnode_remove((ListObject *)object, index)) == NULL)
+			if ((obj = listtype.remove((ListObject *)object, index)) == NULL)
 				error(IndexError);
 			expect(RPAR);
 		} else if (TYPE(object) == LIST_T && strcmp("len", scanner.string) == 0) {
 			expect(IDENTIFIER);
-			obj = list_length((ListObject *)object);
+			obj = listtype.length((ListObject *)object);
 		} else if (TYPE(object) == STR_T && strcmp("len", scanner.string) == 0) {
 			expect(IDENTIFIER);
-			obj = str_length((StrObject *)object);
+			obj = strtype.length((StrObject *)object);// str_length((StrObject *)object);
 		} else
 			error(SyntaxError, "unknown method %s for type %s", scanner.string, TYPENAME(object));
 	} else
@@ -232,7 +232,7 @@ static Object *primary_expr(void)
 			while (accept(RSQB) == 0) {
 				do {
 					tmp = assignment_expr();
-					listnode_append((ListObject *)obj, obj_copy(tmp));
+					listtype.append((ListObject *)obj, obj_copy(tmp));
 					obj_decref(tmp);
 				} while (accept(COMMA));
 			}

@@ -11,8 +11,10 @@ typedef struct {
 	OBJ_HEAD;
 } NoneObject;
 
-extern TypeObject noneobject;
+typedef struct {
+	TYPE_HEAD;
+} NoneType;
 
-extern NoneObject none;
+extern NoneType nonetype;
 
 #endif

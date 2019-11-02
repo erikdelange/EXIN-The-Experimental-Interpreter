@@ -17,7 +17,7 @@ def user_input()
 
     do
         input "Base : " base, "Exponent : " exponent
-        print "Power(", base, ", ", exponent, ") = ", power(base, exponent), "\n"
+        print -raw "Power(", base, ", ", exponent, ") = ", power(base, exponent), "\n"
         input "Continue? (y/n) " more
     while more != 'n'
 
@@ -27,9 +27,9 @@ def user_input()
 def auto(i, e)
     int b
     while b <= i
-        print b, "^", e, " = ", power(b,e), "\n"
+        print -raw b, "^", e, " = ", power(b,e), "\n"
         b += 1
-    print "\n"
+    print
 
 
 # base raised to the exponent power

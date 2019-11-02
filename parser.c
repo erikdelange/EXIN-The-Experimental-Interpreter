@@ -420,7 +420,8 @@ static void do_stmnt(void)
  * for identifier in sequence NEWLINE
  *      block
  *
- * If the identifier does not exist it is created.
+ * If the identifier does not exist it is created. It remains in existence
+ * after the loop is finished, pointing to the last read value (or none).
  *
  * in:  token = first token after FOR
  * out: token = first token after dedent of block
@@ -450,13 +451,14 @@ static void for_stmnt(void)
 	loop = reader.save();
 
 	for (int_t i = 0; i < len && !do_break; i++) {
+		/* bind() has implicit unbind of previous value */
 		identifier.bind(id, obj_item(sequence, i));
 		block();
-		identifier.unbind(id);
 		do_continue = 0;
 		reader.jump(loop);
 	}
 	do_break = 0;
+	/* id now points to last value of sequence */
 
 	skip_block();
 
@@ -481,34 +483,56 @@ static void import_stmt(void)
 		obj_decref(pos);
 		obj_decref(obj);
 	} while (accept(COMMA));
-
 	expect(NEWLINE);
 }
 
 
 /* Print value(s) naar STDOUT.
  *
- * Syntax: print value ( , value )* NEWLINE
+ * Syntax: 'print' '-raw'? ( value ( ',' value )* )? NEWLINE
  *
  * in:  token = first token after PRINT
  * out: token = first token after NEWLINE
  */
 static void	print_stmnt(void)
 {
+	bool first = true;
+	bool raw = false;
 	Object *obj;
 
-	do {
-		obj = assignment_expr();
-		debug_printf(~NODEBUG, "\nprint :%c", ' ');
-		#ifdef VT100
-		debug_printf(~NODEBUG, "%c[042m", 27);  /* VT100 green background */
-		#endif  /* VT100 */
-		obj_print(obj);
-		#ifdef VT100
-		debug_printf(~NODEBUG, "%c[0m", 27);  /* VT100 standard background */
-		#endif  /* VT100 */
-		obj_decref(obj);
-	} while (accept(COMMA));
+	if (scanner.token == MINUS) {
+		if (scanner.peek() == IDENTIFIER && strcmp(scanner.string, "raw") == 0) {
+			scanner.next();
+			scanner.next();
+			raw = true;
+		}
+	}
+
+	if (scanner.token != NEWLINE) {
+		do {
+			obj = assignment_expr();
+			debug_printf(~NODEBUG, "\nprint :%c", ' ');
+			#ifdef VT100
+			debug_printf(~NODEBUG, "%c[042m", 27);  /* VT100 green background */
+			#endif  /* VT100 */
+
+			if (first == true)
+				first = false;
+			else  /* first == false */
+				if (raw == false)
+					printf(" ");
+
+			obj_print(obj);
+
+			#ifdef VT100
+			debug_printf(~NODEBUG, "%c[0m", 27);  /* VT100 standard background */
+			#endif  /* VT100 */
+
+			obj_decref(obj);
+		} while (accept(COMMA));
+	}
+	if (raw == false)
+		printf("\n");
 
 	expect(NEWLINE);
 }
@@ -610,34 +634,34 @@ Object *function_call(PositionObject *addr)
 static ListObject *push_arguments(void)
 {
 	Object *obj;
-	ListObject *list;
+	ListObject *arglist;
 
-	list = (ListObject *)obj_alloc(LIST_T);
+	arglist = (ListObject *)obj_alloc(LIST_T);
 
 	expect(LPAR);
 
 	while (scanner.token != RPAR) {
 		obj = assignment_expr();
-		listnode_append(list, obj_copy(obj));
+		listtype.append(arglist, obj_copy(obj));
 		obj_decref(obj);
 		if (scanner.token == RPAR)
 			continue;
 		else expect(COMMA);
 	}
 
-	return list;
+	return arglist;
 }
 
 
-/* After a jump to a function read the arguments from 'list' and create local
- * variables. The list has been created via deep copy and so contains new
+/* After a jump to a function read the arguments from 'arglist' and create local
+ * variables. Arglist has been created via deep copy and so contains new
  * object which only need to be linked to local variable names. Not all
  * arguments have to be read from the list.
  *
  * in:  token = LPAR
  * out: token = RPAR of argument list in function definition
  */
-static void pop_arguments(ListObject *list)
+static void pop_arguments(ListObject *arglist)
 {
 	Identifier *id;
 	Object *obj;
@@ -650,7 +674,7 @@ static void pop_arguments(ListObject *list)
 								tokenName(scanner.token));
 		if ((id = identifier.add(scanner.string)) == NULL)
 			error(NameError, "identifier %s already declared", scanner.string);
-		if ((obj = listnode_remove(list, 0)) == NULL)
+		if ((obj = listtype.remove(arglist, 0)) == NULL)
 			error(SyntaxError, "no argument on stack to assign to %s", \
 								scanner.string);
 

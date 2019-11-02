@@ -20,7 +20,7 @@ static StrObject *str_alloc(void)
 	if ((obj = calloc(1, sizeof(StrObject))) == NULL)
 		error(OutOfMemoryError);
 
-	obj->typeobj = &strobject;
+	obj->typeobj = (TypeObject *)&strtype;
 	obj->type = STR_T;
 	obj->refcount = 0;
 
@@ -68,7 +68,7 @@ static StrObject *str_vset(StrObject *obj, va_list argp)
 /* Operand op1 or op2 is a string. The other operand can be anything and
  * will be converted to a string.
  */
-Object *str_concat(Object *op1, Object *op2)
+static Object *str_concat(Object *op1, Object *op2)
 {
 	char *s;
 	size_t bytes;
@@ -104,13 +104,13 @@ static int_t length(StrObject *obj)
 }
 
 
-Object *str_length(StrObject *obj)
+static Object *str_length(StrObject *obj)
 {
 	return obj_create(INT_T, length(obj));
 }
 
 
-Object *str_repeat(Object *op1, Object *op2)
+static Object *str_repeat(Object *op1, Object *op2)
 {
 	char *str;
     int_t times;
@@ -143,23 +143,23 @@ Object *str_repeat(Object *op1, Object *op2)
 }
 
 
-Object *str_eql(Object *op1, Object *op2)
+static Object *str_eql(Object *op1, Object *op2)
 {
-	int r = strcmp(obj_as_str(op1), obj_as_str(op2)) == 0 ? 1 : 0;
+	int result = strcmp(obj_as_str(op1), obj_as_str(op2)) == 0 ? 1 : 0;
 
-	return obj_create(INT_T, (int_t)r);
+	return obj_create(INT_T, (int_t)result);
 }
 
 
-Object *str_neq(Object *op1, Object *op2)
+static Object *str_neq(Object *op1, Object *op2)
 {
-	int r = strcmp(obj_as_str(op1), obj_as_str(op2)) == 0 ? 1 : 0;
+	int result = strcmp(obj_as_str(op1), obj_as_str(op2)) == 0 ? 1 : 0;
 
-	return obj_create(INT_T, (int_t)!r);
+	return obj_create(INT_T, (int_t)!result);
 }
 
 
-CharObject *str_item(StrObject *str, int index)
+static CharObject *str_item(StrObject *str, int index)
 {
 	CharObject *obj;
 	int_t len;
@@ -178,7 +178,7 @@ CharObject *str_item(StrObject *str, int index)
 }
 
 
-StrObject *str_slice(StrObject *obj, int start, int end)
+static StrObject *str_slice(StrObject *obj, int start, int end)
 {
 	StrObject *slice;
 	char *src, *dst;
@@ -211,11 +211,19 @@ StrObject *str_slice(StrObject *obj, int start, int end)
 
 /* String object API.
  */
-TypeObject strobject = {
+StrType strtype = {
 	.name = "str",
 	.alloc = (Object *(*)())str_alloc,
 	.free = (void (*)(Object *))str_free,
 	.print = (void (*)(Object *))str_print,
 	.set = (Object *(*)())str_set,
-	.vset = (Object *(*)(Object *, va_list))str_vset
-    };
+	.vset = (Object *(*)(Object *, va_list))str_vset,
+
+	.length = str_length,
+	.item = str_item,
+	.slice = str_slice,
+	.concat = str_concat,
+	.repeat = str_repeat,
+	.eql = str_eql,
+	.neq = str_neq
+	};

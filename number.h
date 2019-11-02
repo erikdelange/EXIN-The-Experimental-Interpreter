@@ -22,27 +22,53 @@ typedef struct {
 	float_t fval;
 } FloatObject;
 
-extern TypeObject charobject;
-extern TypeObject intobject;
-extern TypeObject floatobject;
+typedef struct {
+	OBJ_HEAD;
+	objecttype_t numbertype;
+	union {
+		char_t cval;
+		int_t ival;
+		float_t fval;
+	} value;
+} NumberObject;
 
-extern Object *number_add(Object *op1, Object *op2);
-extern Object *number_sub(Object *op1, Object *op2);
-extern Object *number_mul(Object *op1, Object *op2);
-extern Object *number_div(Object *op1, Object *op2);
-extern Object *number_mod(Object *op1, Object *op2);
-extern Object *number_inv(Object *op1);
+typedef struct {
+	TYPE_HEAD;
+} CharType;
 
-extern Object *number_eql(Object *op1, Object *op2);
-extern Object *number_neq(Object *op1, Object *op2);
-extern Object *number_lss(Object *op1, Object *op2);
-extern Object *number_leq(Object *op1, Object *op2);
-extern Object *number_gtr(Object *op1, Object *op2);
-extern Object *number_geq(Object *op1, Object *op2);
+extern CharType chartype;
 
-extern Object *number_or(Object *op1, Object *op2);
-extern Object *number_and(Object *op1, Object *op2);
+typedef struct {
+	TYPE_HEAD;
+} IntType;
 
-extern Object *number_negate(Object *op1);
+extern IntType inttype;
+
+typedef struct {
+	TYPE_HEAD;
+} FloatType;
+
+extern FloatType floattype;
+
+typedef struct {
+	TYPE_HEAD;
+	Object *(*add)(Object *op1, Object *op2);
+	Object *(*sub)(Object *op1, Object *op2);
+	Object *(*mul)(Object *op1, Object *op2);
+	Object *(*div)(Object *op1, Object *op2);
+	Object *(*mod)(Object *op1, Object *op2);
+	Object *(*inv)(Object *op1);
+	Object *(*eql)(Object *op1, Object *op2);
+	Object *(*neq)(Object *op1, Object *op2);
+	Object *(*lss)(Object *op1, Object *op2);
+	Object *(*leq)(Object *op1, Object *op2);
+	Object *(*gtr)(Object *op1, Object *op2);
+	Object *(*geq)(Object *op1, Object *op2);
+	Object *(*or)(Object *op1, Object *op2);
+	Object *(*and)(Object *op1, Object *op2);
+	Object *(*negate)(Object *op1);
+} NumberType;
+
+extern NumberType numbertype;
 
 #endif

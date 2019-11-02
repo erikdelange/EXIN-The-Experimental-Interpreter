@@ -112,8 +112,6 @@ static PositionObject *reader_save(void)
 	pos->reader = reader;
 	pos->scanner = scanner;
 
-	assert(pos != NULL);
-
 	return pos;
 }
 
@@ -163,6 +161,9 @@ static void import(const char *filename)
 	/* Straight struct copy using assignment (s1 = s2) does not work
 	 * for jmp_buf in gcc 6.3.0 (don't know why, perhaps because jmp_buf is
 	 * platform-specific) so memcpy is needed instead.
+	 *
+	 * void *memcpy(void *m1, const void *m2, size_t n) copies n characters
+	 * from memory area m2 to memory area m1.
 	 */
 	memcpy(&temp, &return_address, sizeof(jmp_buf));
 	if (setjmp(return_address) == 0)
@@ -206,4 +207,4 @@ Reader reader = {
 	.save = reader_save,
 	.jump = reader_jump,
 	.print_current_line = print_current_line
-    };
+	};

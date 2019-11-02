@@ -4,7 +4,6 @@
  */
 #ifndef _STR_
 #define _STR_
-
 #include "object.h"
 #include "number.h"
 
@@ -13,14 +12,17 @@ typedef struct {
 	char *sptr;
 } StrObject;
 
-extern TypeObject strobject;
+typedef struct {
+	TYPE_HEAD;
+	Object *(*length)(StrObject *obj);
+	CharObject *(*item)(StrObject *str, int index);
+	StrObject *(*slice)(StrObject *obj, int start, int end);
+	Object *(*concat)(Object *op1, Object *op2);
+	Object *(*repeat)(Object *op1, Object *op2);
+	Object *(*eql)(Object *op1, Object *op2);
+	Object *(*neq)(Object *op1, Object *op2);
+} StrType;
 
-extern Object *str_length(StrObject *obj);
-extern CharObject *str_item(StrObject *str, int index);
-extern StrObject *str_slice(StrObject *obj, int start, int end);
-extern Object *str_concat(Object *op1, Object *op2);
-extern Object *str_repeat(Object *op1, Object *op2);
-extern Object *str_eql(Object *op1, Object *op2);
-extern Object *str_neq(Object *op1, Object *op2);
+extern StrType strtype;
 
 #endif

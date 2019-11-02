@@ -115,28 +115,28 @@ Object *obj_alloc(objecttype_t type)
 
 	switch (type) {
 		case CHAR_T:
-			obj = charobject.alloc();
+			obj = chartype.alloc();
 			break;
 		case INT_T:
-			obj = intobject.alloc();
+			obj = inttype.alloc();
 			break;
 		case FLOAT_T:
-			obj = floatobject.alloc();
+			obj = floattype.alloc();
 			break;
 		case STR_T:
-			obj = strobject.alloc();
+			obj = strtype.alloc();
 			break;
 		case LIST_T:
-			obj = listobject.alloc();
+			obj = listtype.alloc();
 			break;
 		case LISTNODE_T:
-			obj = listnodeobject.alloc();
+			obj = listnodetype.alloc();
 			break;
 		case POSITION_T:
-			obj = posobject.alloc();
+			obj = positiontype.alloc();
 			break;
 		case NONE_T:
-			obj = noneobject.alloc();
+			obj = nonetype.alloc();
 			break;
 		default:
 			error(SystemError, "cannot allocate type %d", type);
@@ -306,11 +306,11 @@ Object *obj_add(Object *op1, Object *op2)
 	op2 = isListNode(op2) ? obj_from_listnode(op2) : op2;
 
 	if (isNumber(op1) && isNumber(op2))
-		return number_add(op1, op2);
+		return numbertype.add(op1, op2);
 	else if (isString(op1) || isString(op2))
-		return str_concat(op1, op2);
+		return strtype.concat(op1, op2);
 	else if (isList(op1) && isList(op2))
-		return list_concat((ListObject *)op1, (ListObject *)op2);
+		return listtype.concat((ListObject *)op1, (ListObject *)op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation +: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
@@ -326,7 +326,7 @@ Object *obj_sub(Object *op1, Object *op2)
 	op2 = isListNode(op2) ? obj_from_listnode(op2) : op2;
 
 	if (isNumber(op1) && isNumber(op2))
-		return number_sub(op1, op2);
+		return numbertype.sub(op1, op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation -: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
@@ -342,11 +342,11 @@ Object *obj_mult(Object *op1, Object *op2)
 	op2 = isListNode(op2) ? obj_from_listnode(op2) : op2;
 
 	if (isNumber(op1) && isNumber(op2))
-		return number_mul(op1, op2);
+		return numbertype.mul(op1, op2);
 	else if ((isNumber(op1) || isNumber(op2)) && (isString(op1) || isString(op2)))
-		return str_repeat(op1, op2);
+		return strtype.repeat(op1, op2);
 	else if ((isNumber(op1) || isNumber(op2)) && (isList(op1) || isList(op2)))
-		return list_repeat(op1, op2);
+		return listtype.repeat(op1, op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation *: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
@@ -362,7 +362,7 @@ Object *obj_divs(Object *op1, Object *op2)
 	op2 = isListNode(op2) ? obj_from_listnode(op2) : op2;
 
 	if (isNumber(op1) && isNumber(op2))
-		return number_div(op1, op2);
+		return numbertype.div(op1, op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation /: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
@@ -378,7 +378,7 @@ Object *obj_mod(Object *op1, Object *op2)
 	op2 = isListNode(op2) ? obj_from_listnode(op2) : op2;
 
 	if (isNumber(op1) && isNumber(op2))
-		return number_mod(op1, op2);
+		return numbertype.mod(op1, op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation %%: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
@@ -393,7 +393,7 @@ Object *obj_invert(Object *op1)
 	op1 = isListNode(op1) ? obj_from_listnode(op1) : op1;
 
 	if (isNumber(op1))
-		return number_inv(op1);
+		return numbertype.inv(op1);
 	else
 		error(TypeError, "unsupported operand type for operation -: %s", \
 						  TYPENAME(op1));
@@ -409,11 +409,11 @@ Object *obj_eql(Object *op1, Object *op2)
 	op2 = isListNode(op2) ? obj_from_listnode(op2) : op2;
 
 	if (isNumber(op1) && isNumber(op2))
-		return number_eql(op1, op2);
+		return numbertype.eql(op1, op2);
 	else if (isString(op1) && isString(op2))
-		return str_eql(op1, op2);
+		return strtype.eql(op1, op2);
 	else if (isList(op1) && isList(op2))
-		return list_eql((ListObject *)op1, (ListObject *)op2);
+		return listtype.eql((ListObject *)op1, (ListObject *)op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation ==: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
@@ -429,11 +429,11 @@ Object *obj_neq(Object *op1, Object *op2)
 	op2 = isListNode(op2) ? obj_from_listnode(op2) : op2;
 
 	if (isNumber(op1) && isNumber(op2))
-		return number_neq(op1, op2);
+		return numbertype.neq(op1, op2);
 	else if (isString(op1) && isString(op2))
-		return str_neq(op1, op2);
+		return strtype.neq(op1, op2);
 	else if (isList(op1) && isList(op2))
-		return list_neq((ListObject *)op1, (ListObject *)op2);
+		return listtype.neq((ListObject *)op1, (ListObject *)op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation !=: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
@@ -449,7 +449,7 @@ Object *obj_lss(Object *op1, Object *op2)
 	op2 = isListNode(op2) ? obj_from_listnode(op2) : op2;
 
 	if (isNumber(op1) && isNumber(op2))
-		return number_lss(op1, op2);
+		return numbertype.lss(op1, op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation <: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
@@ -465,7 +465,7 @@ Object *obj_leq(Object *op1, Object *op2)
 	op2 = isListNode(op2) ? obj_from_listnode(op2) : op2;
 
 	if (isNumber(op1) && isNumber(op2))
-		return number_leq(op1, op2);
+		return numbertype.leq(op1, op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation <=: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
@@ -481,7 +481,7 @@ Object *obj_gtr(Object *op1, Object *op2)
 	op2 = isListNode(op2) ? obj_from_listnode(op2) : op2;
 
 	if (isNumber(op1) && isNumber(op2))
-		return number_gtr(op1, op2);
+		return numbertype.gtr(op1, op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation >: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
@@ -497,7 +497,7 @@ Object *obj_geq(Object *op1, Object *op2)
 	op2 = isListNode(op2) ? obj_from_listnode(op2) : op2;
 
 	if (isNumber(op1) && isNumber(op2))
-		return number_geq(op1, op2);
+		return numbertype.geq(op1, op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation >=: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
@@ -513,7 +513,7 @@ Object *obj_or(Object *op1, Object *op2)
 	op2 = isListNode(op2) ? obj_from_listnode(op2) : op2;
 
 	if (isNumber(op1) && isNumber(op2))
-		return number_or(op1, op2);
+		return numbertype.or(op1, op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation or: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
@@ -529,7 +529,7 @@ Object *obj_and(Object *op1, Object *op2)
 	op2 = isListNode(op2) ? obj_from_listnode(op2) : op2;
 
 	if (isNumber(op1) && isNumber(op2))
-		return number_and(op1, op2);
+		return numbertype.and(op1, op2);
 	else
 		error(TypeError, "unsupported operand type(s) for operation and: %s and %s", \
 						  TYPENAME(op1), TYPENAME(op2));
@@ -573,7 +573,7 @@ Object *obj_negate(Object *op1)
 	op1 = isListNode(op1) ? obj_from_listnode(op1) : op1;
 
 	if (isNumber(op1))
-		return number_negate(op1);
+		return numbertype.negate(op1);
 	else
 		error(TypeError, "unsupported operand type for operation !: %s", TYPENAME(op1));
 
@@ -589,9 +589,9 @@ Object *obj_item(Object *sequence, int index)
 	sequence = isListNode(sequence) ? obj_from_listnode(sequence) : sequence;
 
 	if (TYPE(sequence) == STR_T)
-		return (Object *)str_item((StrObject *)sequence, index);
+		return (Object *)strtype.item((StrObject *)sequence, index);
 	else if (TYPE(sequence) == LIST_T)
-		return (Object *)list_item((ListObject *)sequence, index);
+		return (Object *)listtype.item((ListObject *)sequence, index);
 	else
 		error(TypeError, "type %s is not subscriptable", TYPENAME(sequence));
 
@@ -607,9 +607,9 @@ Object *obj_slice(Object *sequence, int start, int end)
 	sequence = isListNode(sequence) ? obj_from_listnode(sequence) : sequence;
 
 	if (TYPE(sequence) == STR_T)
-		return (Object *)str_slice((StrObject *)sequence, start, end);
+		return (Object *)strtype.slice((StrObject *)sequence, start, end);
 	else if (TYPE(sequence) == LIST_T)
-		return (Object *)list_slice((ListObject *)sequence, start, end);
+		return (Object *)listtype.slice((ListObject *)sequence, start, end);
 	else
 		error(TypeError, "type %s is not subscriptable", TYPENAME(sequence));
 
@@ -627,9 +627,9 @@ int_t obj_length(Object *sequence)
 	sequence = isListNode(sequence) ? obj_from_listnode(sequence) : sequence;
 
 	if (TYPE(sequence) == STR_T)
-		obj = str_length((StrObject *)sequence);
+		obj = strtype.length((StrObject *)sequence);
 	else if (TYPE(sequence) == LIST_T)
-		obj = list_length((ListObject *)sequence);
+		obj = listtype.length((ListObject *)sequence);
 	else
 		error(TypeError, "type %s is not subscriptable", TYPENAME(sequence));
 
@@ -665,6 +665,8 @@ char_t obj_as_char(Object *op1)
 			return (char_t)((IntObject *)op1)->ival;
 		case FLOAT_T:
 			return (char_t)((FloatObject *)op1)->fval;
+		case STR_T:
+			return str_to_char(((StrObject *)op1)->sptr);
 		default:
 			error(ValueError, "cannot convert %s to char", TYPENAME(op1));
 	}
@@ -750,21 +752,21 @@ ListObject *obj_as_list(Object *op1)
 
 /* result = (bool_t)op1
  */
-int obj_as_bool(Object *op1)
+bool obj_as_bool(Object *op1)
 {
 	op1 = isListNode(op1) ? obj_from_listnode(op1) : op1;
 
 	switch (TYPE(op1)) {
 		case CHAR_T:
-			return obj_as_char(op1) ? 1 : 0;
+			return obj_as_char(op1) ? true : false;
 		case INT_T:
-			return obj_as_int(op1) ? 1 : 0;
+			return obj_as_int(op1) ? true : false;
 		case FLOAT_T:
-			return obj_as_float(op1) ? 1 : 0;
+			return obj_as_float(op1) ? true : false;
 		default:
 			error(ValueError, "cannot convert %s to bool", TYPENAME(op1));
 	}
-	return 0;
+	return false;
 }
 
 
@@ -774,8 +776,8 @@ char_t str_to_char(char *s)
 {
 	char_t c = 0;
 
-	if (s[0] == '\\') {  /* is escape sequence */
-		switch (s[1]) {
+	if (*s == '\\') {  /* is an escape sequence */
+		switch (*++s) {
 			case 'b' :	c = '\b'; break;
 			case 'f' :	c = '\f'; break;
 			case 'n' :	c = '\n'; break;
@@ -786,10 +788,16 @@ char_t str_to_char(char *s)
 			case '\'':	c = '\''; break;
 			case '\"':	c = '\"'; break;
 			case '0' :	c = '\0'; break;
-			default  :	error(ValueError, "unknown escape sequence: %c", s[1]);
+			default  :	error(ValueError, "unknown escape sequence: %c", *s);
 		}
-	} else  /* not an escape sequence */
-		c = s[0];
+	} else {  /* not an escape sequence */
+		if (*s == '\0')
+			error(SyntaxError, "empty character constant");
+		else
+			c = *s;
+	}
+	if (*++s != '\0')
+		error(SyntaxError, "to many characters in character constant");
 
 	return c;
 }
@@ -891,18 +899,18 @@ static void _enqueue(Object *item)
  */
 static void _dequeue(Object *item)
 {
-	if (item->nextobj == NULL) {
-		if (item->prevobj == NULL) {
-			head = tail = NULL;
-		} else {
+	if (item->nextobj == NULL) {  /* last element */
+		if (item->prevobj == NULL) {  /* also first element */
+			head = tail = NULL;  /* so empty the list */
+		} else {  /* not also the first element */
 			tail = item->prevobj;
 			tail->nextobj = NULL;
 		}
-	} else {
-		if (item->prevobj == NULL){
+	} else {  /* not the last element */
+		if (item->prevobj == NULL){  /* but the first element */
 			head = item->nextobj;
 			head->prevobj = NULL;
-		} else {
+		} else {  /* somewhere in the middle of the list */
 			item->prevobj->nextobj = item->nextobj;
 			item->nextobj->prevobj = item->prevobj;
 		}

@@ -1,10 +1,11 @@
 # module_4.x
 #
-# to be imported by module_3.xi
 
-print "now in module_4.x\n"
+print "** now in module_4.x **"
 
-def m4()
-    print "now in function m4()\n"
+def fm4()
+    print "call to function fm4 in module_4.x"
 
-print "now exiting module_4.x\n"
+fm4()
+
+print "** leaving module_4.x **"

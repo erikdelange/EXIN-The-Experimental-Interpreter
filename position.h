@@ -15,6 +15,10 @@ typedef struct positionobject {
 	struct scanner scanner;		/* stores relevant parts of scanner */
 } PositionObject;
 
-extern TypeObject posobject;
+typedef struct {
+	TYPE_HEAD;
+} PositionType;
+
+extern PositionType positiontype;
 
 #endif

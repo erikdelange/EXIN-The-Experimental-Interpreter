@@ -28,6 +28,7 @@
 #include "identifier.h"
 #include "strdup.h"
 #include "error.h"
+#include "none.h"
 
 
 static Scope top = SCOPE_INIT;	/* head of global identifier list */
@@ -72,6 +73,8 @@ static Identifier *search(const char *name)
 
 /* Create a new identifier in a specific scope list.
  *
+ * The identifier points to the 'none' object.
+ *
  * level    list in which to add the identifier
  * name     identifier name
  * return   *Identifier object or NULL if the identifier already exists
@@ -90,7 +93,7 @@ static Identifier *addIdentifier(Scope *level, const char *name)
 		level->first = id;
 		if ((id->name = strdup(name)) == NULL)
 			error(OutOfMemoryError);
-		id->object = NULL;
+		id->object = (Object *)obj_alloc(NONE_T);
 	}
 	return id;
 }

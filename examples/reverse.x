@@ -1,6 +1,5 @@
 # reverse.x
 
-
 # Reverse string s
 #
 def reverse(s)
@@ -15,21 +14,17 @@ def reverse(s)
 
 # First a short demo
 #
-str s
+str s2, s1 = "abracadabra"
 
-s = reverse("abracadabra")
+s2 = reverse(s1)
 
-print s, "\n\n"  # this will print 'arbadacarba'
-
-s = reverse(s)   # turn s back in the original string
-
-print s, 2 * "\n"
+print -raw s1, " reversed is ", s2, 2 * "\n" 
 
 # Now let the user enter strings
 #
 do
-    input "Enter a string to reverse (empty line to end): " s
-    if s == ""
+    input "Enter a string to reverse (empty line to end): " s1
+    if s1 == ""
         break
-    print reverse(s), "\n"
+    print s1, "reversed is", reverse(s1)
 while 1

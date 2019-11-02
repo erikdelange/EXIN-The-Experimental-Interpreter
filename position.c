@@ -20,7 +20,7 @@ static PositionObject *pos_alloc(void)
 	if ((obj = calloc(1, sizeof(PositionObject))) == NULL)
 		error(OutOfMemoryError);
 
-	obj->typeobj = &posobject;
+	obj->typeobj = (TypeObject *)&positiontype;
 	obj->type = POSITION_T;
 	obj->refcount = 0;
 
@@ -59,11 +59,11 @@ static PositionObject *pos_vset(PositionObject *dest, va_list argp)
 
 /*	Position object API.
  */
-TypeObject posobject = {
+PositionType positiontype = {
 	.name = "pos",
 	.alloc = (Object *(*)())pos_alloc,
 	.free = (void (*)(Object *))pos_free,
 	.print = (void (*)(Object *))pos_print,
 	.set = (Object *(*)())pos_set,
 	.vset = (Object *(*)(Object *, va_list))pos_vset
-    };
+	};

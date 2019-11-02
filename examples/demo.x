@@ -19,25 +19,26 @@ def list_with_two_dimensions()
             inner.append((i + 1) * 10 + j)
             j += 1
         outer.append(inner)
-        print "inner = ", inner, newline
+        print "inner =", inner
         i = i + 1
 
-    print "outer = ", outer, newline * 2
+    print "outer =", outer, "\n"
 
-    print "Print list which includes another list", newline
+    print "Print list which includes another list:"
 
     i = 0
     do
         j = 0
         while j < outer[i].len
-            print outer[i][j], " "
+            print -raw outer[i][j], " "
             j += 1
         i += 1
     while i < outer.len
 
-    print "\n\n"
+    print
 
 list_with_two_dimensions()
+print
 
 # ------------------------------------------
 # Function with arguments and a return value
@@ -45,94 +46,96 @@ list_with_two_dimensions()
 
 # Multiply two arguments - also works for strings and list
 #
-print "Multiply two values", newline
+print "Multiply two values:"
 
 def multiply(x, y)
-    print x, " * ", y, " = "
+    print -raw x, " * ", y, " = "
     return x * y
 
 float a = multiply(1.1, 2.1)
-print a, '\n'
+print a
 
 int b = multiply(2, 3)
-print b, '\n'
+print b
 
 str s = multiply("abc", 4)
-print s, '\n'
+print s
 
 list t = multiply([1.2, "ab", 'c'], 2)
-print t, newline * 2
+print t, "\n"
 
 
 # ------------------------------
 # Add numbers, strings and lists
 #
-print "Add two values", newline
+print "Add two values:"
 
 def add(x, y)
-    print x, " + ", y, " = "
+    print -raw x, " + ", y, " = "
     return x + y
 
-print add(1.1, 2.2), newline		# two floats
-print add("abc", "def"), newline	# two strings
-print add([1,2], [3,4]), newline	# two lists
-print add("abc", 'd'), newline		# string and char
-print add("abc", 123), newline		# string and int
-print add("abc", 3.14), newline		# string and float
+print add(1.1, 2.2)		# two floats
+print add("abc", "def")	# two strings
+print add([1,2], [3,4])	# two lists
+print add("abc", 'd')	# string and char
+print add("abc", 123)	# string and int
+print add("abc", 3.14)	# string and float
+print
 
 
 # --------------
 # Nested if else
 #
-print newline, "if " + "then else", newline  # string concatenation via +
+print "if " + "then else:"  # string concatenation via +
 
 # Test if value is less then, equal if greater then zero
 #
 def test_for_zero(v)
     if v < 0
-        print "v < 0, v = ", v, "\n"
+        print -raw "v < 0, v = ", v, "\n"
     else
         if v == 0
-            print "v = 0", "\n"
+            print "v = 0"
         else
-            print "v > 0, v = ", v, "\n"
+            print -raw "v > 0, v = ", v, "\n"
 
 test_for_zero(-2)
 test_for_zero(0)
 test_for_zero(2)
+print
 
 
 # ----------
 # While loop
 #
-print newline, "while loop", newline
+print "while loop:"
 
 def while_loop(v)
     while (v += 1) != 5
-        print "v = ", v, newline
+        print "v =", v
 
 while_loop(0)
-print '\n'
+print
 
 
 # -------------
 # Do while loop
 #
-print "do while loop", newline
+print "do while loop:"
 
 def do_loop(v)
     do
-        print "v = ", v += 1, newline
+        print "v =", v += 1
     while v < 5
 
 do_loop(0)
-print '\n'
+print
 
 
 # -------------------
 # Cascaded assignment
 #
-print "Cascaded assignment (a = b = c = d = 3 * 3): "
+print -raw "Cascaded assignment (a = b = c = d = 3 * 3): "
 
 int c
 int d
@@ -140,38 +143,38 @@ int d
 a = b = c = d = 3 * 3
 
 if a == b and c == d and d == 3 * 3
-    print a, " = " , b, " = ", c, " = ", d, newline * 2
+    print a, "=" , b, "=", c, "=", d, newline
 
 
 # ------------------
 # Recursive function
 #
-print "Recursive function: "
+print -raw "Recursive function: "
 
 def func(local)
     if local > 0
         func(local - 1)
-    print local, " "
+    print -raw local, " "
 
 func(9)
-print newline * 2
+print newline
 
 
 # -----------------------------------------------------
 # Function without parameter which returns a new string
 #
-print "Function which returns string f1: "
+print -raw "Function which returns string f1: "
 
 def f1()
     return "f1"
 
-print f1(), newline * 2
+print f1(), newline
 
 
 # -----------------------------------------------
 # Function which returns a new list of i elements
 #
-print "Function which returns a new list of i elements:\n"
+print "Function which returns a new list of i elements:"
 
 def create_list(i)
     list l
@@ -182,13 +185,13 @@ def create_list(i)
 
     return l
 
-print "create_list(6)      = ", create_list(6), "\n"
-print "create_list(6)[1]   = ", create_list(6)[1], "\n"
-print "create_list(6)[-1]  = ", create_list(6)[-1], "\n"  # -1 is first element from end
-print "create_list(6)[:2]  = ", create_list(6)[:2], "\n"
-print "create_list(6)[2:]  = ", create_list(6)[2:], "\n"
-print "create_list(6)[2:4] = ", create_list(6)[2:4], "\n"
-print "create_list(6)[2:-2]= ", create_list(6)[2:-2], "\n\n"
+print "create_list(6)      = ", create_list(6)
+print "create_list(6)[1]   = ", create_list(6)[1]
+print "create_list(6)[-1]  = ", create_list(6)[-1]  # -1 is first element from end
+print "create_list(6)[:2]  = ", create_list(6)[:2]
+print "create_list(6)[2:]  = ", create_list(6)[2:]
+print "create_list(6)[2:4] = ", create_list(6)[2:4]
+print "create_list(6)[2:-2]= ", create_list(6)[2:-2], "\n"
 
 
 # ---------------------------------------------------------
@@ -210,7 +213,7 @@ def fibonacci(n)
     return fib
 
 int n = 10
-print "Fibonacci sequence for ", n, " elements: ", fibonacci(n), "\n\n"
+print "Fibonacci sequence for", n, "elements:", fibonacci(n), "\n"
 
 
 # -----------------------------------
@@ -237,18 +240,18 @@ def power(g, e)
 
     return x
 
-print "Direct use of function return value: "
+print -raw "Direct use of function return value: "
 
-print "2^3 + 1.1 = ", power(2, 3) + 1.1, newline, newline
+print "2^3 + 1.1 =", power(2, 3) + 1.1, newline
 
 
 # ----------------------------------------------------------------------
-print "Scientific notation of float constants: 2.1E2 = "
-print 2.1E2, newline, newline
+print -raw "Scientific notation of float constants: 2.1E2 = "
+print 2.1E2, newline
 
 
 # -----------------------------------------------------------
 # Return from EXIN with a calculated value (script exit code must be 7)
 #
-print "This script will now exit with a return value of ", 1 + 2 * 3
+print "This script will now exit with a return value of", 1 + 2 * 3
 return 1 + 2 * 3

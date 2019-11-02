@@ -11,13 +11,13 @@
 
 char *strdup(const char *s)
 {
-    void *new;
-    size_t len = strlen(s) + 1;
+	void *new;
+	size_t len = strlen(s) + 1;
 
-    new = malloc(len);
+	new = malloc(len);
 
-    if (new == NULL)
-        return NULL;
+	if (new == NULL)
+		return NULL;
 
-    return (char *)memcpy(new, s, len);
+	return (char *)memcpy(new, s, len);
 }

@@ -217,7 +217,7 @@ The *for .. in sequence* loop cycles through the content of a list of string. As
 for element in [1, 2.0, "abc", 'c']
     print element, " ", type(element), "\n"
 ```
-It is not neccesary to define variable *element* upfront because it is just a reference to a variable in the list. In C this would be called a pointer. It can be used to change the value in the list. The types of the values which are assigned can be different for each element of the list. If the sequence used in the *for .. in* loop is a string then of course *element* is only assigned characters. Strings are read-only.
+It is not neccesary to define variable *element* upfront because it is just a reference to a variable in the list. In C this would be called a pointer. It can be used to change the value in the list. The types of the values which are assigned can be different for each element of the list. If the sequence used in the *for .. in* loop is a string then of course *element* is only assigned characters. Strings are read-only. *Element* stays in existence after the for loop is finished, and then points to the last read value. If the sequence was empty ("" or []) it points to the *none* object.
 ##### Function definition
 Functions are defined using the *def* keyword followed by a function name and a pair of parenthesis containing the argument names separated by comma's. Even if a function has no arguments the parenthesis are mandatory. All arguments are passed by value. There is no type checking when the function is called, and more arguments can be sent to the function then are stated in the definition. Sending less arguments will result in an error.
 ```
@@ -251,12 +251,13 @@ str file = "file1.ext"
 import "file2.ext", file
 ```
 ##### Input and output
-Information can be send to the standard output via the *print* statement. Any number of expressions separated by comma's can follow *print*.
+Information can be send to the standard output via the *print* statement. Any number of expressions (also none) separated by comma's can follow *print*.
 ```
 >>> str s = "Hello"
->>> print s, " there ", 1 + 2 - 3.14
+>>> print s, "there", 1 + 2 - 3.14
 Hello there -0.14
 ```
+The printed arguments are separated by a space, and after the last argument a newline is printed. This behaviour can be supressed by adding *-raw* after the *print* statement (e.g *print -raw 3.14*). Note that *-raw* is not followed by a comma.
 The *input* statement reads data from the standard input into a variable. Input must be ended by a newline. Optionally a string can be specified which is printed before the input is read. Multiple variables can be read using a single input statement.
 ```
 input "Please enter your name: " name
@@ -265,6 +266,8 @@ input first_name, last_name
 ##### Various
 The *pass* keyword is a no-operation statement and can be used as a placeholder during program development.
 Statements cannot be used as identifier (for a variable or function) name. However the name of builtin functions (like type) can be used as identifier name. This will shadow the builtin function.
+##### Builtin functions
+A number of builtin functions are provided. These include type(variable) to return a string with the type of the variable, chr(integer) which return a string with the ASCII representation of integer and ord(string) which returns the ASCII value (as integer) of the character in the string.
 ##### Grammar in EBNF
 For a graphical representation of the syntax see [EXIN syntax diagram](EXIN%20syntax%20diagram.pdf).
 For an explantion of the EBNF notation used below see [EBNF syntax.txt](EBNF%20syntax.txt).
@@ -294,7 +297,7 @@ block ::= NEWLINE INDENT statement+ DEDENT
 
 import_stmt ::= 'import' assignment_expr ( ',' assignment_expr )* NEWLINE  /* assignment must result in string */
 
-print_stmnt ::= 'print' assignment_expr ( ',' assignment_expr )* NEWLINE
+print_stmnt ::= 'print' '-raw'? ( assignment_expr ( ',' assignment_expr )* )?  NEWLINE
 
 input_stmnt ::= 'input' string? identifier ( ',' string? identifier )* NEWLINE
 

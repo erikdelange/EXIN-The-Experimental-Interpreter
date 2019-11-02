@@ -17,7 +17,7 @@ static Object *char_alloc(void)
 	if ((obj = calloc(1, sizeof(CharObject))) == NULL)
 		error(OutOfMemoryError);
 
-	obj->typeobj = &charobject;
+	obj->typeobj = (TypeObject *)&chartype;
 	obj->type = CHAR_T;
 	obj->refcount = 0;
 
@@ -34,7 +34,7 @@ static Object *int_alloc(void)
 	if ((obj = calloc(1, sizeof(IntObject))) == NULL)
 		error(OutOfMemoryError);
 
-	obj->typeobj = &intobject;
+	obj->typeobj = (TypeObject *)&inttype;
 	obj->type = INT_T;
 	obj->refcount = 0;
 
@@ -51,7 +51,7 @@ static Object *float_alloc(void)
 	if ((obj = calloc(1, sizeof(FloatObject))) == NULL)
 		error(OutOfMemoryError);
 
-	obj->typeobj = &floatobject;
+	obj->typeobj = (TypeObject *)&floattype;
 	obj->type = FLOAT_T;
 	obj->refcount = 0;
 
@@ -113,11 +113,11 @@ static Object *number_vset(Object *obj, va_list argp)
 {
 	switch (TYPE(obj)) {
 		case CHAR_T:
-			return (Object *)char_set((CharObject *)obj, va_arg(argp, int));
+			return (Object *)char_set((CharObject *)obj, va_arg(argp, int));  /* va_arg requires at least an int */
 		case INT_T:
 			return (Object *)int_set((IntObject *)obj, va_arg(argp, int_t));
 		case FLOAT_T:
-			return (Object *)float_set((FloatObject *)obj, va_arg(argp, double));
+			return (Object *)float_set((FloatObject *)obj, va_arg(argp, float_t));
 		default:
 			break;
 	}
@@ -143,7 +143,7 @@ static objecttype_t coerce(Object *op1, Object *op2)
 }
 
 
-Object *number_add(Object *op1, Object *op2)
+static Object *number_add(Object *op1, Object *op2)
 {
 	switch (coerce(op1, op2)) {
 		case CHAR_T:
@@ -158,7 +158,7 @@ Object *number_add(Object *op1, Object *op2)
 }
 
 
-Object *number_sub(Object *op1, Object *op2)
+static Object *number_sub(Object *op1, Object *op2)
 {
 	switch (coerce(op1, op2)) {
 		case CHAR_T:
@@ -173,7 +173,7 @@ Object *number_sub(Object *op1, Object *op2)
 }
 
 
-Object *number_mul(Object *op1, Object *op2)
+static Object *number_mul(Object *op1, Object *op2)
 {
 	switch (coerce(op1, op2)) {
 		case CHAR_T:
@@ -188,7 +188,7 @@ Object *number_mul(Object *op1, Object *op2)
 }
 
 
-Object *number_div(Object *op1, Object *op2)
+static Object *number_div(Object *op1, Object *op2)
 {
 	if (obj_as_int(op2) == 0)
 		error(DivisionByZeroError);
@@ -206,7 +206,7 @@ Object *number_div(Object *op1, Object *op2)
 }
 
 
-Object *number_mod(Object *op1, Object *op2)
+static Object *number_mod(Object *op1, Object *op2)
 {
 	if (obj_as_int(op2) == 0)
 		error(DivisionByZeroError);
@@ -224,7 +224,7 @@ Object *number_mod(Object *op1, Object *op2)
 }
 
 
-Object *number_inv(Object *op1)
+static Object *number_inv(Object *op1)
 {
 	Object *op2, *result;
 
@@ -249,7 +249,7 @@ Object *number_inv(Object *op1)
 }
 
 
-Object *number_eql(Object *op1, Object *op2)
+static Object *number_eql(Object *op1, Object *op2)
 {
 	if (TYPE(op1) == FLOAT_T || TYPE(op2) == FLOAT_T)
 		return obj_create(INT_T, (int_t)(obj_as_float(op1) == obj_as_float(op2)));
@@ -260,7 +260,7 @@ Object *number_eql(Object *op1, Object *op2)
 }
 
 
-Object *number_neq(Object *op1, Object *op2)
+static Object *number_neq(Object *op1, Object *op2)
 {
 	if (TYPE(op1) == FLOAT_T || TYPE(op2) == FLOAT_T)
 		return obj_create(INT_T, (int_t)(obj_as_float(op1) != obj_as_float(op2)));
@@ -271,7 +271,7 @@ Object *number_neq(Object *op1, Object *op2)
 }
 
 
-Object *number_lss(Object *op1, Object *op2)
+static Object *number_lss(Object *op1, Object *op2)
 {
 	if (TYPE(op1) == FLOAT_T || TYPE(op2) == FLOAT_T)
 		return obj_create(INT_T, (int_t)(obj_as_float(op1) < obj_as_float(op2)));
@@ -282,7 +282,7 @@ Object *number_lss(Object *op1, Object *op2)
 }
 
 
-Object *number_leq(Object *op1, Object *op2)
+static Object *number_leq(Object *op1, Object *op2)
 {
 	if (TYPE(op1) == FLOAT_T || TYPE(op2) == FLOAT_T)
 		return obj_create(INT_T, (int_t)(obj_as_float(op1) <= obj_as_float(op2)));
@@ -293,7 +293,7 @@ Object *number_leq(Object *op1, Object *op2)
 }
 
 
-Object *number_gtr(Object *op1, Object *op2)
+static Object *number_gtr(Object *op1, Object *op2)
 {
 	if (TYPE(op1) == FLOAT_T || TYPE(op2) == FLOAT_T)
 		return obj_create(INT_T, (int_t)(obj_as_float(op1) > obj_as_float(op2)));
@@ -304,7 +304,7 @@ Object *number_gtr(Object *op1, Object *op2)
 }
 
 
-Object *number_geq(Object *op1, Object *op2)
+static Object *number_geq(Object *op1, Object *op2)
 {
 	if (TYPE(op1) == FLOAT_T || TYPE(op2) == FLOAT_T)
 		return obj_create(INT_T, (int_t)(obj_as_float(op1) >= obj_as_float(op2)));
@@ -315,27 +315,27 @@ Object *number_geq(Object *op1, Object *op2)
 }
 
 
-Object *number_or(Object *op1, Object *op2)
+static Object *number_or(Object *op1, Object *op2)
 {
 	return obj_create(INT_T, (int_t)(obj_as_bool(op1) || obj_as_bool(op2) ? 1 : 0));
 }
 
 
-Object *number_and(Object *op1, Object *op2)
+static Object *number_and(Object *op1, Object *op2)
 {
 	return obj_create(INT_T, (int_t)(obj_as_bool(op1) && obj_as_bool(op2) ? 1 : 0));
 }
 
 
-Object *number_negate(Object *op1)
+static Object *number_negate(Object *op1)
 {
 	return obj_create(INT_T, (int_t)!obj_as_bool(op1));
 }
 
 
-/* Number object API (separate for char_t, int_t and float_t).
+/* Number object API (separate for char_t, int_t, float_t and number_t).
  */
-TypeObject charobject = {
+CharType chartype = {
 	.name = "char",
 	.alloc = char_alloc,
 	.free = number_free,
@@ -344,7 +344,7 @@ TypeObject charobject = {
 	.vset = number_vset
 	};
 
-TypeObject intobject = {
+IntType inttype = {
 	.name = "int",
 	.alloc = int_alloc,
 	.free = number_free,
@@ -353,11 +353,36 @@ TypeObject intobject = {
 	.vset = number_vset
 	};
 
-TypeObject floatobject = {
+FloatType floattype = {
 	.name = "float",
 	.alloc = float_alloc,
 	.free = number_free,
 	.print = number_print,
 	.set = (Object *(*)())float_set,
 	.vset = number_vset
+	};
+
+NumberType numbertype = {
+	.name = "number",
+	.alloc = int_alloc,  /* number considered INT_T */
+	.free = number_free,
+	.print = number_print,
+	.set = (Object *(*)())int_set,  /* number considered INT_T */
+	.vset = number_vset,
+
+	.add = number_add,
+	.sub = number_sub,
+	.mul = number_mul,
+	.div = number_div,
+	.mod = number_mod,
+	.inv = number_inv,
+	.eql = number_eql,
+	.neq = number_neq,
+	.lss = number_lss,
+	.leq = number_leq,
+	.gtr = number_gtr,
+	.geq = number_geq,
+	.or = number_or,
+	.and = number_and,
+	.negate = number_negate
 	};

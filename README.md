@@ -6,7 +6,7 @@ EXIN is an exercise in defining a progamming language and writing an interpreter
 #
 def reverse(s)
     str new
-    int index = s.len  # index initially is the length of the string
+    int index = s.len
 
     while index
         index -= 1
@@ -16,24 +16,20 @@ def reverse(s)
 
 # First a short demo
 #
-str s
+str s2, s1 = "abracadabra"
 
-s = reverse("abracadabra")
+s2 = reverse(s1)
 
-print s, "\n\n"  # this will print 'arbadacarba' followed by two newlines
-
-s = reverse(s)   # turn s back in the original string
-
-print s, 2 * "\n"  # prints s followed by two newlines
+print -raw s1, " reversed is ", s2, 2 * "\n"
 
 # Now let the user enter strings
 #
 do
-    input "Enter a string to reverse (empty line to end): " s
-    if s == ""
-        break  # quit the loop
-    print reverse(s), "\n"
-while 1  # infinite loop
+    input "Enter a string to reverse (empty line to end): " s1
+    if s1 == ""
+        break
+    print s1, "reversed is", reverse(s1)
+while 1
 ```
 The interpreter is written in C (version C99). The details of the language and the interpreter are explained in the documents listed below. EXIN is designed for fun and education (at least mine :) and you can do with it whatever you like.
 

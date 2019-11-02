@@ -2,7 +2,8 @@
  *
  * A list contains 0 of more listnodes. The list object is a header which
  * points to the first listnode. The last listnode points to the header.
- * Every listnode points to the object which is stored in the list.
+ * Every listnode points to the object which is stored in the list. In
+ * this way the list structure is agnostic of the object type stored.
  *
  * 2016	K.W.E. de Lange
  */
@@ -21,21 +22,29 @@ typedef struct listnode {
 	OBJ_HEAD;
 	struct listnode *next;	/* next node in the list, NULL for last */
 	struct listnode *prev;	/* previous node in the list, NULL for first */
-	struct object *obj;  	/* opgeslagen object */
+	struct object *obj;  	/* object which is stored in the list */
 } ListNode;
 
-extern TypeObject listobject;
-extern TypeObject listnodeobject;
+typedef struct {
+	TYPE_HEAD;
+	Object *(*length)(ListObject *obj);
+	ListNode *(*item)(ListObject *str, int index);
+	ListObject *(*slice)(ListObject *obj, int start, int end);
+	Object *(*concat)(ListObject *op1, ListObject *op2);
+	Object *(*repeat)(Object *op1, Object *op2);
+	Object *(*eql)(ListObject *op1, ListObject *op2);
+	Object *(*neq)(ListObject *op1, ListObject *op2);
+	void (*insert)(ListObject *list, int index, Object *obj);
+	void (*append)(ListObject *list, Object *obj);
+	Object *(*remove)(ListObject *list, int index);
+} ListType;
 
-extern Object *list_length(ListObject *list);
-extern ListNode *list_item(ListObject *list, int index);
-extern ListObject *list_slice(ListObject *list, int start, int end);
-extern Object *list_concat(ListObject *op1, ListObject *op2);
-extern Object *list_repeat(Object *op1, Object *op2);
-extern Object *list_eql(ListObject *op1, ListObject *op2);
-extern Object *list_neq(ListObject *op1, ListObject *op2);
-extern void listnode_insert(ListObject *list, int index, Object *obj);
-extern void listnode_append(ListObject *list, Object *obj);
-extern Object *listnode_remove(ListObject *list, int index);
+extern ListType listtype;
+
+typedef struct {
+	TYPE_HEAD;
+} ListNodeType;
+
+extern ListNodeType listnodetype;
 
 #endif

@@ -2,6 +2,8 @@
  *
  * List object operations
  *
+ * See list.h for an explanation of of how lists are structured.
+ *
  * 2016 K.W.E. de Lange
  */
 #include <stdlib.h>
@@ -20,7 +22,7 @@ static ListObject *list_alloc(void)
 	if ((list = calloc(1, sizeof(ListObject))) == NULL)
 		error(OutOfMemoryError);
 
-	list->typeobj = &listobject;
+	list->typeobj = (TypeObject *)&listtype;
 	list->type = LIST_T;
 	list->refcount = 0;
 
@@ -37,7 +39,7 @@ static void list_free(ListObject *list)
 {
 	Object *obj;
 
-	while ((obj = listnode_remove(list, 0)) != NULL)
+	while ((obj = listtype.remove(list, 0)) != NULL)
 		obj_decref(obj);
 
 	free(list);
@@ -66,11 +68,11 @@ static ListObject *list_set(ListObject *dest, ListObject *src)
 	Object *obj;
 
 	if (dest->head != NULL)
-		while ((obj = listnode_remove(dest, 0)) != NULL)
+		while ((obj = listtype.remove(dest, 0)) != NULL)
 			obj_decref(obj);
 
 	for (ListNode *node = src->head; node; node = node->next)
-		listnode_append(dest, obj_copy(node->obj));
+		listtype.append(dest, obj_copy(node->obj));
 
 	return dest;
 }
@@ -91,7 +93,7 @@ static ListNode *listnode_alloc(void)
 	if ((node = calloc(1, sizeof(ListNode))) == NULL)
 		error(OutOfMemoryError);
 
-	node->typeobj = &listnodeobject;
+	node->typeobj = (TypeObject *)&listnodetype;
 	node->type = LISTNODE_T;
 	node->refcount = 0;
 
@@ -151,7 +153,7 @@ static int_t length(ListObject *list)
 }
 
 
-Object *list_length(ListObject *list)
+static Object *list_length(ListObject *list)
 {
 	return obj_create(INT_T, length(list));
 }
@@ -159,7 +161,7 @@ Object *list_length(ListObject *list)
 
 /* Create a new list which contains the objects from op1 and op2.
  */
-Object *list_concat(ListObject *op1, ListObject *op2)
+static Object *list_concat(ListObject *op1, ListObject *op2)
 {
 	ListObject *list;
 	ListNode *item;
@@ -168,13 +170,13 @@ Object *list_concat(ListObject *op1, ListObject *op2)
 	list = (ListObject *)obj_alloc(LIST_T);
 
 	for (i = 0; i < length(op1); i++) {
-		item = list_item(op1, i);
-		listnode_append(list, obj_copy(item->obj));
+		item = listtype.item(op1, i);
+		listtype.append(list, obj_copy(item->obj));
 		obj_decref(item);
 	}
 	for (i = 0; i < length(op2); i++) {
-		item = list_item(op2, i);
-		listnode_append(list, obj_copy(item->obj));
+		item = listtype.item(op2, i);
+		listtype.append(list, obj_copy(item->obj));
 		obj_decref(item);
 	}
 	return (Object *)list;
@@ -183,7 +185,7 @@ Object *list_concat(ListObject *op1, ListObject *op2)
 
 /* Create a new list which contains n times an existing list.
  */
-Object *list_repeat(Object *op1, Object *op2)
+static Object *list_repeat(Object *op1, Object *op2)
 {
 	ListObject *list;
 	ListNode *item;
@@ -198,8 +200,8 @@ Object *list_repeat(Object *op1, Object *op2)
 
 	while (times--)
 		for (int_t i = 0; i < length((ListObject *)s); i++) {
-			item = list_item((ListObject *)s, i);
-			listnode_append(list, obj_copy(item->obj));
+			item = listtype.item((ListObject *)s, i);
+			listtype.append(list, obj_copy(item->obj));
 			obj_decref(item);
 		}
 
@@ -209,9 +211,9 @@ Object *list_repeat(Object *op1, Object *op2)
 
 /* Compare the content of two lists by index (math: tuple).
  */
-static int list_cmp(ListObject *op1, ListObject *op2)
+static bool list_cmp(ListObject *op1, ListObject *op2)
 {
-	bool r;
+	bool equal;
 	Object *obj;
 	int_t i, l1;
 	ListNode *item1, *item2;
@@ -219,43 +221,43 @@ static int list_cmp(ListObject *op1, ListObject *op2)
 	l1 = length(op1);
 
 	if (l1 != length(op2))
-		return 0;
+		return false;  /* the lists should at least be of equal length */
 
-	for (r = 1, i = 0; i < l1; i++) {
-		item1 = list_item(op1, i);
-		item2 = list_item(op2, i);
+	for (equal = true, i = 0; i < l1; i++) {
+		item1 = listtype.item(op1, i);
+		item2 = listtype.item(op2, i);
 		obj = obj_eql((Object *)item1, (Object *)item2);
-		r = obj_as_bool(obj);
+		equal = obj_as_bool(obj);
 		obj_decref(item1);
 		obj_decref(item2);
 		obj_decref(obj);
-		if (r == 0)
-			break;  /* stop compare at first mismatch */
+		if (equal == false)
+			break;  /* stop compare on first mismatch */
 	}
-	return i == l1 ? 1 : 0;  /* 1 = equal, 0 = not equal */
+	return i == l1 ? true : false;  /* true (1) = equal, false (0) = not equal */
 }
 
 
-Object *list_eql(ListObject *op1, ListObject *op2)
+static Object *list_eql(ListObject *op1, ListObject *op2)
 {
-	int r = list_cmp(op1, op2);
+	int result = list_cmp(op1, op2);
 
-	return obj_create(INT_T, (int_t)r);
+	return obj_create(INT_T, (int_t)result);
 }
 
 
-Object *list_neq(ListObject *op1, ListObject *op2)
+static Object *list_neq(ListObject *op1, ListObject *op2)
 {
-	int r = list_cmp(op1, op2);
+	int result = list_cmp(op1, op2);
 
-	return obj_create(INT_T, (int_t)!r);
+	return obj_create(INT_T, (int_t)!result);
 }
 
 
 /* Retrieve a listnode from a list by index.
  * Beware: The refcount of the listnode is increased by 1.
  */
-ListNode *list_item(ListObject *list, int index)
+static ListNode *list_item(ListObject *list, int index)
 {
 	ListNode *node;
 	int_t len, i;
@@ -285,7 +287,7 @@ ListNode *list_item(ListObject *list, int index)
  * The new list contains new object (= deep copy). Start and end are
  * automatically adjusted to the nearest possible values.
  */
-ListObject *list_slice(ListObject *list, int start, int end)
+static ListObject *list_slice(ListObject *list, int start, int end)
 {
 	ListObject *slice;
 	ListNode *node;
@@ -308,8 +310,8 @@ ListObject *list_slice(ListObject *list, int start, int end)
 	slice = (ListObject *)obj_alloc(LIST_T);
 
 	for (int_t i = start; i < end; i++) {
-		node = list_item(list, i);
-		listnode_append(slice, obj_copy(node->obj));
+		node = listtype.item(list, i);
+		listtype.append(slice, obj_copy(node->obj));
 		obj_decref(node);
 	}
 
@@ -318,8 +320,11 @@ ListObject *list_slice(ListObject *list, int start, int end)
 
 
 /* Append an object to the end of a list.
+ *
+ * list     list to append object to
+ * obj      object to append
  */
-void listnode_append(ListObject *list, Object *obj)
+static void list_append_object(ListObject *list, Object *obj)
 {
 	ListNode *node, *tail;
 
@@ -328,7 +333,7 @@ void listnode_append(ListObject *list, Object *obj)
 	if (list->head == NULL) {  /* append to empty list */
 		list->head = node;
 		list->tail = node;
-	} else {  /* append to list which has one of more listnodes */
+	} else {  /* append to list which already has one of more listnodes */
 		tail = list->tail;
 		node->prev = tail;
 		tail->next = node;
@@ -342,8 +347,12 @@ void listnode_append(ListObject *list, Object *obj)
  * Index is automatically adjusted to the nearest possible value.
  * A negative index counts back from the end of the list. Index -1
  * points to the last listnode.
+ *
+ * list     list to insert object into
+ * index    insert object before this index
+ * obj      object to insert
  */
-void listnode_insert(ListObject *list, int index, Object *obj)
+static void list_insert_object(ListObject *list, int index, Object *obj)
 {
 	ListNode *node, *iptr;
 	int_t len;
@@ -353,7 +362,7 @@ void listnode_insert(ListObject *list, int index, Object *obj)
 	if (list->head == NULL) {  /* insert in empty list */
 		list->head = node;
 		list->tail = node;
-	} else {  /* insert in list which has one or more listnodes */
+	} else {  /* insert in list which already has one or more listnodes */
 		len = length(list);
 
 		if (index < 0)
@@ -384,11 +393,14 @@ void listnode_insert(ListObject *list, int index, Object *obj)
 
 /* Remove a listnode from a list.
  *
- * Index must exist (numbering starts at 0).
- * A negative index counts back from the end of the list. Index -1
- * points to the last listnode.
+ * Index must exist (numbering starts at 0). A negative index counts back
+ * from the end of the list. Index -1 points to the last listnode.
+ *
+ * list     list to remove object from
+ * index    index of object to remove
+ * return   object which was removed from list
  */
-Object *listnode_remove(ListObject *list, int index)
+static Object *list_remove_object(ListObject *list, int index)
 {
 	ListNode *node;
 	Object *obj = NULL;
@@ -428,24 +440,35 @@ Object *listnode_remove(ListObject *list, int index)
 
 
 /* List object API.
- */
-TypeObject listobject = {
+*/
+ListType listtype = {
 	.name = "list",
 	.alloc = (Object *(*)())list_alloc,
 	.free = (void (*)(Object *))list_free,
 	.print = (void (*)(Object *))list_print,
 	.set = (Object *(*)())list_set,
-	.vset = (Object *(*)(Object *, va_list))list_vset
-    };
+	.vset = (Object *(*)(Object *, va_list))list_vset,
+
+	.length = list_length,
+	.item = list_item,
+	.slice = list_slice,
+	.concat = list_concat,
+	.repeat = list_repeat,
+	.eql = list_eql,
+	.neq = list_neq,
+	.insert = list_insert_object,
+	.append = list_append_object,
+	.remove = list_remove_object
+	};
 
 
 /* Listnode object API.
  */
-TypeObject listnodeobject = {
+ListNodeType listnodetype = {
 	.name = "listnode",
 	.alloc = (Object *(*)())listnode_alloc,
 	.free = (void (*)(Object *))listnode_free,
 	.print = (void (*)(Object *))listnode_print,
 	.set = (Object *(*)())listnode_set,
 	.vset = (Object *(*)(Object *, va_list))listnode_vset
-    };
+	};

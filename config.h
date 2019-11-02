@@ -11,7 +11,7 @@
 #include <stdio.h>
 
 #define LANGUAGE	"EXIN"
-#define VERSION		"1.11"
+#define VERSION		"1.12"
 #define BUFSIZE		256		/* maximum length of identifier name excl '\0' */
 #define LINESIZE	256		/* maximum length of input line excl '\0' */
 #define MAXINDENT	132		/* maximum number of indents */

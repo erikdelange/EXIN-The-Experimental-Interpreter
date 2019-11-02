@@ -88,8 +88,8 @@ static Module *new(const char *name)
 {
 	Module *m;
 
-    assert(name != NULL);
-    assert(*name != '\0');
+	assert(name != NULL);
+	assert(*name != '\0');
 
 	if ((m = calloc(1, sizeof(Module))) == NULL)
 		error(OutOfMemoryError);
@@ -116,8 +116,8 @@ static Module *new(const char *name)
  */
 Module module = {
 	.next = NULL,
-	.name = NULL,
-	.code = NULL,
+	.name = "",
+	.code = "\n",
 	.size = 0,
 
 	.new = new,

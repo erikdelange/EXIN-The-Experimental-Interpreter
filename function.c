@@ -5,6 +5,7 @@
  * 2019	K.W.E. de Lange
  */
 #include <string.h>
+#include "error.h"
 #include "function.h"
 
 
@@ -31,7 +32,7 @@ static Object *type(void)
 }
 
 
-/* Builtin: return string representation of integer
+/* Builtin: return ASCII character (as string) representation of integer
  *
  * in:	token = LPAR of argument list
  * out:	token = token after RPAR of function call argument list
@@ -48,8 +49,33 @@ static Object *chr(void)
 	expect(RPAR);
 
 	snprintf(buffer, BUFSIZE, "%c", obj_as_char(obj));
-	result = obj_create(STR_T, buffer);  // VERBETER: 10 als \n printen
+	result = obj_create(STR_T, buffer);
 
+	obj_decref(obj);
+
+	return result;
+}
+
+
+/* Builtin: return integer representation of ASCII character (in string)
+ *
+ * in:	token = LPAR of argument list
+ * out:	token = token after RPAR of function call argument list
+ *
+ * Syntaxt: ord(string expression)
+ */
+static Object *ord(void)
+{
+	Object *obj, *result;
+
+	expect(LPAR);
+	obj = assignment_expr();
+	expect(RPAR);
+
+	if (TYPE(obj) != STR_T)
+		error(TypeError, "expected string but found %s", TYPENAME(obj));
+
+	result = obj_create(INT_T, (int_t)obj_as_char(obj));
 	obj_decref(obj);
 
 	return result;
@@ -63,6 +89,7 @@ static struct {
 	Object *(*functionaddr)();
 } builtinTable[] = { /* Note: functionnames must be sorted alphabetically */
 	{"chr", chr},
+	{"ord", ord},
 	{"type", type}
 };
 

@@ -5,11 +5,11 @@
 #include "none.h"
 
 
-NoneObject none = {
-    .refcount = 1,
-    .type = NONE_T,
-    .typeobj = &noneobject
-    };
+static NoneObject none = {
+	.refcount = 0,
+	.type = NONE_T,
+	.typeobj = (TypeObject *)&nonetype
+	};
 
 
 static NoneObject *none_alloc(void)
@@ -43,11 +43,11 @@ static NoneObject *none_vset(NoneObject *obj, va_list argp)
 
 /*	None object API.
  */
-TypeObject noneobject = {
+NoneType nonetype = {
 	.name = "none",
 	.alloc = (Object *(*)())none_alloc,
 	.free = (void (*)(Object *))none_free,
 	.print = (void (*)(Object *))none_print,
 	.set = (Object *(*)())none_set,
 	.vset = (Object *(*)(Object *, va_list))none_vset
-    };
+	};
