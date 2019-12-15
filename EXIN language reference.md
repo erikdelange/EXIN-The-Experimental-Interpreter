@@ -215,7 +215,7 @@ This loop is executed infinitly because 1 always evaluates to true. However the 
 The *for .. in sequence* loop cycles through the content of a list of string. As with the other loops *break* and *continue* can be used here.
 ```
 for element in [1, 2.0, "abc", 'c']
-    print element, " ", type(element), "\n"
+    print element, type(element)
 ```
 It is not neccesary to define variable *element* upfront because it is just a reference to a variable in the list. In C this would be called a pointer. It can be used to change the value in the list. The types of the values which are assigned can be different for each element of the list. If the sequence used in the *for .. in* loop is a string then of course *element* is only assigned characters. Strings are read-only. *Element* stays in existence after the for loop is finished, and then points to the last read value. If the sequence was empty ("" or []) it points to the *none* object.
 ##### Function definition
@@ -239,7 +239,7 @@ def fibonacci(n)
     return fib
 
 int n = 10
-print "Fibonacci sequence for ", n, " elements: ", fibonacci(n), "\n\n"
+print "Fibonacci sequence for", n, "elements: ", fibonacci(n)
 ```
 A function returns when it reaches the end of its statement block or when a *return* statement is encountered. When using the *return* statement a return value can be explicitly specified. Without this statement, or when using just *return* the return value is considered to be integer 0. The return value of a function can be used immediately, so a function can appear everywhere where a variable can appear. Any data type can be returned by a function, including lists and strings.
 Variables are defined within the scope of a function. Any variable defined outside of a function is considered global. Functions are always defined globally.
@@ -258,6 +258,7 @@ Information can be send to the standard output via the *print* statement. Any nu
 Hello there -0.14
 ```
 The printed arguments are separated by a space, and after the last argument a newline is printed. This behaviour can be supressed by adding *-raw* after the *print* statement (e.g *print -raw 3.14*). Note that *-raw* is not followed by a comma.
+
 The *input* statement reads data from the standard input into a variable. Input must be ended by a newline. Optionally a string can be specified which is printed before the input is read. Multiple variables can be read using a single input statement.
 ```
 input "Please enter your name: " name

@@ -21,7 +21,7 @@
 #define int_t	long		/* basic type for INT_T */
 #define float_t	double		/* basic type for FLOAT_T */
 
-/* 	All global configuration variables.
+/*	All global configuration variables.
  */
 typedef struct {
 	int debug;      /* debug logging level */

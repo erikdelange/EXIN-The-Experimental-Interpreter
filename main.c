@@ -26,28 +26,28 @@ Config config = {				/* global configuration variables */
 };
 
 
-/* Print the usage message.
+/* Print the usage message to stream (normally stdout or stderr).
  */
-static void usage(char *executable)
+static void usage(char *executable, FILE *stream)
 {
-	fprintf(stderr, "\n%s version %s\n", LANGUAGE, VERSION);
-	fprintf(stderr, "usage: %s [options] module\n", executable);
-	fprintf(stderr, "module: name of file containing code to execute\n");
-	fprintf(stderr, "options\n");
+	fprintf(stream, "\n%s version %s\n", LANGUAGE, VERSION);
+	fprintf(stream, "usage: %s [options] module\n", executable);
+	fprintf(stream, "module: name of file containing code to execute\n");
+	fprintf(stream, "options\n");
 	#ifdef DEBUG
-	fprintf(stderr, "-d[detail] = show debug info\n");
-	fprintf(stderr, "    detail = sum of options (default = 1)\n");
-	fprintf(stderr, "    option 0: no debug output\n");
-	fprintf(stderr, "    option 1: show tokens during execution\n");
-	fprintf(stderr, "    option 2: show block entry and exit\n");
-	fprintf(stderr, "    option 4: show memory allocation\n");
-	fprintf(stderr, "    option 8: show tokens during function scan\n");
-	fprintf(stderr, "    option 16: dump identifier and object table to disk after program end\n");
+	fprintf(stream, "-d[detail] = show debug info\n");
+	fprintf(stream, "    detail = sum of options (default = 1)\n");
+	fprintf(stream, "    option 0: no debug output\n");
+	fprintf(stream, "    option 1: show tokens during execution\n");
+	fprintf(stream, "    option 2: show block entry and exit\n");
+	fprintf(stream, "    option 4: show memory allocation\n");
+	fprintf(stream, "    option 8: show tokens during function scan\n");
+	fprintf(stream, "    option 16: dump identifier and object table to disk after program end\n");
 	#endif  /* DEBUG */
-	fprintf(stderr, "-h = show usage information\n");
-	fprintf(stderr, "-t[tabsize] = set tab size in spaces\n");
-	fprintf(stderr, "    tabsize = >= 1 (default = %d)\n", TABSIZE);
-	fprintf(stderr, "-v = show version information\n");
+	fprintf(stream, "-h = show usage information\n");
+	fprintf(stream, "-t[tabsize] = set tab size in spaces\n");
+	fprintf(stream, "    tabsize = >= 1 (default = %d)\n", TABSIZE);
+	fprintf(stream, "-v = show version information\n");
 }
 
 
@@ -73,7 +73,7 @@ int	main(int argc, char **argv)
 				break;
 			#endif  /* DEBUG */
 			case 'h':
-				usage(executable);
+				usage(executable, stdout);
 				return 0;
 			case 't':
 				if (isdigit(*++argv[0])) {
@@ -91,14 +91,14 @@ int	main(int argc, char **argv)
 				return 0;
 			default:
 				fprintf(stderr, "%s: unknown option -%c\n", executable, ch);
-				usage(executable);
+				usage(executable, stderr);
 				return 0;
 		}
 	}
 
 	if (argc == 0) {
 		fprintf(stderr, "%s: module name missing\n", executable);
-		usage(executable);
+		usage(executable, stderr);
 	} else if (argc == 1) {
 		reader.import(*argv);
 
@@ -116,7 +116,7 @@ int	main(int argc, char **argv)
 			return obj_as_int(return_value);
 	} else {  /* more then 1 argument */
 		fprintf(stderr, "%s: to many modules\n", executable);
-		usage(executable);
+		usage(executable, stderr);
 	}
 	return 0;
 }
