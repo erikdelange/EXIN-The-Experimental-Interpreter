@@ -37,7 +37,7 @@ static void input_stmnt(void);
 static void return_stmt(void);
 static void import_stmt(void);
 static void expression_stmnt(void);
-static ListObject *push_arguments(void);
+static void push_arguments(ListObject *arglist);
 static void pop_arguments(ListObject *arglist);
 
 
@@ -207,6 +207,7 @@ void statement(void)
 	else if (accept(PRINT))
 		print_stmnt();
 	else if (accept(RETURN) || accept(DEDENT))
+		/* Note: implicit return at end of block */
 		return_stmt();
 	else if (accept(WHILE))
 		while_stmnt();
@@ -580,47 +581,48 @@ static void input_stmnt(void)
  */
 Object *function_call(PositionObject *addr)
 {
-	PositionObject *return_to;
+	PositionObject *pos;
 	ListObject *arglist;
 	jmp_buf temp;
 	Object *obj;
 
 	debug_printf(DEBUGBLOCK, "\n------: %s", "Start function");
 
-	arglist = push_arguments();
-	/* token is now RPAR of function call */
+	arglist = (ListObject *)obj_alloc(LIST_T);
+	push_arguments(arglist);  /* at return token is RPAR of function call */
+
 	scope.append_level();
 
-	return_to = reader.save();  /* continue here after return from function */
-
+	pos = reader.save();  /* continue here after return from function */
 	reader.jump(addr);  /* jump to function definition */
-	expect(IDENTIFIER);
 
+	expect(IDENTIFIER);
 	pop_arguments(arglist);
 	expect(RPAR);
 
-	/* Save the previous value of jmp_buf */
 	memcpy(&temp, &return_address, sizeof(jmp_buf));
-	if (setjmp(return_address) == 0)  /* for return statement */
+	if (setjmp(return_address) == 0)  /* will return here at end of function */
 		block();
 	memcpy(&return_address, &temp, sizeof(jmp_buf));
 
-	debug_printf(DEBUGBLOCK, "\n------: %s", "End function");
-
-	/* now returned from function */
+	/* now returned from function, check for return value */
 	if (return_value == NULL)
-		return_value = obj_create(INT_T, 0);  /* without return value return integer 0 */
+		obj = obj_create(INT_T, 0);  /* without return value return integer 0 */
+	else {
+		obj = return_value;
+		return_value = NULL;
+	}
 
 	obj_decref((Object *)arglist);
 
-	reader.jump(return_to);  /* continue at end of function call */
+	reader.jump(pos);  /* continue after end of function call */
+	obj_decref((Object *)pos);
+
 	accept(RPAR);
 
 	scope.remove_level();
 
-	obj_decref((Object *)return_to);
-	obj = return_value;
-	return_value = NULL;
+	debug_printf(DEBUGBLOCK, "\n------: %s", "End function");
 
 	return obj;
 }
@@ -631,12 +633,9 @@ Object *function_call(PositionObject *addr)
  * in:  token = function IDENTIFIER
  * out: token = RPAR of argument list in function call
  */
-static ListObject *push_arguments(void)
+static void push_arguments(ListObject *arglist)
 {
 	Object *obj;
-	ListObject *arglist;
-
-	arglist = (ListObject *)obj_alloc(LIST_T);
 
 	expect(LPAR);
 
@@ -646,10 +645,9 @@ static ListObject *push_arguments(void)
 		obj_decref(obj);
 		if (scanner.token == RPAR)
 			continue;
-		else expect(COMMA);
+		else
+			expect(COMMA);
 	}
-
-	return arglist;
 }
 
 
