@@ -158,7 +158,10 @@ static void import(const char *filename)
 	reader.current = module.new(filename);
 	reader.reset();
 
-	/* Straight struct copy using assignment (s1 = s2) does not work
+	/* Save the current return address before jumping into the new file,
+	 * and restore it aferwards.
+	 *
+	 * Straight struct copy using assignment (s1 = s2) does not work
 	 * for jmp_buf in gcc 6.3.0 (don't know why, perhaps because jmp_buf is
 	 * platform-specific) so memcpy is needed instead.
 	 *

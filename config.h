@@ -11,17 +11,24 @@
 #include <stdio.h>
 
 #define LANGUAGE	"EXIN"
-#define VERSION		"1.12"
+#define VERSION		"1.13"
+#define TABSIZE		4		/* default spaces per tab */
+
+/*	Constants which are used to define the size of
+ *	arrays which are created at compile time
+ */
 #define BUFSIZE		256		/* maximum length of identifier name excl '\0' */
 #define LINESIZE	256		/* maximum length of input line excl '\0' */
 #define MAXINDENT	132		/* maximum number of indents */
-#define TABSIZE		4		/* default spaces per tab */
 
+/*	C representation of EXIN's basic variable types
+ */
 #define char_t	char		/* basic type for CHAR_T */
 #define int_t	long		/* basic type for INT_T */
 #define float_t	double		/* basic type for FLOAT_T */
 
-/*	All global configuration variables.
+/*	Container for all global configuration variables
+ * 	which can be changed during run time.
  */
 typedef struct {
 	int debug;      /* debug logging level */
