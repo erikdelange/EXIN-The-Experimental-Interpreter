@@ -11,7 +11,7 @@
 #include <stdio.h>
 
 #define LANGUAGE	"EXIN"
-#define VERSION		"1.13"
+#define VERSION		"1.14"
 #define TABSIZE		4		/* default spaces per tab */
 
 /*	Constants which are used to define the size of

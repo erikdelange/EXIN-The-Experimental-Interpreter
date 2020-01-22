@@ -557,10 +557,16 @@ Object *obj_in(Object *op1, Object *op2)
 		if (result != NULL)
 			obj_decref(result);
 		item = obj_item(op2, i);
-		result = obj_eql(op1, item);
-		obj_decref(item);
-		if (obj_as_int(result) == 1)
-			break;
+		if (TYPE(op1) != TYPE(obj_from_listnode(item))) {
+			/* no need to compare if types don't match */
+			result = obj_create(INT_T, (int_t)0);
+		} else {
+			/* types match, comparison if useful */
+			result = obj_eql(op1, item);
+			obj_decref(item);
+			if (obj_as_int(result) == 1)
+				break;
+		}
 	}
 	return result;
 }
