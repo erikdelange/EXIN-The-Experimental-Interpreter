@@ -144,34 +144,20 @@ static void print_current_line(void)
 /* API: Load a module and execute the code.
  *
  * filename     filename of module to load and execute
+ * return		0 or integer return value argument from return statement
  */
-static void import(const char *filename)
+static int import(const char *filename)
 {
-	jmp_buf temp;
-
 	assert(filename != NULL);
 	assert(*filename != '\0');
 
 	if (module.search(filename) != NULL)
-		return;  /* importing a module will only be done once */
+		return 0;  /* importing a module will only be done once */
 
 	reader.current = module.new(filename);
 	reader.reset();
 
-	/* Save the current return address before jumping into the new file,
-	 * and restore it aferwards.
-	 *
-	 * Straight struct copy using assignment (s1 = s2) does not work
-	 * for jmp_buf in gcc 6.3.0 (don't know why, perhaps because jmp_buf is
-	 * platform-specific) so memcpy is needed instead.
-	 *
-	 * void *memcpy(void *m1, const void *m2, size_t n) copies n characters
-	 * from memory area m2 to memory area m1.
-	 */
-	memcpy(&temp, &return_address, sizeof(jmp_buf));
-	if (setjmp(return_address) == 0)
-		parser();
-	memcpy(&return_address, &temp, sizeof(jmp_buf));
+	return parser();
 }
 
 

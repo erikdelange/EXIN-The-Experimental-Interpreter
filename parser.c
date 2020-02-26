@@ -23,10 +23,12 @@
 
 /* Forward declarations.
  */
+static void statement(void);
 static void block(void);
-static void skip_function(void);
 static void skip_block(void);
 static void function_declaration(void);
+static void skip_function(void);
+static void expression_stmnt(void);
 static void variable_declaration(objecttype_t type);
 static void if_stmnt(void);
 static void while_stmnt(void);
@@ -36,13 +38,18 @@ static void print_stmnt(void);
 static void input_stmnt(void);
 static void return_stmt(void);
 static void import_stmt(void);
-static void expression_stmnt(void);
 static void push_arguments(ListObject *arglist);
 static void pop_arguments(ListObject *arglist);
 
 
-static int do_break = 0;		/* Busy quiting loop because of break */
-static int do_continue = 0;		/* Busy quiting loop because of continue */
+static int do_break = 0;	/* Busy quiting loop because of break */
+static int do_continue = 0;	/* Busy quiting loop because of continue */
+static int do_return = 0;	/* Busy exiting block or module because of return */
+
+
+/* Variable to store a functions return value
+ */
+static Object *return_value;
 
 
 /* Check if the current token matches t. If true then return 1 and read the
@@ -73,24 +80,88 @@ int expect(token_t t)
 
 
 /* Initialise and start the parsing proces.
+ *
+ * return		0 or integer return value argument from return statement
  */
-void parser(void)
+int parser(void)
 {
+	int r = 0;
+
 	function_declaration();
 
 	scanner.next();
 
 	while (1) {
 		statement();
-		if (accept(ENDMARKER))
+		if (do_return || accept(ENDMARKER))
 			break;
 	}
+
+	do_return = 0;
+
+	if (return_value) {
+		if (isNumber(return_value))
+			r = obj_as_int(return_value);
+		obj_decref(return_value);
+	}
+	return r;
+}
+
+
+/* Statement interpreter.
+ *
+ * in:  token = token to interpret
+ * out: token = first token after statement
+ */
+void statement(void)
+{
+	do_return = 0;
+
+	if (accept(DEFCHAR))
+		variable_declaration(CHAR_T);
+	else if (accept(DEFINT))
+		variable_declaration(INT_T);
+	else if (accept(DEFFLOAT))
+		variable_declaration(FLOAT_T);
+	else if (accept(DEFSTR))
+		variable_declaration(STR_T);
+	else if (accept(DEFLIST))
+		variable_declaration(LIST_T);
+	else if (accept(DEFFUNC))
+		skip_function();
+	else if (accept(FOR))
+		for_stmnt();
+	else if (accept(DO))
+		do_stmnt();
+	else if (accept(IF))
+		if_stmnt();
+	else if (accept(IMPORT))
+		import_stmt();
+	else if (accept(INPUT))
+		input_stmnt();
+	else if (accept(PASS))
+		expect(NEWLINE);
+	else if (accept(PRINT))
+		print_stmnt();
+	else if (accept(RETURN) || accept(DEDENT))
+		/* Note: DEDENT is implicit 'return' at end of block */
+		return_stmt();
+	else if (accept(WHILE))
+		while_stmnt();
+	else if (accept(BREAK))
+		do_break = 1;
+	else if (accept(CONTINUE))
+		do_continue = 1;
+	else if (accept(ENDMARKER))
+		;
+	else
+		expression_stmnt();
 }
 
 
 /* Store the address (= LPAR after IDENTIFIER) of every function in the module.
  *
- * The identifiers are always placed in the list with local variables.
+ * The identifiers are placed in the list with local variables.
  */
 static void function_declaration(void)
 {
@@ -144,7 +215,7 @@ static void skip_function(void)
 }
 
 
-/* Skip statements in a block, also considering sub-blocks.
+/* Skip statements in a block, also skipping sub-blocks.
  *
  * in:  token = first token of block; must be NEWLINE, else error
  * out: token = first token after DEDENT at end of block
@@ -173,55 +244,6 @@ static void skip_block(void)
 }
 
 
-/* Statement interpreter.
- *
- * in:  token = token to interpret
- * out: token = first token after statement
- */
-void statement(void)
-{
-	if (accept(DEFCHAR))
-		variable_declaration(CHAR_T);
-	else if (accept(DEFINT))
-		variable_declaration(INT_T);
-	else if (accept(DEFFLOAT))
-		variable_declaration(FLOAT_T);
-	else if (accept(DEFSTR))
-		variable_declaration(STR_T);
-	else if (accept(DEFLIST))
-		variable_declaration(LIST_T);
-	else if (accept(DEFFUNC))
-		skip_function();
-	else if (accept(FOR))
-		for_stmnt();
-	else if (accept(DO))
-		do_stmnt();
-	else if (accept(IF))
-		if_stmnt();
-	else if (accept(IMPORT))
-		import_stmt();
-	else if (accept(INPUT))
-		input_stmnt();
-	else if (accept(PASS))
-		expect(NEWLINE);
-	else if (accept(PRINT))
-		print_stmnt();
-	else if (accept(RETURN) || accept(DEDENT))
-		/* Note: implicit return at end of block */
-		return_stmt();
-	else if (accept(WHILE))
-		while_stmnt();
-	else if (accept(BREAK))
-		do_break = 1;
-	else if (accept(CONTINUE))
-		do_continue = 1;
-	else if (accept(ENDMARKER))
-		;
-	else
-		expression_stmnt();
-}
-
-
 /* Execute a statement block.
  *
  * Syntax: NEWLINE INDENT statement+ DEDENT
@@ -238,7 +260,7 @@ static void block(void)
 
 	while (1) {
 		statement();
-		if (scanner.token == DEDENT || scanner.token == ENDMARKER)
+		if (scanner.token == DEDENT || scanner.token == ENDMARKER || do_return)
 			break;
 		if (do_break || do_continue) {  /* skip rest of block */
 			int level = 1;
@@ -314,11 +336,10 @@ static void variable_declaration(objecttype_t type)
  *
  * in:  token = first token of expression
  * out: token = first token after expression (= NEWLINE)
- *
  */
-static int condition(void)
+static bool condition(void)
 {
-	int result;
+	bool result;
 	Object *obj;
 
 	obj = comma_expr();
@@ -369,7 +390,7 @@ static void	while_stmnt(void)
 
 	loop = reader.save();
 
-	while (condition() && !do_break) {
+	while (condition() && !do_break && !do_return) {
 		block();
 		do_continue = 0;
 		reader.jump(loop);
@@ -407,7 +428,7 @@ static void do_stmnt(void)
 		do_continue = 0;
 		expect(DEDENT);
 		expect(WHILE);
-	} while	(condition() && !do_break);
+	} while	(condition() && !do_break && !do_return);
 
 	do_break = 0;
 
@@ -451,7 +472,7 @@ static void for_stmnt(void)
 
 	loop = reader.save();
 
-	for (int_t i = 0; i < len && !do_break; i++) {
+	for (int_t i = 0; i < len && !do_break && !do_return; i++) {
 		/* bind() has implicit unbind of previous value */
 		identifier.bind(id, obj_item(sequence, i));
 		block();
@@ -583,7 +604,6 @@ Object *function_call(PositionObject *addr)
 {
 	PositionObject *pos;
 	ListObject *arglist;
-	jmp_buf temp;
 	Object *obj;
 
 	debug_printf(DEBUGBLOCK, "\n------: %s", "Start function");
@@ -600,10 +620,8 @@ Object *function_call(PositionObject *addr)
 	pop_arguments(arglist);
 	expect(RPAR);
 
-	memcpy(&temp, &return_address, sizeof(jmp_buf));
-	if (setjmp(return_address) == 0)  /* will return here at end of function */
-		block();
-	memcpy(&return_address, &temp, sizeof(jmp_buf));
+	block();  /* execute function body */
+	do_return = 0;
 
 	/* now returned from function, check for return value */
 	if (return_value == NULL)
@@ -684,6 +702,7 @@ static void pop_arguments(ListObject *arglist)
 
 
 /* return: exit from function with a return value (default int 0).
+ *         also called at the end of a block (= implicit return statement).
  *
  * Syntax: return value? NEWLINE
  *
@@ -699,8 +718,5 @@ static void return_stmt(void)
 
 	expect(NEWLINE);
 
-	/* When returning from a function jump to function_call(),
-	 * else to import().
-	 */
-	longjmp(return_address, 1);
+	do_return = 1;
 }

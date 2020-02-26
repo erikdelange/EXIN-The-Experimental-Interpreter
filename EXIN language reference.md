@@ -39,7 +39,7 @@ Code execution always starts at the top of a file.
 ##### Data types
 The three primitive data types are *char*, *int* and *float*. They are used for storing characters, integers and floating point numbers and match the C data types char, long and double.
 
-On top of these primitive types two additional data types are built: strings and lists. These are sequence data types as they can store multiple values which can be accessed by index. Lists can contain any data type, including other lists. Their data type is *list*. A special variant of the list is the string (data type *str*) which can contain only characters.
+On top of these primitive types two additional data types are constructed: strings and lists. These are sequence data types as they can store multiple values which can be accessed by index. Lists can contain any data type, including other lists. Their data type is *list*. A special variant of the list is the string (data type *str*) which can contain only characters.
 
 EXIN is strongly typed and requires that every variable is declared before it can be used.
 ```
@@ -65,7 +65,7 @@ The type of a variable or constant can be retreived via the builtin *type()* fun
 = str
 ```
 ##### Literals
-A character constant is surrounded by single quotes, a string constant by double quotes. Both may contain escape sequences starting with a backslash. Number constant without a decimal dot are considered integers, and with a dot floats. A floating point number can also be written in scientific notation.
+A character constant is surrounded by single quotes, a string constant by double quotes. Both may contain escape sequences starting with a backslash. Number constants without a decimal dot are considered integers, and ones with a dot floats. A floating point number can also be written in scientific notation.
 ``` python
 >>> 1 / 2
 = 0
@@ -131,7 +131,7 @@ The most efficient way to append an element at the end of a list is via the *.ap
 >>> print m
 [3.14]
 ```
-Inserting an element at any place in a list is done via *.insert(before_index, element)*. Removing an element can only be done via its index. As always this can be an index from the beginning or from the end of the list.
+Inserting an element at any place in a list is done via *.insert(before_index, element)*. Removing an element can only be done via its index. As usual this can be an index from the beginning or from the end of the list.
 ``` c
 >>> list m
 >>> m.insert(0, 3.14)  # insert at beginning of list
@@ -268,7 +268,7 @@ input first_name, last_name
 The *pass* keyword is a no-operation statement and can be used as a placeholder during program development.
 Statements cannot be used as identifier (for a variable or function) name. However the name of builtin functions (like type) can be used as identifier name. This will shadow the builtin function.
 ##### Builtin functions
-A number of builtin functions are provided. These include type(variable) to return a string with the type of the variable, chr(integer) which return a string with the ASCII representation of integer and ord(string) which returns the ASCII value (as integer) of the character in the string.
+A number of builtin functions are provided. These include type(variable) to return a string with the type of the variable, chr(integer) which returs a string with the ASCII representation of integer and ord(string) which returns the ASCII value (as integer) of the character in the string.
 ##### Grammar in EBNF
 For a graphical representation of the syntax see [EXIN syntax diagram](EXIN%20syntax%20diagram.pdf).
 For an explantion of the EBNF notation used below see [EBNF syntax.txt](EBNF%20syntax.txt).
