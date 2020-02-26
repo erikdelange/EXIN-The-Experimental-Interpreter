@@ -11,7 +11,7 @@ typedef struct reader {
 	struct module *current;	/* currently reading from this module */
 	char *pos;				/* position of next character to read */
 	char *bol;				/* position of beginning of current line */
-	
+
 	int (*nextch)(void);	/* read the next character */
 	int (*peekch)(void);	/* peek the next character */
 	int (*pushch)(int);		/* push character back in the input stream */
@@ -21,7 +21,7 @@ typedef struct reader {
 	void (*init)(struct reader *);			/* initialize reader struct */
 	struct positionobject *(*save)(void);	/* save current reader */
 	void (*jump)(struct positionobject *);	/* load current reader */
-	void (*import)(const char *filename);	/* import new module */
+	int (*import)(const char *filename);	/* import new module */
 	void (*print_current_line)(void);		/* print current line */
 } Reader;
 

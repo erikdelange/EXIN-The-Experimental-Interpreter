@@ -11,7 +11,7 @@
 #include <stdio.h>
 
 #define LANGUAGE	"EXIN"
-#define VERSION		"1.14"
+#define VERSION		"1.15"
 #define TABSIZE		4		/* default spaces per tab */
 
 /*	Constants which are used to define the size of
@@ -36,8 +36,6 @@ typedef struct {
 } Config;
 
 extern Config config;
-
-extern jmp_buf return_address;
 
 /*	Define preprocessor macro DEBUG in the compiler options
  *	to enable debug logging.

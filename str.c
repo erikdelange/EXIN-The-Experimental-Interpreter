@@ -24,8 +24,7 @@ static StrObject *str_alloc(void)
 	obj->type = STR_T;
 	obj->refcount = 0;
 
-	obj->sptr = strdup("");  /* initial value is empty string */
-	if (obj->sptr == NULL)
+	if ((obj->sptr = strdup("")) == NULL)  /* initial value is empty string */
 		error(OutOfMemoryError);
 
 	return obj;
@@ -50,9 +49,7 @@ static StrObject *str_set(StrObject *obj, const char *s)
 	if (obj->sptr != NULL)
 		free(obj->sptr);
 
-	obj->sptr = strdup(s);
-
-	if (obj->sptr == NULL)
+	if ((obj->sptr = strdup(s)) == NULL)
 		error(OutOfMemoryError);
 
 	return obj;
@@ -79,9 +76,7 @@ static Object *str_concat(Object *op1, Object *op2)
 
 	bytes = strlen(obj_as_str(op1)) + strlen(obj_as_str(op2)) + 1;
 
-	s = calloc(bytes, sizeof(char));
-
-	if (s == NULL)
+	if ((s = calloc(bytes, sizeof(char))) == NULL)
 		error(OutOfMemoryError);
 
 	strcpy(s, obj_as_str(op1));
@@ -127,9 +122,7 @@ static Object *str_repeat(Object *op1, Object *op2)
 
 	bytes = (size_t)length((StrObject *)s) * times + 1;
 
-	str = calloc(bytes, sizeof(char));
-
-	if (str == NULL)
+	if ((str = calloc(bytes, sizeof(char))) == NULL)
 		error(OutOfMemoryError);
 
 	while (times--)

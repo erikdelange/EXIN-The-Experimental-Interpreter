@@ -415,9 +415,8 @@ Object *obj_eql(Object *op1, Object *op2)
 	else if (isList(op1) && isList(op2))
 		return listtype.eql((ListObject *)op1, (ListObject *)op2);
 	else
-		error(TypeError, "unsupported operand type(s) for operation ==: %s and %s", \
-						  TYPENAME(op1), TYPENAME(op2));
-	return NULL;
+		/* operands of different types are by definition not equal */
+		return obj_create(INT_T, (int_t)0);
 }
 
 
@@ -435,9 +434,8 @@ Object *obj_neq(Object *op1, Object *op2)
 	else if (isList(op1) && isList(op2))
 		return listtype.neq((ListObject *)op1, (ListObject *)op2);
 	else
-		error(TypeError, "unsupported operand type(s) for operation !=: %s and %s", \
-						  TYPENAME(op1), TYPENAME(op2));
-	return NULL;
+		/* operands of different types are by definition not equal */
+		return obj_create(INT_T, (int_t)1);
 }
 
 
@@ -557,16 +555,10 @@ Object *obj_in(Object *op1, Object *op2)
 		if (result != NULL)
 			obj_decref(result);
 		item = obj_item(op2, i);
-		if (TYPE(op1) != TYPE(obj_from_listnode(item))) {
-			/* no need to compare if types don't match */
-			result = obj_create(INT_T, (int_t)0);
-		} else {
-			/* types match, comparison if useful */
-			result = obj_eql(op1, item);
-			obj_decref(item);
-			if (obj_as_int(result) == 1)
-				break;
-		}
+		result = obj_eql(op1, item);
+		obj_decref(item);
+		if (obj_as_int(result) == 1)
+			break;
 	}
 	return result;
 }
@@ -654,7 +646,7 @@ Object *obj_type(Object *op1)
 }
 
 
-/* Various conversions between variable and object types.
+/* Various conversions between variable- and object-types.
  */
 
 
@@ -778,12 +770,13 @@ bool obj_as_bool(Object *op1)
 
 /* Convert string to a char_t
  */
-char_t str_to_char(char *s)
+char_t str_to_char(const char *s)
 {
 	char_t c = 0;
 
 	if (*s == '\\') {  /* is an escape sequence */
 		switch (*++s) {
+			case '0' :	c = '\0'; break;
 			case 'b' :	c = '\b'; break;
 			case 'f' :	c = '\f'; break;
 			case 'n' :	c = '\n'; break;
@@ -793,7 +786,6 @@ char_t str_to_char(char *s)
 			case '\\':	c = '\\'; break;
 			case '\'':	c = '\''; break;
 			case '\"':	c = '\"'; break;
-			case '0' :	c = '\0'; break;
 			default  :	error(ValueError, "unknown escape sequence: %c", *s);
 		}
 	} else {  /* not an escape sequence */
@@ -811,7 +803,7 @@ char_t str_to_char(char *s)
 
 /* Convert string to an int_t
  */
-int_t str_to_int(char *s)
+int_t str_to_int(const char *s)
 {
 	char *e;
 	int_t i;
@@ -833,7 +825,7 @@ int_t str_to_int(char *s)
 
 /* Convert string to a float_t
  */
-float_t str_to_float(char *s)
+float_t str_to_float(const char *s)
 {
 	char *e;
 	float_t f;

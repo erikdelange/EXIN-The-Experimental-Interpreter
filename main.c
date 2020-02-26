@@ -17,9 +17,6 @@
 #include "config.h"
 
 
-jmp_buf	return_address;			/* Return address at end of function */
-Object	*return_value = NULL;	/* Result of the last function call */
-
 Config config = {				/* global configuration variables */
 	.debug = NODEBUG,
 	.tabsize = TABSIZE
@@ -100,7 +97,7 @@ int	main(int argc, char **argv)
 		fprintf(stderr, "%s: module name missing\n", executable);
 		usage(executable, stderr);
 	} else if (argc == 1) {
-		reader.import(*argv);
+		int r = reader.import(*argv);
 
 		#ifdef DEBUG
 		void dump_identifier(void);
@@ -112,8 +109,7 @@ int	main(int argc, char **argv)
 		}
 		#endif  /* DEBUG */
 
-		if (return_value && isNumber(return_value))
-			return obj_as_int(return_value);
+		return r;
 	} else {  /* more then 1 argument */
 		fprintf(stderr, "%s: to many modules\n", executable);
 		usage(executable, stderr);

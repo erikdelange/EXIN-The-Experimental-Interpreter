@@ -104,10 +104,10 @@ static Identifier *addIdentifier(Scope *level, const char *name)
  * name     identifier name
  * return   indentifier object
  */
- static Identifier *add(const char *name)
- {
+static Identifier *add(const char *name)
+{
 	return addIdentifier(local, name);
- }
+}
 
 
 /* API: Unbind an object and an identifier.

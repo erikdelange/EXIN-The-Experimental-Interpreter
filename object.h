@@ -116,14 +116,10 @@ extern char *obj_as_str(Object *op1);
 extern ListObject *obj_as_list(Object *op1);
 extern bool obj_as_bool(Object *a);
 
-extern char_t str_to_char(char *s);
-extern int_t str_to_int(char *s);
-extern float_t str_to_float(char *s);
+extern char_t str_to_char(const char *s);
+extern int_t str_to_int(const char *s);
+extern float_t str_to_float(const char *s);
 
 extern Object *obj_to_strobj(Object *obj);
-
-/* Global variable to store a functions return value
- */
-extern Object *return_value;
 
 #endif

@@ -323,14 +323,14 @@ static token_t read_string(char *string)
 					case '0' :	reader.nextch(); ch = '\0'; break;
 					case 'a' :	reader.nextch(); ch = '\a'; break;
 					case 'b' :	reader.nextch(); ch = '\b'; break;
-					case 't' :	reader.nextch(); ch = '\t'; break;
-					case 'n' :	reader.nextch(); ch = '\n'; break;
-					case 'v' :	reader.nextch(); ch = '\v'; break;
 					case 'f' :	reader.nextch(); ch = '\f'; break;
+					case 'n' :	reader.nextch(); ch = '\n'; break;
 					case 'r' :	reader.nextch(); ch = '\r'; break;
-					case '\"':	reader.nextch(); ch = '\"'; break;
-					case '\'':	reader.nextch(); ch = '\''; break;
+					case 't' :	reader.nextch(); ch = '\t'; break;
+					case 'v' :	reader.nextch(); ch = '\v'; break;
 					case '\\':	reader.nextch(); ch = '\\'; break;
+					case '\'':	reader.nextch(); ch = '\''; break;
+					case '\"':	reader.nextch(); ch = '\"'; break;
 				}
 			if (count < BUFSIZE)
 				string[count++]= ch;
@@ -466,14 +466,14 @@ static token_t read_character(char *c)
 			case '0' :	c[0] = '\0'; break;
 			case 'a' :	c[0] = '\a'; break;
 			case 'b' :	c[0] = '\b'; break;
-			case 't' :	c[0] = '\t'; break;
-			case 'n' :	c[0] = '\n'; break;
-			case 'v' :	c[0] = '\v'; break;
 			case 'f' :	c[0] = '\f'; break;
+			case 'n' :	c[0] = '\n'; break;
 			case 'r' :	c[0] = '\r'; break;
-			case '\"':	c[0] = '\"'; break;
-			case '\'':	c[0] = '\''; break;
+			case 't' :	c[0] = '\t'; break;
+			case 'v' :	c[0] = '\v'; break;
 			case '\\':	c[0] = '\\'; break;
+			case '\'':	c[0] = '\''; break;
+			case '\"':	c[0] = '\"'; break;
 			default  :	error(SyntaxError, "unknown escape sequence: %c", ch);
 		}
 	} else {  /* not an escape sequence */
