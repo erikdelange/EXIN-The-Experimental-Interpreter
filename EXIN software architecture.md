@@ -26,7 +26,7 @@ options
 By specifying a module it is loaded and executed. The module name must include its extension (if any), the interpreter does not guess.
 ##### Notes on coding
 ###### Include files
-If a source file requires a header (*.h*) file, this has the same basename (*module.c, module.h*). Every header file has a guard (_BASENAME_) to prevent double inclusion. Every source or header file only includes the headers it needs, I do not follow an 'include all' approach.
+If a source file requires a header (*.h*) file, this has the same basename (*module.c, module.h*). Every header file has a guard (__BASENAME__) to prevent double inclusion. Every source or header file only includes the headers it needs, I do not follow an 'include all' approach.
 ###### Assertions
 Certain bugs such as NULL pointers can terminate the interpreter immediately and leave you clueless where things went wrong. To catch these bugs in several functions the validity of input and ouput values is checked using the assert() macro. In the release version assertions are removed by defining preprocessor macro NDEBUG.
 ###### Directory structure
