@@ -1,6 +1,6 @@
 # EXIN - An Experimental Interpreter
 
-**June 6, 2020 <br>
+**June 6, 2020 <br><br>
 This repository has been superseded by [EXIN-AST](https://github.com/erikdelange/EXIN-AST-The-Experimental-Interpreter), and will not be developed any further. While still implementing the same language [EXIN-AST](https://github.com/erikdelange/EXIN-AST-The-Experimental-Interpreter) follows a more elegant design centered around an Abstract Syntax Tree.**
 ___
 EXIN is an exercise in defining a programming language and writing an interpreter for it. Both are as simple as possible to make it easy to understand how the interpreter code is structured and to be able to add new features. The language resembles (as far as I know) Basic, C and Python. This is an example of EXIN code:
