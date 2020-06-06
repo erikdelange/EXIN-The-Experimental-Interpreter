@@ -1,6 +1,6 @@
 # EXIN - An Experimental Interpreter
 
-EXIN is an exercise in defining a progamming language and writing an interpreter for it. Both are as simple as possible to make it easy to understand how the interpreter code is structured and to be able to add new features. The language resembles (as far as I know) Basic, C and Python. This is an example of EXIN code:
+EXIN is an exercise in defining a programming language and writing an interpreter for it. Both are as simple as possible to make it easy to understand how the interpreter code is structured and to be able to add new features. The language resembles (as far as I know) Basic, C and Python. This is an example of EXIN code:
 ```
 # Reverse string s
 #
